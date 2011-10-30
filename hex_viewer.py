@@ -37,7 +37,7 @@ class HexListenerCommand(sublime_plugin.EventListener):
                     # Set original syntax highlighting
                     view.set_syntax_file(orig_buffer['hex_syntax'])
                     # Notify user of interception
-                    sublime.set_timeout(lambda: self.intercept_save_msg(),1000)
+                    sublime.set_timeout(lambda: self.intercept_save_msg(), 1000)
 
 
 class HexViewerCommand(sublime_plugin.TextCommand):
@@ -80,7 +80,7 @@ class HexViewerCommand(sublime_plugin.TextCommand):
                 # Convert to decimal value
                 value = struct.unpack('=B', byte)[0]
                 # Save printable value
-                p_buffer += "." if value < 32 or value > 127 else byte
+                p_buffer += "." if value < 32 or value > 126 else byte
                 # Add line number
                 if count == 1:
                     b_buffer += "%08x:  " % (line * self.bytes_wide)
