@@ -3,8 +3,8 @@ import sublime_plugin
 import struct
 from os.path import basename
 
-DEFAULT_BIT_GROUP = 32
-DEFAULT_BYTES_WIDE = 16
+DEFAULT_BIT_GROUP = 16
+DEFAULT_BYTES_WIDE = 24
 VALID_BITS = [8, 16, 32, 64, 128]
 VALID_BYTES = [8, 10, 16, 24, 32, 48, 64, 128, 256, 512]
 
@@ -18,7 +18,7 @@ class HexListenerCommand(sublime_plugin.EventListener):
     def on_pre_save(self, view):
         # Protect on save: Don't save hex output to file
         file_name = view.file_name()
-        if file_name != None and self.view.settings().has("hex_viewer_name"):
+        if file_name != None and view.settings().has("hex_viewer_name"):
             # See if you have the original buffer
             orig_buffer = view.settings().get("hex_view_file", None)
             if orig_buffer != None:

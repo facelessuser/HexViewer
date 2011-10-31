@@ -1,7 +1,7 @@
 {
 	// Group bytes together by bits
 	//Valid Settings (8|16|32|64|128)
-	"group_bytes_by_bits" : 32,
+	"group_bytes_by_bits" : 16,
 
 	// Number of 8 bit bytes per line
 	// Will use closet number of bytes if group bytes
