@@ -29,6 +29,7 @@ class HexListenerCommand(sublime_plugin.EventListener):
                     view.settings().erase("hex_view_file")
                     view.settings().erase("hex_view_bits")
                     view.settings().erase("hex_view_bytes")
+                    view.settings().erase('hex_viewer_name')
                     # Make view writable again
                     view.set_scratch(False)
                     view.set_read_only(False)
@@ -142,8 +143,9 @@ class HexViewerCommand(sublime_plugin.TextCommand):
             content_buffer = sublime.Region(0, view.size())
             # Save original buffer to protect against saves
             # while in hex view mode
-            self.view.settings().set("hex_view_bits", self.bits)
-            self.view.settings().set("hex_view_bytes", self.bytes)
+            view.settings().set("hex_view_bits", self.bits)
+            view.settings().set("hex_view_bytes", self.bytes)
+            view.settings().set("hex_viewer_name", file_name)
             if not self.new_file and not self.view.settings().has("hex_view_file"):
                 self.view.settings().set(
                     "hex_view_file",
@@ -165,11 +167,11 @@ class HexViewerCommand(sublime_plugin.TextCommand):
     def run(self, edit, new_file=False, bits=None, bytes=None):
         self.view = sublime.active_window().active_view()
         self.init(bits, bytes, new_file)
-        file_name = self.view.file_name()
+        file_name = self.view.settings().get("hex_viewer_name", self.view.file_name())
         self.syntax = self.view.settings().get('syntax')
         language = basename(self.syntax).replace('.tmLanguage', '').lower() if self.syntax != None else self.syntax
         if file_name != None:
-            if language == "hex" and new_file == False:
+            if language == "hex":
                 if bits == None and bytes == None:
                     self.restore_buffer(file_name, edit)
                 else:
@@ -195,7 +197,7 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
 
     def run(self, option):
         self.view = self.window.active_view()
-        file_name = self.view.file_name()
+        file_name = self.view.settings().get("hex_viewer_name", self.view.file_name())
         self.syntax = self.view.settings().get('syntax')
         language = basename(self.syntax).replace('.tmLanguage', '').lower() if self.syntax != None else self.syntax
         if file_name != None:
