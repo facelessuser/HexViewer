@@ -1,7 +1,11 @@
 {
-	// Group bytes together by bits (8|16|32|64).
+	// Group bytes together by bits
+	//Valid Settings (8|16|32|64|128)
 	"group_bytes_by_bits" : 32,
 
-	// Number of 8 bit bytes per line (8|16|32|64)
-	"bytes_per_line" : 16
+	// Number of 8 bit bytes per line
+	// Will use closet number of bytes if group bytes
+	// does not align
+	// Valid Settings (8|10|16|24|32|48|64|128|256|512)
+	"bytes_per_line" : 24
 }

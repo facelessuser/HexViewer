@@ -7,5 +7,15 @@
 		"caption": "Hex Viewer: Hex View",
 		"command": "hex_viewer",
 		"args"   : {"new_file": true}
+	},
+	{
+		"caption": "Hex Viewer: Set Bit Group",
+		"command": "hex_viewer_options",
+		"args"   : {"option": "bits"}
+	},
+	{
+		"caption": "Hex Viewer: Set Bytes Per Line",
+		"command": "hex_viewer_options",
+		"args"   : {"option": "bytes"}
 	}
 ]

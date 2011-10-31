@@ -3,8 +3,10 @@ import sublime_plugin
 import struct
 from os.path import basename
 
-BYTE_GROUP = 32
-BYTES_WIDE = 16
+DEFAULT_BIT_GROUP = 32
+DEFAULT_BYTES_WIDE = 16
+VALID_BITS = [8, 16, 32, 64, 128]
+VALID_BYTES = [8, 10, 16, 24, 32, 48, 64, 128, 256, 512]
 
 hv_settings = sublime.load_settings('hex_viewer.sublime-settings')
 
@@ -18,14 +20,15 @@ class HexListenerCommand(sublime_plugin.EventListener):
         file_name = view.file_name()
         self.syntax = view.settings().get('syntax')
         language = basename(self.syntax).replace('.tmLanguage', '').lower() if self.syntax != None else self.syntax
-        if(file_name != None):
-            if(language == "hex"):
-                view_id = str(view.id())
+        if file_name != None:
+            if language == "hex":
                 # See if you have the original buffer
-                orig_buffer = view.settings().get("hex_view_" + view_id, None)
+                orig_buffer = view.settings().get("hex_view_file", None)
                 if orig_buffer != None:
                     # Clean up buffer in memory
-                    view.settings().erase("hex_view_" + view_id)
+                    view.settings().erase("hex_view_file")
+                    view.settings().erase("hex_view_bits")
+                    view.settings().erase("hex_view_bytes")
                     # Make view writable again
                     view.set_scratch(False)
                     view.set_read_only(False)
@@ -41,29 +44,41 @@ class HexListenerCommand(sublime_plugin.EventListener):
 
 
 class HexViewerCommand(sublime_plugin.TextCommand):
-    def init(self):
-        byte_group = hv_settings.get('group_bytes_by_bits', BYTE_GROUP)
-        bytes_wide = hv_settings.get('bytes_per_line', BYTES_WIDE)
-        self.group_size = None
-        self.bytes_wide = None
+    def init(self, bits, bytes, new_file):
+        self.new_file = new_file
+        # Get current bit and byte settings from view
+        # Or try and get them from settings file
+        #If none are found, use default
+        current_bits = self.view.settings().get(
+            'hex_view_bits',
+            hv_settings.get('group_bytes_by_bits', DEFAULT_BIT_GROUP)
+        )
+        current_bytes = self.view.settings().get(
+            'hex_view_bytes',
+            hv_settings.get('bytes_per_line', DEFAULT_BYTES_WIDE)
+        )
+        # Use passed in bit and byte settings if available
+        self.bits = bits if bits != None else int(current_bits)
+        self.bytes = bytes if bytes != None else int(current_bytes)
+        self.group_size = DEFAULT_BIT_GROUP / 8
+        self.bytes_wide = DEFAULT_BYTES_WIDE
 
         # Set grouping
-        if (
-            byte_group == 8 or
-            byte_group == 16 or
-            byte_group == 32 or
-            byte_group == 64
-        ):
-            self.group_size = byte_group / 8
+        if self.bits in VALID_BITS:
+            self.group_size = self.bits / 8
 
         # Set bytes per line
-        if (
-            bytes_wide == 8 or
-            bytes_wide == 16 or
-            bytes_wide == 32 or
-            bytes_wide == 64
-        ):
-            self.bytes_wide = bytes_wide
+        if self.bytes in VALID_BYTES:
+            #Account for byte grouping that doesn't line up
+            self.bytes_wide = self.bytes
+
+        # Check if grouping and bytes per line do not align
+        # Round down to nearest bytes
+        offset = self.bytes_wide % self.group_size
+        if offset == self.bytes_wide:
+            self.bytes_wide = self.bits / 8
+        elif offset != 0:
+            self.bytes_wide -= offset
 
     def read_bin(self, file_name, edit):
         count = 0
@@ -127,10 +142,11 @@ class HexViewerCommand(sublime_plugin.TextCommand):
             content_buffer = sublime.Region(0, view.size())
             # Save original buffer to protect against saves
             # while in hex view mode
-            if not self.new_file:
-                view_id = str(self.view.id())
+            self.view.settings().set("hex_view_bits", self.bits)
+            self.view.settings().set("hex_view_bytes", self.bytes)
+            if not self.new_file and not self.view.settings().has("hex_view_file"):
                 self.view.settings().set(
-                    "hex_view_" + view_id,
+                    "hex_view_file",
                     {
                         "hex_syntax": self.syntax,
                         "hex_buffer": self.view.substr(content_buffer)
@@ -145,34 +161,51 @@ class HexViewerCommand(sublime_plugin.TextCommand):
         window = sublime.active_window()
         window.run_command("close_file")
         window.open_file(file_name)
-        # This method keeps from having to reopen the original file
-        # But this always leaves the buffer dirty.
-        # Could be fixed by saving after switch, but I don't like
-        # saving when not needed.
-        # self.id = str(self.view.id())
-        # hex_view = self.view.settings().get("hex_view_" + self.id, None)
-        # if hex_view != None:
-        #     content_buffer = sublime.Region(0, self.view.size())
-        #     self.view.set_read_only(False)
-        #     self.view.replace(edit, content_buffer, hex_view['hex_buffer'])
-        #     self.view.set_syntax_file(hex_view['hex_syntax'])
-        #     self.view.settings().erase("hex_view_" + self.id)
-        #     self.view.set_scratch(False)
 
-    def run(self, edit, new_file=False):
-        self.init()
+    def run(self, edit, new_file=False, bits=None, bytes=None):
         self.view = sublime.active_window().active_view()
+        self.init(bits, bytes, new_file)
         file_name = self.view.file_name()
         self.syntax = self.view.settings().get('syntax')
         language = basename(self.syntax).replace('.tmLanguage', '').lower() if self.syntax != None else self.syntax
-        if(file_name != None):
-            if(language == "hex" and new_file == False):
-                self.restore_buffer(file_name, edit)
+        if file_name != None:
+            if language == "hex" and new_file == False:
+                if bits == None and bytes == None:
+                    self.restore_buffer(file_name, edit)
+                else:
+                    self.view.set_read_only(False)
+                    self.read_bin(file_name, edit)
             else:
                 if self.view.is_dirty():
                     sublime.error_message(
                         "You have unsaved changes that will be lost! Please save before converting to hex."
                     )
                 else:
-                    self.new_file = new_file
                     self.read_bin(file_name, edit)
+
+
+class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
+    def set_bits(self, value):
+        if value != -1:
+            self.window.active_view().run_command('hex_viewer', {"bits": VALID_BITS[value]})
+
+    def set_bytes(self, value):
+        if value != -1:
+            self.window.active_view().run_command('hex_viewer', {"bytes": VALID_BYTES[value]})
+
+    def run(self, option):
+        self.view = self.window.active_view()
+        file_name = self.view.file_name()
+        self.syntax = self.view.settings().get('syntax')
+        language = basename(self.syntax).replace('.tmLanguage', '').lower() if self.syntax != None else self.syntax
+        if file_name != None:
+            if language == "hex":
+                option_list = []
+                if option == "bits":
+                    for bits in VALID_BITS:
+                        option_list.append(str(bits) + " bits")
+                    self.window.show_quick_panel(option_list, self.set_bits)
+                elif option == "bytes":
+                    for bytes in VALID_BYTES:
+                        option_list.append(str(bytes) + " bytes")
+                    self.window.show_quick_panel(option_list, self.set_bytes)
