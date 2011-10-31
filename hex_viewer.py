@@ -18,30 +18,27 @@ class HexListenerCommand(sublime_plugin.EventListener):
     def on_pre_save(self, view):
         # Protect on save: Don't save hex output to file
         file_name = view.file_name()
-        self.syntax = view.settings().get('syntax')
-        language = basename(self.syntax).replace('.tmLanguage', '').lower() if self.syntax != None else self.syntax
-        if file_name != None:
-            if language == "hex":
-                # See if you have the original buffer
-                orig_buffer = view.settings().get("hex_view_file", None)
-                if orig_buffer != None:
-                    # Clean up buffer in memory
-                    view.settings().erase("hex_view_file")
-                    view.settings().erase("hex_view_bits")
-                    view.settings().erase("hex_view_bytes")
-                    view.settings().erase('hex_viewer_name')
-                    # Make view writable again
-                    view.set_scratch(False)
-                    view.set_read_only(False)
-                    # Copy original buffer back in the view
-                    current_buffer = sublime.Region(0, view.size())
-                    edit = view.begin_edit()
-                    view.replace(edit, current_buffer, orig_buffer['hex_buffer'])
-                    view.end_edit(edit)
-                    # Set original syntax highlighting
-                    view.set_syntax_file(orig_buffer['hex_syntax'])
-                    # Notify user of interception
-                    sublime.set_timeout(lambda: self.intercept_save_msg(), 1000)
+        if file_name != None and self.view.settings().has("hex_viewer_name"):
+            # See if you have the original buffer
+            orig_buffer = view.settings().get("hex_view_file", None)
+            if orig_buffer != None:
+                # Clean up buffer in memory
+                view.settings().erase("hex_view_file")
+                view.settings().erase("hex_view_bits")
+                view.settings().erase("hex_view_bytes")
+                view.settings().erase('hex_viewer_name')
+                # Make view writable again
+                view.set_scratch(False)
+                view.set_read_only(False)
+                # Copy original buffer back in the view
+                current_buffer = sublime.Region(0, view.size())
+                edit = view.begin_edit()
+                view.replace(edit, current_buffer, orig_buffer['hex_buffer'])
+                view.end_edit(edit)
+                # Set original syntax highlighting
+                view.set_syntax_file(orig_buffer['hex_syntax'])
+                # Notify user of interception
+                sublime.set_timeout(lambda: self.intercept_save_msg(), 1000)
 
 
 class HexViewerCommand(sublime_plugin.TextCommand):
@@ -169,9 +166,8 @@ class HexViewerCommand(sublime_plugin.TextCommand):
         self.init(bits, bytes, new_file)
         file_name = self.view.settings().get("hex_viewer_name", self.view.file_name())
         self.syntax = self.view.settings().get('syntax')
-        language = basename(self.syntax).replace('.tmLanguage', '').lower() if self.syntax != None else self.syntax
         if file_name != None:
-            if language == "hex":
+            if self.view.settings().has("hex_viewer_name"):
                 if bits == None and bytes == None:
                     self.restore_buffer(file_name, edit)
                 else:
@@ -198,10 +194,8 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
     def run(self, option):
         self.view = self.window.active_view()
         file_name = self.view.settings().get("hex_viewer_name", self.view.file_name())
-        self.syntax = self.view.settings().get('syntax')
-        language = basename(self.syntax).replace('.tmLanguage', '').lower() if self.syntax != None else self.syntax
         if file_name != None:
-            if language == "hex":
+            if self.view.settings().has("hex_viewer_name"):
                 option_list = []
                 if option == "bits":
                     for bits in VALID_BITS:
