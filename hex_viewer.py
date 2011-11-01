@@ -123,9 +123,11 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             if apply_to_current:
                 view = self.view
             else:
-                self.window.run_command("close_file")
                 view = self.window.new_file()
                 view.set_name(basename(file_name) + ".hex")
+                self.window.focus_view(self.view)
+                self.window.run_command("close_file")
+                self.window.focus_view(view)
 
             # Get buffer size
             content_buffer = sublime.Region(0, view.size())
@@ -147,8 +149,10 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             view.sel().add(sublime.Region(0, 0))
 
     def read_file(self, file_name):
+        view = self.window.open_file(file_name)
+        self.window.focus_view(self.view)
         self.window.run_command("close_file")
-        self.window.open_file(file_name)
+        self.window.focus_view(view)
 
     def run(self, bits=None, bytes=None):
         self.view = self.window.active_view()
