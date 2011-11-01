@@ -4,12 +4,7 @@
 		"command": "hex_viewer"
 	},
 	{
-		"caption": "Hex Viewer: Hex View",
-		"command": "hex_viewer",
-		"args"   : {"new_file": true}
-	},
-	{
-		"caption": "Hex Viewer: Set Bit Group",
+		"caption": "Hex Viewer: Set Bits Per Group",
 		"command": "hex_viewer_options",
 		"args"   : {"option": "bits"}
 	},
