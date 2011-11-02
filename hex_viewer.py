@@ -28,21 +28,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
 
 class HexViewerCommand(sublime_plugin.WindowCommand):
-    def init(self, bits, bytes):
-        # Get current bit and byte settings from view
-        # Or try and get them from settings file
-        # If none are found, use default
-        current_bits = self.view.settings().get(
-            'hex_viewer_bits',
-            hv_settings.get('group_bytes_by_bits', DEFAULT_BIT_GROUP)
-        )
-        current_bytes = self.view.settings().get(
-            'hex_viewer_bytes',
-            hv_settings.get('bytes_per_line', DEFAULT_BYTES_WIDE)
-        )
-        # Use passed in bit and byte settings if available
-        self.bits = bits if bits != None else int(current_bits)
-        self.bytes = bytes if bytes != None else int(current_bytes)
+    def set_format(self):
         self.group_size = DEFAULT_BIT_GROUP / 8
         self.bytes_wide = DEFAULT_BYTES_WIDE
 
@@ -61,6 +47,53 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             self.bytes_wide = self.bits / 8
         elif offset != 0:
             self.bytes_wide -= offset
+
+    def buffer_init(self, bits, bytes):
+        self.view = self.window.active_view()
+        file_name = None
+        if self.view != None:
+            # Get font settings
+            self.font = hv_settings.get('custom_font', 'None')
+            self.font_size = hv_settings.get('custom_font_size', 0)
+
+            #Get file name
+            file_name = self.view.settings().get("hex_viewer_file_name", self.view.file_name())
+
+            # Get current bit and byte settings from view
+            # Or try and get them from settings file
+            # If none are found, use default
+            current_bits = self.view.settings().get(
+                'hex_viewer_bits',
+                hv_settings.get('group_bytes_by_bits', DEFAULT_BIT_GROUP)
+            )
+            current_bytes = self.view.settings().get(
+                'hex_viewer_bytes',
+                hv_settings.get('bytes_per_line', DEFAULT_BYTES_WIDE)
+            )
+            # Use passed in bit and byte settings if available
+            self.bits = bits if bits != None else int(current_bits)
+            self.bytes = bytes if bytes != None else int(current_bytes)
+            self.set_format()
+        return file_name
+
+    def panel_init(self):
+        view  = self.window.active_view()
+        self.view =  self.window.get_output_panel('hex_viewer')
+        if view != None and self.view != None:
+            # Get font settings
+            self.font = hv_settings.get('custom_font', 'None')
+            self.font_size = hv_settings.get('panel_custom_font_size', 0)
+
+            # Get file name
+            file_name = view.settings().get("hex_viewer_file_name", view.file_name())
+            if file_name != None:
+                self.view.settings().set("hex_viewer_file_name", file_name)
+
+            # Get current bit and byte settings for Hex View Panel
+            self.bits = hv_settings.get('panel_group_bytes_by_bits', DEFAULT_BIT_GROUP)
+            self.bytes = hv_settings.get('panel_bytes_per_line', DEFAULT_BYTES_WIDE)
+            self.set_format()
+        return file_name
 
     def read_bin(self, file_name, apply_to_current=False):
         count = 0
@@ -129,6 +162,12 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 self.window.run_command("close_file")
                 self.window.focus_view(view)
 
+            # Set font
+            if self.font != 'None':
+                view.settings().set('font_face', self.font)
+            if self.font_size != 0:
+                view.settings().set("font_size", self.font_size)
+
             # Get buffer size
             content_buffer = sublime.Region(0, view.size())
 
@@ -154,23 +193,25 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.window.run_command("close_file")
         self.window.focus_view(view)
 
-    def run(self, bits=None, bytes=None):
-        self.view = self.window.active_view()
-        if self.view == None:
-            return
-        self.init(bits, bytes)
-        file_name = self.view.settings().get("hex_viewer_file_name", self.view.file_name())
+    def run(self, bits=None, bytes=None, use_buffer=True):
+        # See if output is wanted in a panel or in a buffer
+        file_name = self.buffer_init(bits, bytes) if use_buffer else self.panel_init()
+
         if file_name != None:
             # Decide whether to read in as a binary file or a traditional file
-            if self.view.settings().has("hex_viewer_file_name"):
-                if bits == None and bytes == None:
+            if self.view.settings().has("hex_viewer_file_name") or not use_buffer:
+                if bits == None and bytes == None and use_buffer:
                     # Switch back to traditional output
                     self.read_file(file_name)
                 else:
-                    # Change format of currently open hex file.
+                    # Change format of currently open hex view
                     # Make writable for modification
                     self.view.set_read_only(False)
                     self.read_bin(file_name, True)
+
+                     # Show panel if required
+                    if not use_buffer:
+                        self.window.run_command("show_panel", {"panel": "output.hex_viewer"})
             else:
                 # We are going to swap out the current file for hex output
                 # So as not to clutter the screen.  Changes need to be saved

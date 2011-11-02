@@ -2,10 +2,19 @@
 	// Group bytes together by bits
 	//Valid Settings (8|16|32|64|128)
 	"group_bytes_by_bits" : 16,
+	"panel_group_bytes_by_bits" : 16,
 
-	// Number of 8 bit bytes per line
+	// Number of 8 bit bytes per line.
 	// Will use closet number of bytes if group bytes
-	// does not align
+	// does not align.
 	// Valid Settings (8|10|16|24|32|48|64|128|256|512)
-	"bytes_per_line" : 24
+	"bytes_per_line" : 24,
+	"panel_bytes_per_line" : 48,
+
+	// Use a custom font and/or font size in hex view.
+	// Use None to use the current Sublime Text font.
+	"custom_font" : "None",
+	// Use zero to use the current Sublime Text font size.
+	"custom_font_size" : 0,
+	"panel_custom_font_size" : 0
 }

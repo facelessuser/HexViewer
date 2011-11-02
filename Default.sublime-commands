@@ -1,5 +1,10 @@
 [
 	{
+		"caption": "Hex Viewer: Hex View Panel",
+		"command": "hex_viewer",
+		"args"   : {"use_buffer": false}
+	},
+	{
 		"caption": "Hex Viewer: Toggle Hex View",
 		"command": "hex_viewer"
 	},
