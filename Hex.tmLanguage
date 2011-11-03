@@ -7,37 +7,99 @@
 		<string>hex</string>
 	</array>
 	<key>keyEquivalent</key>
-	<string>^~A</string>
+	<string>^~H</string>
 	<key>name</key>
 	<string>Hex</string>
 	<key>patterns</key>
 	<array>
 		<dict>
 			<key>begin</key>
-			<string>^([a-f\d]+\:)\s*</string>
-			<key>captures</key>
+			<string>^([a-f\d]{8}\:)([\s]{2})</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
 					<key>name</key>
 					<string>keyword.address.hex</string>
 				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>dump.buffer-start.hex</string>
+				</dict>
 			</dict>
 			<key>end</key>
-			<string>(([\da-f]+[\s]?)+)(?:\s{2}([\w\W]+)*)?$</string>
+			<string>[\s]{2}</string>
 			<key>endCaptures</key>
 			<dict>
-				<key>1</key>
+				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>raw.hex</string>
-				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>comment.hex</string>
+					<string>dump.buffer-end.hex</string>
 				</dict>
 			</dict>
+			<key>name</key>
+			<string>dump.hex</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>begin</key>
+					<string>[\da-f]{1}</string>
+					<key>beginCaptures</key>
+					<dict>
+						<key>0</key>
+						<dict>
+							<key>name</key>
+							<string>raw.nibble.upper.hex</string>
+						</dict>
+					</dict>
+					<key>end</key>
+					<string>[\da-f]{1}</string>
+					<key>endCaptures</key>
+					<dict>
+						<key>0</key>
+						<dict>
+							<key>name</key>
+							<string>raw.nibble.lower.hex</string>
+						</dict>
+					</dict>
+					<key>name</key>
+					<string>raw.byte.hex</string>
+					<key>patterns</key>
+					<array>
+						<dict>
+							<key>match</key>
+							<string>[\w\W]</string>
+							<key>name</key>
+							<string>invalid.illegal.expected-nibble.hex</string>
+						</dict>
+					</array>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>[\s]{1}</string>
+					<key>name</key>
+					<string>raw.punctuation.hex</string>
+				</dict>
+				<dict>
+					<key>match</key>
+					<string>[\w\W]{1}\s*</string>
+					<key>name</key>
+					<string>invalid.illegal.character.hex</string>
+				</dict>
+			</array>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>^[\w\W]*$</string>
+			<key>name</key>
+			<string>invalid.malformed-line.hex</string>
+		</dict>
+		<dict>
+			<key>match</key>
+			<string>[\w\W]*$</string>
+			<key>name</key>
+			<string>comment.ascii.hex</string>
 		</dict>
 	</array>
 	<key>scopeName</key>

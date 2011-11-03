@@ -24,6 +24,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
             view.set_read_only(False)
             view.settings().erase("hex_viewer_bits")
             view.settings().erase("hex_viewer_bytes")
+            view.settings().erase("hex_viewer_actual_bytes")
             view.settings().erase("hex_viewer_file_name")
 
 
@@ -174,6 +175,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             # Save hex view settings
             view.settings().set("hex_viewer_bits", self.bits)
             view.settings().set("hex_viewer_bytes", self.bytes)
+            view.settings().set("hex_viewer_actual_bytes", self.bytes_wide)
             if not self.view.settings().has("hex_viewer_file_name"):
                 view.settings().set("hex_viewer_file_name", file_name)
 
