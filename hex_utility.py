@@ -22,6 +22,24 @@ class HexNavCommand(sublime_plugin.EventListener):
             500
         )
 
+    # def get_address(self, view, start, end, line):
+    #     lines = line
+    #     add_start = lines*self.bytes_wide + start - 1
+    #     add_end = lines*self.bytes_wide + end - 1
+    #     length = len(self.address)
+    #     if length != 0  and (self.address[length - 1][0] + 1) == add_start:
+    #         self.address[length - 1][1] = add_end
+    #     else:
+    #         if add_start != add_end:
+    #             self.address.append([add_start, -1])
+    #         else:
+    #             self.address.append([add_start, add_end])
+    #     # Debug
+    #     if add_end != add_start:
+    #         print ("%08x " % add_start) + (" %08x " % add_end)
+    #     else:
+    #         print ("%08x " % add_start)
+
     def ascii_selection(self, view, start, bytes):
         # Offset of address
         offset = 11
@@ -36,8 +54,10 @@ class HexNavCommand(sublime_plugin.EventListener):
         end_char = start_char + bytes
         # Set ascii region to highlight
         self.selected_bytes.append(sublime.Region(start_char, end_char))
+        return start_byte, start_byte + bytes - 1, row
 
     def highlight_byte(self, view):
+        self.address = []
         self.selected_bytes = []
         group_size = view.settings().get("hex_viewer_bits", None)
         self.bytes_wide = view.settings().get("hex_viewer_actual_bytes", None)
@@ -72,17 +92,21 @@ class HexNavCommand(sublime_plugin.EventListener):
                         if first == -1:
                             first = start
                     elif view.score_selector(loop, 'raw.nibble.upper'):
+                        if loop == loopend:
+                            selection.append(sublime.Region(start, loop))
+                    elif view.score_selector(loop, 'raw.nibble.lower'):
+                        selection.append(sublime.Region(start, loop + 1))
                         bytes += 1
                 elif start != -1:
                     selection.append(sublime.Region(start, loop))
                     start = -1
-                    bytes += 1
                 if loop == loopend:
                     for item in selection:
                         self.selected_bytes.append(item)
                 loop += 1
             if bytes:
-                self.ascii_selection(view, first, bytes)
+                start_byte, end_byte, line = self.ascii_selection(view, first, bytes)
+                # self.get_address(view, start_byte, end_byte, line)
 
         view.add_regions(
             "hex_view",
