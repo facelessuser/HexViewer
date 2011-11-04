@@ -11,6 +11,23 @@ VALID_BYTES = [8, 10, 16, 24, 32, 48, 64, 128, 256, 512]
 hv_settings = sublime.load_settings('hex_viewer.sublime-settings')
 
 
+def iterfile(filename, groupsize, maxblocksize=4096):
+    with open(filename, "rb") as bin:
+        # Ensure read block is a multiple of groupsize
+        blocksize = maxblocksize - (maxblocksize % groupsize)
+
+        start = 0
+        bytes = bin.read(blocksize)
+        while bytes:
+            outbytes = bytes[start:start + groupsize]
+            while outbytes:
+                yield outbytes
+                start += groupsize
+                outbytes = bytes[start:start + groupsize]
+            start = 0
+            bytes = bin.read(blocksize)
+
+
 class HexViewerListenerCommand(sublime_plugin.EventListener):
     def on_pre_save(self, view):
         # We are saving the file so it will now reference itself
@@ -97,97 +114,90 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         return file_name
 
     def read_bin(self, file_name, apply_to_current=False):
-        count = 0
+        translate_table = ("." * 32) + "".join(chr(c) for c in xrange(32, 127)) + ("." * 129)
+        def_struct = struct.Struct("=" + ("B" * self.bytes_wide))
+        def_template = (("%02x" * self.group_size) + " ") * (self.bytes_wide / self.group_size)
+
         line = 0
-        group = 0
-        p_buffer = ""
-        b_buffer = ""
-        with open(file_name, "rb") as bin:
-            byte = bin.read(1)
-            while byte != "":
-                count += 1
-                group += 1
+        b_buffer = []
+        for bytes in iterfile(file_name, self.bytes_wide):
+            l_buffer = []
 
+            # Add line number
+            l_buffer.append("%08x:  " % (line * self.bytes_wide))
+
+            try:
+                # Complete line
                 # Convert to decimal value
-                value = struct.unpack('=B', byte)[0]
-                # Save printable value
-                p_buffer += "." if value < 32 or value > 126 else byte
-                # Add line number
-                if count == 1:
-                    b_buffer += "%08x:  " % (line * self.bytes_wide)
-                # Save hex value
-                b_buffer += "%02x" % value
+                values = def_struct.unpack(bytes)
 
-                # Insert space between byte groups
-                if (group == self.group_size):
-                    b_buffer += " "
-                    group = 0
+                # Add hex value
+                l_buffer.append(def_template % values)
+            except struct.error:
+                # Incomplete line
+                # Convert to decimal value
+                values = struct.unpack("=" + ("B" * len(bytes)), bytes)
 
-                # Append printable chars and add new line
-                if count == self.bytes_wide:
-                    b_buffer += " " + p_buffer + "\n"
-                    p_buffer = ""
-                    line += 1
-                    count = 0
+                # Add hex value
+                remain_group = len(bytes) / self.group_size
+                remain_extra = len(bytes) % self.group_size
+                l_buffer.append(((("%02x" * self.group_size) + " ") * (remain_group) + ("%02x" * remain_extra)) % values)
 
-                # Get next byte
-                byte = bin.read(1)
-
-            # Append printable chars to incomplete line
-            if count != 0:
-                delta = self.bytes_wide - count
+                # Append printable chars to incomplete line
+                delta = self.bytes_wide - len(bytes)
                 group_space = delta / self.group_size
-                extra_space = delta % self.group_size
+                extra_space = (1 if delta % self.group_size else 0)
 
-                # Add space for missing bytes
-                while delta:
-                    b_buffer += "  "
-                    delta -= 1
-                # Add trailing space for missing groups
-                while group_space:
-                    b_buffer += " "
-                    group_space -= 1
-                # Add trailing space for incomplete group
-                if extra_space:
-                    b_buffer += " "
-                # Append printable chars
-                b_buffer += " " + p_buffer
+                l_buffer.append(" " * (group_space + extra_space + delta * 2))
 
-            # Show binary data
-            if apply_to_current:
-                view = self.view
-            else:
-                view = self.window.new_file()
-                view.set_name(basename(file_name) + ".hex")
-                self.window.focus_view(self.view)
-                self.window.run_command("close_file")
-                self.window.focus_view(view)
+            # Append printable chars
+            l_buffer.append(" " + bytes.translate(translate_table))
 
-            # Set font
-            if self.font != 'None':
-                view.settings().set('font_face', self.font)
-            if self.font_size != 0:
-                view.settings().set("font_size", self.font_size)
+            # Add line to buffer
+            b_buffer.append("".join(l_buffer))
 
-            # Get buffer size
-            content_buffer = sublime.Region(0, view.size())
+            line += 1
 
-            # Save hex view settings
-            view.settings().set("hex_viewer_bits", self.bits)
-            view.settings().set("hex_viewer_bytes", self.bytes)
-            view.settings().set("hex_viewer_actual_bytes", self.bytes_wide)
-            if not self.view.settings().has("hex_viewer_file_name"):
-                view.settings().set("hex_viewer_file_name", file_name)
+        # Join buffer lines
+        b_buffer = "\n".join(b_buffer)
 
-            # Show hex content in view; make read only
-            view.set_scratch(True)
-            edit = view.begin_edit()
-            view.replace(edit, content_buffer, b_buffer)
-            view.end_edit(edit)
-            view.set_read_only(True)
-            view.set_syntax_file("Packages/HexViewer/Hex.tmLanguage")
-            view.sel().clear()
-            view.sel().add(sublime.Region(0, 0))
+        # Show binary data
+        if apply_to_current:
+            view = self.view
+        else:
+            view = self.window.new_file()
+            view.set_name(basename(file_name) + ".hex")
+            self.window.focus_view(self.view)
+            self.window.run_command("close_file")
+            self.window.focus_view(view)
+
+        # Set syntax
+        view.set_syntax_file("Packages/HexViewer/Hex.tmLanguage")
+
+        # Set font
+        if self.font != 'None':
+            view.settings().set('font_face', self.font)
+        if self.font_size != 0:
+            view.settings().set("font_size", self.font_size)
+
+        # Get buffer size
+        content_buffer = sublime.Region(0, view.size())
+
+        # Save hex view settings
+        view.settings().set("hex_viewer_bits", self.bits)
+        view.settings().set("hex_viewer_bytes", self.bytes)
+        view.settings().set("hex_viewer_actual_bytes", self.bytes_wide)
+        if not self.view.settings().has("hex_viewer_file_name"):
+            view.settings().set("hex_viewer_file_name", file_name)
+
+        # Show hex content in view; make read only
+        view.set_scratch(True)
+        edit = view.begin_edit()
+        view.sel().clear()
+        view.replace(edit, content_buffer, b_buffer)
+        view.end_edit(edit)
+        view.set_read_only(True)
+        view.sel().add(sublime.Region(0, 0))
 
     def read_file(self, file_name):
         view = self.window.open_file(file_name)
