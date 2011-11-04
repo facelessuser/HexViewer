@@ -16,5 +16,15 @@
 	"custom_font" : "None",
 	// Use zero to use the current Sublime Text font size.
 	"custom_font_size" : 0,
-	"panel_custom_font_size" : 0
+	"panel_custom_font_size" : 0,
+
+	//Scope? (Defined in theme files.)
+	//Examples: (keyword/string/number)
+	"highlight_scope" : "entity.name.class",
+
+	//Icon? (dot/circle/bookmark/cross)
+	"highlight_icon" : "cross",
+
+	//Style? (solid/outline/underline/none)
+	"highlight_style" : "solid"
 }

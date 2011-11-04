@@ -78,8 +78,8 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         return file_name
 
     def panel_init(self):
-        view  = self.window.active_view()
-        self.view =  self.window.get_output_panel('hex_viewer')
+        view = self.window.active_view()
+        self.view = self.window.get_output_panel('hex_viewer')
         if view != None and self.view != None:
             # Get font settings
             self.font = hv_settings.get('custom_font', 'None')
@@ -235,6 +235,11 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
     def set_bytes(self, value):
         if value != -1:
             self.window.run_command('hex_viewer', {"bytes": VALID_BYTES[value]})
+
+    def is_enabled(self):
+        syntax = self.window.active_view().settings().get('syntax')
+        language = basename(syntax).replace('.tmLanguage', '').lower() if syntax != None else "plain text"
+        return (language == "hex")
 
     def run(self, option):
         self.view = self.window.active_view()

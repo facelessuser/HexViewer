@@ -17,5 +17,9 @@
 		"caption": "Hex Viewer: Set Bytes Per Line",
 		"command": "hex_viewer_options",
 		"args"   : {"option": "bytes"}
+	},
+	{
+		"caption": "Hex Viewer: Find By Address",
+		"command": "hex_go_to"
 	}
 ]
