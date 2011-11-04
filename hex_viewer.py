@@ -146,7 +146,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 # Append printable chars to incomplete line
                 delta = self.bytes_wide - len(bytes)
                 group_space = delta / self.group_size
-                extra_space = int(delta % self.group_size)
+                extra_space = (1 if delta % self.group_size else 0)
 
                 l_buffer.append(" " * (group_space + extra_space + delta * 2))
 
