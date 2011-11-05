@@ -1,12 +1,15 @@
 [
 	{
-		"caption": "Hex Viewer: Hex View Panel",
-		"command": "hex_viewer",
-		"args"   : {"use_buffer": false}
-	},
-	{
 		"caption": "Hex Viewer: Toggle Hex View",
 		"command": "hex_viewer"
+	},
+	{
+		"caption": "Hex Viewer: Show Hex Inspector",
+		"command": "hex_show_inspector"
+	},
+	{
+		"caption": "Hex Viewer: Toggle Endianness (Big|Little)",
+		"command": "hex_toggle_inspector_endianness"
 	},
 	{
 		"caption": "Hex Viewer: Set Bits Per Group",

@@ -94,25 +94,6 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             self.set_format()
         return file_name
 
-    def panel_init(self):
-        view = self.window.active_view()
-        self.view = self.window.get_output_panel('hex_viewer')
-        if view != None and self.view != None:
-            # Get font settings
-            self.font = hv_settings.get('custom_font', 'None')
-            self.font_size = hv_settings.get('panel_custom_font_size', 0)
-
-            # Get file name
-            file_name = view.settings().get("hex_viewer_file_name", view.file_name())
-            if file_name != None:
-                self.view.settings().set("hex_viewer_file_name", file_name)
-
-            # Get current bit and byte settings for Hex View Panel
-            self.bits = hv_settings.get('panel_group_bytes_by_bits', DEFAULT_BIT_GROUP)
-            self.bytes = hv_settings.get('panel_bytes_per_line', DEFAULT_BYTES_WIDE)
-            self.set_format()
-        return file_name
-
     def read_bin(self, file_name, apply_to_current=False):
         translate_table = ("." * 32) + "".join(chr(c) for c in xrange(32, 127)) + ("." * 129)
         def_struct = struct.Struct("=" + ("B" * self.bytes_wide))
@@ -151,7 +132,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 l_buffer.append(" " * (group_space + extra_space + delta * 2))
 
             # Append printable chars
-            l_buffer.append(" " + bytes.translate(translate_table))
+            l_buffer.append(" :" + bytes.translate(translate_table))
 
             # Add line to buffer
             b_buffer.append("".join(l_buffer))
@@ -175,7 +156,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         view.set_syntax_file("Packages/HexViewer/Hex.tmLanguage")
 
         # Set font
-        if self.font != 'None':
+        if self.font != 'none':
             view.settings().set('font_face', self.font)
         if self.font_size != 0:
             view.settings().set("font_size", self.font_size)
@@ -205,14 +186,14 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.window.run_command("close_file")
         self.window.focus_view(view)
 
-    def run(self, bits=None, bytes=None, use_buffer=True):
-        # See if output is wanted in a panel or in a buffer
-        file_name = self.buffer_init(bits, bytes) if use_buffer else self.panel_init()
+    def run(self, bits=None, bytes=None):
+        # Init Buffer
+        file_name = self.buffer_init(bits, bytes)
 
         if file_name != None:
             # Decide whether to read in as a binary file or a traditional file
-            if self.view.settings().has("hex_viewer_file_name") or not use_buffer:
-                if bits == None and bytes == None and use_buffer:
+            if self.view.settings().has("hex_viewer_file_name"):
+                if bits == None and bytes == None:
                     # Switch back to traditional output
                     self.read_file(file_name)
                 else:
@@ -220,10 +201,6 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                     # Make writable for modification
                     self.view.set_read_only(False)
                     self.read_bin(file_name, True)
-
-                     # Show panel if required
-                    if not use_buffer:
-                        self.window.run_command("show_panel", {"panel": "output.hex_viewer"})
             else:
                 # We are going to swap out the current file for hex output
                 # So as not to clutter the screen.  Changes need to be saved

@@ -29,9 +29,14 @@
 				</dict>
 			</dict>
 			<key>end</key>
-			<string>[\s]{2}</string>
+			<string>[\s]{2}(\:)</string>
 			<key>endCaptures</key>
 			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.ascii-start.hex</string>
+				</dict>
 				<key>0</key>
 				<dict>
 					<key>name</key>
