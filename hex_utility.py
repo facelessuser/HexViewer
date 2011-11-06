@@ -51,12 +51,16 @@ class HexNavCommand(sublime_plugin.WindowCommand):
         self.total_bytes = 0
         self.address = []
         self.selected_bytes = []
+
+        # Get Seetings from settings file
         group_size = self.view.settings().get("hex_viewer_bits", None)
         self.inspector_enabled = hv_inspector_enable
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
         self.highlight_scope = hv_settings.get("highlight_scope", HIGHLIGHT_SCOPE)
         self.highlight_icon = hv_settings.get("highlight_icon", HIGHLIGHT_ICON)
         style = hv_settings.get("highlight_style", HIGHLIGHT_STYLE)
+
+        # Process highlight style
         self.highlight_style = 0
         if style == "outline":
             self.highlight_style = sublime.DRAW_OUTLINED
@@ -65,6 +69,7 @@ class HexNavCommand(sublime_plugin.WindowCommand):
         elif style == "underline":
             self.highlight_style = sublime.DRAW_EMPTY_AS_OVERWRITE
 
+        #Process hex grouping
         if group_size != None and self.bytes_wide != None:
             self.group_size = group_size / 8
             init_status = True

@@ -1,0 +1,14 @@
+[
+	{
+		"keys": ["super+shift+b","super+shift+h"],
+		"command": "hex_viewer"
+	},
+	{
+		"keys": ["super+shift+b","super+shift+i"],
+		"command": "hex_show_inspector"
+	},
+	{
+		"keys": ["super+shift+b","super+shift+f"],
+		"command": "hex_go_to"
+	}
+]
