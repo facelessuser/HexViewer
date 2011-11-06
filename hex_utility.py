@@ -421,7 +421,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         else:
             i_buffer += item_str % ("double", "--") + nl
         if byte8 != None:
-            i_buffer += item_str % ("binary", '{0:08b}'.format(ord(chr(int(byte8, 16))))) + nl
+            i_buffer += item_str % ("binary", '{0:08b}'.format(unpack(endian + "B", byte8.decode("hex"))[0])) + nl
         else:
             i_buffer += item_str % ("binary", "--") + nl
 
