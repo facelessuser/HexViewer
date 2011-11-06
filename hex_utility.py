@@ -190,7 +190,7 @@ class HexNavCommand(sublime_plugin.WindowCommand):
         start = sel.begin()
         end = sel.end()
         line = view.line(start)
-        hex_chars = (self.group_size * 2) * self.bytes_wide / (self.group_size) + self.bytes_wide / (self.group_size) + 2
+        hex_chars = int((self.group_size * 2) * self.bytes_wide / (self.group_size) + self.bytes_wide / (self.group_size) + 2)
         hex_range = sublime.Region(
             line.begin() + offset,
             line.begin() + offset + hex_chars
@@ -217,7 +217,7 @@ class HexNavCommand(sublime_plugin.WindowCommand):
                 if bytes == 0:
                     bytes = self.get_byte_count(start, end)
                 self.total_bytes += bytes
-                # zero based byte number
+                # Zero based byte number
                 start_byte = self.get_byte_count(hex_range.begin(), start + 2) - 1
                 self.hex_selection(start_byte, bytes, start)
                 # Highlight Ascii
