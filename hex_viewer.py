@@ -179,8 +179,12 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         view.end_edit(edit)
         view.set_read_only(True)
         view.sel().add(sublime.Region(0, 0))
+        if hv_settings.get("inspector", False) and hv_settings.get("inspector_auto_show", False):
+            view.window().run_command("hex_show_inspector")
 
     def read_file(self, file_name):
+        if hv_settings.get("inspector", False):
+            self.window.run_command("hex_hide_inspector")
         view = self.window.open_file(file_name)
         self.window.focus_view(self.view)
         self.window.run_command("close_file")

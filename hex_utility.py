@@ -13,7 +13,10 @@ hv_endianness = hv_settings.get("inspector_endian", "little")
 
 
 def is_enabled():
-    view = sublime.active_window().active_view()
+    window = sublime.active_window()
+    if window == None:
+        return False
+    view = window.active_view()
     if view == None:
         return False
     syntax = view.settings().get('syntax')
@@ -173,14 +176,19 @@ class HexNavCommand(sublime_plugin.WindowCommand):
         end = sel.end()
         bytes = 0
         ascii_range = view.extract_scope(sel.begin())
+
+        # Determine if selection is within ascii range
         if start >= ascii_range.begin() and end <= ascii_range.end() + 1:
+            # Single char selection
             if sel.size() == 0:
                 bytes = 1
                 self.selected_bytes.append(sublime.Region(start, end + 1))
             else:
+                # Multi char selection
                 bytes = end - start
                 self.selected_bytes.append(sublime.Region(start, end))
             self.total_bytes += bytes
+            # Highlight hex values
             self.hex_selection(start - ascii_range.begin(), bytes, start)
 
     def hex_to_ascii(self, sel):
@@ -189,13 +197,18 @@ class HexNavCommand(sublime_plugin.WindowCommand):
         view = self.view
         start = sel.begin()
         end = sel.end()
+
+        # Get range of hex data
         line = view.line(start)
         hex_chars = int((self.group_size * 2) * self.bytes_wide / (self.group_size) + self.bytes_wide / (self.group_size) + 2)
         hex_range = sublime.Region(
             line.begin() + offset,
             line.begin() + offset + hex_chars
         )
+
+        # Determine if selection is within hex range
         if start >= hex_range.begin() and end <= hex_range.end() + 1:
+            # Adjust beginning of selection to begining of first selected byte
             if self.view.score_selector(start, 'raw.nibble.upper') == 0:
                 if self.view.score_selector(start, 'raw.nibble.lower'):
                     start -= 1
@@ -203,6 +216,7 @@ class HexNavCommand(sublime_plugin.WindowCommand):
                     start += 1
                 else:
                     start = None
+            # Adjust ending of selection to end of last selected byte
             if sel.size() == 0 and start != None:
                 end = start + 2
                 bytes = 1
@@ -213,6 +227,8 @@ class HexNavCommand(sublime_plugin.WindowCommand):
                     end = None
             else:
                 end -= 1
+
+            # Highlight hex values and their ascii chars
             if start != None and end != None:
                 if bytes == 0:
                     bytes = self.get_byte_count(start, end)
@@ -282,6 +298,14 @@ class HexShowInspectorCommand(sublime_plugin.WindowCommand):
         self.window.run_command("hex_inspector", {"reset": True})
 
 
+class HexHideInspectorCommand(sublime_plugin.WindowCommand):
+    def is_enabled(self):
+        return is_enabled() and hv_inspector_enable
+
+    def run(self):
+        self.window.run_command("hide_panel", {"panel": "output.hex_viewer_inspector"})
+
+
 class HexToggleInspectorEndiannessCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
         return is_enabled() and hv_inspector_enable
@@ -344,8 +368,8 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         i_buffer = "%28s:%-28s" % ("Hex Inspector ", (" Big Endian" if self.endian == "big" else " Little Endian")) + nl
         if byte8 != None:
             i_buffer += item_dec * 2 % (
-                "byte", int('0x' + byte8, 0),
-                "short", (int('0x' + byte8, 0) - 2 ** 8 if int('0x' + byte8[0], 0) > 8 else int('0x' + byte8, 0))
+                "byte", int(byte8, 16),
+                "short", (int(byte8, 16) - 2 ** 8 if int(byte8[0], 16) >= 8 else int(byte8, 16))
             ) + nl
         else:
             i_buffer += item_str * 2 % (
@@ -354,8 +378,8 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
             ) + nl
         if bytes16 != None:
             i_buffer += item_dec * 2 % (
-                "word", int('0x' + bytes16, 0),
-                "int", (int('0x' + bytes16, 0) - 2 ** 16 if int('0x' + bytes16[0], 0) > 8 else int('0x' + bytes16, 0))
+                "word", int(bytes16, 16),
+                "int", (int(bytes16, 16) - 2 ** 16 if int(bytes16[0], 16) >= 8 else int(bytes16, 16))
             ) + nl
         else:
             i_buffer += item_str * 2 % (
@@ -364,8 +388,8 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
             ) + nl
         if bytes32 != None:
             i_buffer += item_dec * 2 % (
-                "dword", int('0x' + bytes32, 0),
-                "longint", (int('0x' + bytes32, 0) - 2 ** 32 if int('0x' + bytes32[0], 0) > 8 else int('0x' + bytes32, 0))
+                "dword", int(bytes32, 16),
+                "longint", (int(bytes32, 16) - 2 ** 32 if int(bytes32[0], 16) >= 8 else int(bytes32, 16))
             ) + nl
         else:
             i_buffer += item_str * 2 % (
@@ -412,7 +436,7 @@ class HexGoToCommand(sublime_plugin.WindowCommand):
         # Go to address
         try:
             # Address wanted
-            wanted = int("0x" + address, 0)
+            wanted = int(address, 16)
             # Calculate row
             row = int(wanted / (bytes_wide))
             # Byte offset into final row

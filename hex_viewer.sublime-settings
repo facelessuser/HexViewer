@@ -1,6 +1,6 @@
 {
 	// Group bytes together by bits
-	//Valid Settings (8|16|32|64|128)
+	// Valid Settings (8|16|32|64|128)
 	"group_bytes_by_bits" : 16,
 
 	// Number of 8 bit bytes per line.
@@ -19,16 +19,19 @@
 	// Show inspector panel
 	"inspector" : true,
 
-	//endian? (big|little)
+	// endian? (big|little)
 	"inspector_endian" : "big",
 
-	//Scope? (Defined in theme files.)
-	//Examples: (keyword|string|number)
+	// Show inspector panel on hex view load and hide on hex view hide
+	"inspector_auto_show" : true,
+
+	// Scope? (Defined in theme files.)
+	// Examples: (keyword|string|number)
 	"highlight_scope" : "string",
 
-	//Icon? (dot|circle|bookmark|cross)
+	// Icon? (dot|circle|bookmark|cross)
 	"highlight_icon" : "dot",
 
-	//Style? (solid|outline|underline|none)
+	// Style? (solid|outline|underline|none)
 	"highlight_style" : "solid"
 }
