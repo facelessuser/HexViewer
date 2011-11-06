@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 from random import randrange
 from os.path import basename
+from struct import unpack
 
 HIGHLIGHT_SCOPE = "string"
 HIGHLIGHT_ICON = "dot"
@@ -318,11 +319,13 @@ class HexToggleInspectorEndiannessCommand(sublime_plugin.WindowCommand):
     def run(self):
         global hv_endianness
         hv_endianness = "big" if hv_endianness == "little" else "little"
+        self.window.run_command('hex_nav')
 
 
 class HexInspectorCommand(sublime_plugin.WindowCommand):
     def get_bytes(self, start, bytes_wide):
         bytes = self.view.substr(sublime.Region(start, start + 2))
+        byte64 = None
         byte32 = None
         byte16 = None
         byte8 = None
@@ -334,7 +337,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         ascii_divide = group_divide + bytes_wide + address + 1
 
         # Look for 32 bit worth of bytes
-        while start < size and count < 4:
+        while start < size and count < 8:
             # Check if sitting on first nibble
             if self.view.score_selector(start, 'raw.nibble.upper'):
                 bytes += self.view.substr(sublime.Region(start, start + 2))
@@ -358,23 +361,27 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
                         # No more bytes to check
                         break
 
-        # Format bytes by endians and return 8-32 bit variants
         byte8 = bytes[0:2]
         if count > 1:
-            byte16 = bytes[0:4] if self.endian == "big" else (bytes[2:4] + bytes[0:2])
+            byte16 = bytes[0:4]
         if count > 3:
-            byte32 = bytes[0:8] if self.endian == "big" else bytes[6:8] + bytes[4:6] + bytes[2:4] + bytes[0:2]
-        return byte8, byte16, byte32
+            byte32 = bytes[0:8]
+        if count > 7:
+            byte64 = bytes[0:16]
+        return byte8, byte16, byte32, byte64
 
-    def display(self, view, byte8, bytes16, bytes32):
+    def display(self, view, byte8, bytes16, bytes32, bytes64):
         item_dec = "%-12s:  %-14d"
         item_str = "%-12s:  %-14s"
+        item_float = "%-12s:  %-14e"
+        item_double = "%-12s:  %-14e"
         nl = "\n"
+        endian = ">" if self.endian == "big" else "<"
         i_buffer = "%28s:%-28s" % ("Hex Inspector ", (" Big Endian" if self.endian == "big" else " Little Endian")) + nl
         if byte8 != None:
             i_buffer += item_dec * 2 % (
-                "byte", int(byte8, 16),
-                "short", (int(byte8, 16) - 2 ** 8 if int(byte8[0], 16) >= 8 else int(byte8, 16))
+                "byte", unpack(endian + "B", byte8.decode("hex"))[0],
+                "short", unpack(endian + "b", byte8.decode("hex"))[0]
             ) + nl
         else:
             i_buffer += item_str * 2 % (
@@ -383,8 +390,8 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
             ) + nl
         if bytes16 != None:
             i_buffer += item_dec * 2 % (
-                "word", int(bytes16, 16),
-                "int", (int(bytes16, 16) - 2 ** 16 if int(bytes16[0], 16) >= 8 else int(bytes16, 16))
+                "word", unpack(endian + "H", bytes16.decode("hex"))[0],
+                "int", unpack(endian + "h", bytes16.decode("hex"))[0]
             ) + nl
         else:
             i_buffer += item_str * 2 % (
@@ -393,14 +400,26 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
             ) + nl
         if bytes32 != None:
             i_buffer += item_dec * 2 % (
-                "dword", int(bytes32, 16),
-                "longint", (int(bytes32, 16) - 2 ** 32 if int(bytes32[0], 16) >= 8 else int(bytes32, 16))
+                "dword", unpack(endian + "I", bytes32.decode("hex"))[0],
+                "longint", unpack(endian + "i", bytes32.decode("hex"))[0]
             ) + nl
         else:
             i_buffer += item_str * 2 % (
                 "dword", "--",
                 "longint", "--"
             ) + nl
+        if bytes32 != None:
+            i_buffer += item_float % (
+                "float", unpack(endian + "f", bytes32.decode('hex'))[0]
+            )
+        else:
+            i_buffer += item_str % ("float", "--")
+        if bytes64 != None:
+            i_buffer += item_double % (
+                "double", unpack(endian + "d", bytes64.decode('hex'))[0]
+            ) + nl
+        else:
+            i_buffer += item_str % ("double", "--") + nl
         if byte8 != None:
             i_buffer += item_str % ("binary", '{0:08b}'.format(ord(chr(int(byte8, 16))))) + nl
         else:
@@ -420,10 +439,10 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
     def run(self, first_byte=None, bytes_wide=None, reset=False):
         self.view = self.window.active_view()
         self.endian = hv_endianness
-        byte8, bytes16, bytes32 = None, None, None
+        byte8, bytes16, bytes32, bytes64 = None, None, None, None
         if not reset and first_byte != None and bytes_wide != None:
-            byte8, bytes16, bytes32 = self.get_bytes(int(first_byte), int(bytes_wide))
-        self.display(self.window.get_output_panel('hex_viewer_inspector'), byte8, bytes16, bytes32)
+            byte8, bytes16, bytes32, bytes64 = self.get_bytes(int(first_byte), int(bytes_wide))
+        self.display(self.window.get_output_panel('hex_viewer_inspector'), byte8, bytes16, bytes32, bytes64)
 
 
 class HexGoToCommand(sublime_plugin.WindowCommand):

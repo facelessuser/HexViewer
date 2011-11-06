@@ -12,7 +12,7 @@ Hex Viewer is a plugin for Sublime Text 2 that allows the toggling of a file int
 - Search bytes by address
 - Customizable highlight of byte and corresponding ascii representation
 - Customizable byte grouping and bytes per line
-- Hex inspector to view current selected bytes as different unit types (endianness is configurable. float and double to come soon hopefully)
+- Hex inspector to view current selected bytes as different unit types (endianness is configurable.)
 - Display total selected number of bytes and addresses of first group of consecutive bytes in status bar
 
 # Source Code
