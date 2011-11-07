@@ -25,6 +25,10 @@ def is_enabled():
     return (language == "hex")
 
 
+def get_byte_count(start, end, group_size):
+    return int((end - start - 1) / (group_size * 2 + 1)) * int(group_size) + int(((end - start - 1) % (group_size * 2 + 1)) / 2 + 1)
+
+
 class HexUtilityListenerCommand(sublime_plugin.EventListener):
     def check_debounce(self, debounce_id):
         if self.debounce_id == debounce_id:
@@ -206,14 +210,14 @@ class HexNavCommand(sublime_plugin.WindowCommand):
 
         # Get range of hex data
         line = view.line(start)
-        hex_chars = int((self.group_size * 2) * self.bytes_wide / (self.group_size) + self.bytes_wide / (self.group_size) + 2)
+        hex_chars = int((self.group_size * 2) * self.bytes_wide / (self.group_size) + self.bytes_wide / (self.group_size)) - 1
         hex_range = sublime.Region(
             line.begin() + offset,
             line.begin() + offset + hex_chars
         )
 
         # Determine if selection is within hex range
-        if start >= hex_range.begin() and end <= hex_range.end() + 1:
+        if start >= hex_range.begin() and end <= hex_range.end():
             # Adjust beginning of selection to begining of first selected byte
             if self.view.score_selector(start, 'raw.nibble.upper') == 0:
                 if self.view.score_selector(start, 'raw.nibble.lower'):
@@ -224,26 +228,24 @@ class HexNavCommand(sublime_plugin.WindowCommand):
                     start = None
             # Adjust ending of selection to end of last selected byte
             if sel.size() == 0 and start != None:
-                end = start + 2
+                end = start + 1
                 bytes = 1
-            elif self.view.score_selector(end, 'raw.nibble.upper') == 0:
-                if self.view.score_selector(end, 'raw.nibble.lower'):
-                    end += 1
-                elif self.view.score_selector(end - 1, 'raw.nibble.lower') == 0:
-                    end = None
-            else:
-                end -= 1
+            elif self.view.score_selector(end, 'raw.nibble.lower') == 0:
+                if self.view.score_selector(end - 1, 'raw.nibble.lower'):
+                    end -= 1
+                else:
+                    end -= 2
 
             # Highlight hex values and their ascii chars
             if start != None and end != None:
                 if bytes == 0:
-                    bytes = self.get_byte_count(start, end)
+                    bytes = get_byte_count(start, end, self.group_size)
                 self.total_bytes += bytes
                 # Zero based byte number
-                start_byte = self.get_byte_count(hex_range.begin(), start + 2) - 1
+                start_byte = get_byte_count(hex_range.begin(), start + 2, self.group_size) - 1
                 self.hex_selection(start_byte, bytes, start)
                 # Highlight Ascii
-                ascii_start = hex_range.end() + start_byte
+                ascii_start = hex_range.end() + 3 + start_byte
                 ascii_end = ascii_start + bytes
                 self.selected_bytes.append(sublime.Region(ascii_start, ascii_end))
 
