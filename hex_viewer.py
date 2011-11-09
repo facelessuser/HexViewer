@@ -2,13 +2,12 @@ import sublime
 import sublime_plugin
 import struct
 from os.path import basename
+from hex_common import *
 
 DEFAULT_BIT_GROUP = 16
 DEFAULT_BYTES_WIDE = 24
 VALID_BITS = [8, 16, 32, 64, 128]
 VALID_BYTES = [8, 10, 16, 24, 32, 48, 64, 128, 256, 512]
-
-hv_settings = sublime.load_settings('hex_viewer.sublime-settings')
 
 
 def iterfile(filename, groupsize, maxblocksize=4096):
@@ -46,13 +45,16 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
 
 class HexViewerCommand(sublime_plugin.WindowCommand):
+    handshake = -1
+    file_name = ""
+
     def set_format(self):
-        self.group_size = DEFAULT_BIT_GROUP / 8
+        self.group_size = DEFAULT_BIT_GROUP / BITS_PER_BYTE
         self.bytes_wide = DEFAULT_BYTES_WIDE
 
         # Set grouping
         if self.bits in VALID_BITS:
-            self.group_size = self.bits / 8
+            self.group_size = self.bits / BITS_PER_BYTE
 
         # Set bytes per line
         if self.bytes in VALID_BYTES:
@@ -62,7 +64,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         # Round to nearest bytes
         offset = self.bytes_wide % self.group_size
         if offset == self.bytes_wide:
-            self.bytes_wide = self.bits / 8
+            self.bytes_wide = self.bits / BITS_PER_BYTE
         elif offset != 0:
             self.bytes_wide -= offset
 
@@ -178,7 +180,8 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         view.replace(edit, content_buffer, b_buffer)
         view.end_edit(edit)
         view.set_read_only(True)
-        view.sel().add(sublime.Region(0, 0))
+        # Offset past address to first byte
+        view.sel().add(sublime.Region(ADDRESS_OFFSET, ADDRESS_OFFSET))
         if hv_settings.get("inspector", False) and hv_settings.get("inspector_auto_show", False):
             view.window().run_command("hex_show_inspector")
 
@@ -190,29 +193,75 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.window.run_command("close_file")
         self.window.focus_view(view)
 
+    def discard_changes(self, value):
+        if value.strip().lower() == "yes":
+            if self.switch_type == "hex":
+                view = sublime.active_window().active_view()
+                if self.handshake == view.id():
+                    self.view.set_read_only(False)
+                    self.view.set_scratch(True)
+                    clear_edits(self.view)
+                    self.read_bin(self.file_name, self.apply_self)
+                else:
+                    sublime.error_message("Target view is no longer in focus!  Hex view aborted.")
+            else:
+                self.read_file(self.file_name)
+        self.reset()
+
+    def discard_panel(self):
+        self.window.show_input_panel(
+            "Discard Changes? (yes | no):",
+            "no",
+            self.discard_changes,
+            None,
+            self.reset
+        )
+
+    def reset(self):
+        self.handshake = -1
+        self.file_name = ""
+        self.type = None
+        self.apply_self = False
+
     def run(self, bits=None, bytes=None):
         # Init Buffer
         file_name = self.buffer_init(bits, bytes)
 
+        # Identify view
+        if self.handshake != -1 and self.handshake == self.view.id():
+            self.reset()
+        self.handshake = self.view.id()
+
         if file_name != None:
             # Decide whether to read in as a binary file or a traditional file
             if self.view.settings().has("hex_viewer_file_name"):
-                if bits == None and bytes == None:
-                    # Switch back to traditional output
-                    self.read_file(file_name)
+                self.view_type = "hex"
+                if is_hex_dirty(self.view):
+                    self.file_name = file_name
+                    if bits == None and bytes == None:
+                        self.switch_type = "file"
+                    else:
+                        self.switch_type = "hex"
+                        self.apply_self = True
+                    self.discard_panel()
                 else:
-                    # Change format of currently open hex view
-                    # Make writable for modification
-                    self.view.set_read_only(False)
-                    self.read_bin(file_name, True)
+                    if bits == None and bytes == None:
+                        # Switch back to traditional output
+                        self.read_file(file_name)
+                    else:
+                        # Change format of currently open hex view
+                        # Make writable for modification
+                        self.view.set_read_only(False)
+                        self.read_bin(file_name, True)
             else:
                 # We are going to swap out the current file for hex output
                 # So as not to clutter the screen.  Changes need to be saved
                 # Or they will be lost
                 if self.view.is_dirty():
-                    sublime.error_message(
-                        "You have unsaved changes that will be lost! Please save before converting to hex."
-                    )
+                    self.file_name = file_name
+                    self.switch_type = "hex"
+                    self.apply_self = False
+                    self.discard_panel()
                 else:
                     # Switch to hex output
                     self.read_bin(file_name)
@@ -228,9 +277,7 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
             self.window.run_command('hex_viewer', {"bytes": VALID_BYTES[value]})
 
     def is_enabled(self):
-        syntax = self.window.active_view().settings().get('syntax')
-        language = basename(syntax).replace('.tmLanguage', '').lower() if syntax != None else "plain text"
-        return (language == "hex")
+        return is_enabled()
 
     def run(self, option):
         self.view = self.window.active_view()

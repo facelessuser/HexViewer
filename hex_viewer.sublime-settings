@@ -28,10 +28,13 @@
 	// Scope? (Defined in theme files.)
 	// Examples: (keyword|string|number)
 	"highlight_scope" : "string",
+	"highlight_edit_scope": "keyword",
 
-	// Icon? (dot|circle|bookmark|cross)
+	// Icon? (dot|circle|bookmark|cross|none)
 	"highlight_icon" : "dot",
+	"highlight_edit_icon" : "none",
 
 	// Style? (solid|outline|underline|none)
-	"highlight_style" : "solid"
+	"highlight_style" : "solid",
+	"highlight_edit_style" : "underline"
 }

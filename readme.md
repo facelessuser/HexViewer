@@ -1,5 +1,5 @@
 # About
-Hex Viewer is a plugin for Sublime Text 2 that allows the toggling of a file into a hex viewing mode.  Currently it only supports reading and not editing.
+Hex Viewer is a plugin for Sublime Text 2 that allows the toggling of a file into a hex viewing mode.  Hex Viewer also supports hex editing.
 
 <img src="http://dl.dropbox.com/u/342698/HexViewer/preview.png" border="0"/>
 

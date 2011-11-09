@@ -9,6 +9,18 @@
 	},
 	{
 		"keys": ["ctrl+shift+b","ctrl+shift+f"],
-		"command": "hex_go_to"
+		"command": "hex_finder"
+	},
+	{
+		"keys": ["ctrl+shift+b","ctrl+shift+e"],
+		"command": "hex_editor"
+	},
+	{
+		"keys": ["ctrl+shift+b","ctrl+shift+x"],
+		"command": "hex_writer"
+	},
+	{
+		"keys": ["ctrl+shift+b","ctrl+shift+v"],
+		"command": "hex_discard_edits"
 	}
 ]

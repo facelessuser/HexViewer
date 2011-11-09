@@ -9,6 +9,18 @@
 	},
 	{
 		"keys": ["super+shift+b","super+shift+f"],
-		"command": "hex_go_to"
+		"command": "hex_finder"
+	},
+	{
+		"keys": ["super+shift+b","super+shift+e"],
+		"command": "hex_editor"
+	},
+	{
+		"keys": ["super+shift+b","super+shift+x"],
+		"command": "hex_writer"
+	},
+	{
+		"keys": ["super+shift+b","super+shift+v"],
+		"command": "hex_discard_edits"
 	}
 ]

@@ -23,6 +23,18 @@
 	},
 	{
 		"caption": "Hex Viewer: Find By Address",
-		"command": "hex_go_to"
+		"command": "hex_finder"
+	},
+	{
+		"caption": "Hex Viewer: Show Hex Edit Panel",
+		"command": "hex_editor"
+	},
+	{
+		"caption": "Hex Viewer: Discard All Edits",
+		"command": "hex_discard_edits"
+	},
+	{
+		"caption": "Hex Viewer: Export Bin",
+		"command": "hex_writer"
 	}
 ]
