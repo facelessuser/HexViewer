@@ -1,12 +1,133 @@
 import sublime
 import sublime_plugin
 import re
+from os.path import basename
 from struct import unpack
 from hex_common import *
 
 HIGHLIGHT_EDIT_SCOPE = "keyword"
 HIGHLIGHT_EDIT_ICON = "none"
 HIGHLIGHT_EDIT_STYLE = "underline"
+
+
+class HexEditorListenerCommand(sublime_plugin.EventListener):
+    fail_safe_view = None
+    handshake = -1
+
+    def restore(self, value):
+        window = sublime.active_window()
+        view = None
+        if value.strip().lower() == "yes" and self.fail_safe_view != None:
+            # Quit if cannot find window
+            if window == None:
+                self.reset()
+                return
+
+            # Get new view if one was created
+            if self.handshake != -1:
+                for v in window.views():
+                    if self.handshake == v.id():
+                        view = v
+                        # Reset handshake so view won't be closed
+                        self.handshake = -1
+            if view == None:
+                view = window.new_file()
+
+            # Restore view
+            if view != None:
+                # Get highlight settings
+                highlight_scope = hv_settings.get("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
+                highlight_icon = hv_settings.get("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
+                style = hv_settings.get("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
+
+                # No icon?
+                if highlight_icon == "none":
+                    highlight_icon = ""
+
+                # Process highlight style
+                if style == "outline":
+                    style = sublime.DRAW_OUTLINED
+                elif style == "none":
+                    style = sublime.HIDDEN
+                elif style == "underline":
+                    style = sublime.DRAW_EMPTY_AS_OVERWRITE
+                else:
+                    style = 0
+
+                # Setup view with saved settings
+                view.set_name(basename(self.fail_safe_view["name"]) + ".hex")
+                view.settings().set("hex_viewer_bits", self.fail_safe_view["bits"])
+                view.settings().set("hex_viewer_bytes", self.fail_safe_view["bytes"])
+                view.settings().set("hex_viewer_actual_bytes", self.fail_safe_view["actual"])
+                view.settings().set("hex_viewer_file_name", self.fail_safe_view["name"])
+                view.settings().set("font_face", self.fail_safe_view["font_face"])
+                view.settings().set("font_size", self.fail_safe_view["font_size"])
+                view.set_syntax_file("Packages/HexViewer/Hex.tmLanguage")
+                view.sel().clear()
+                edit = view.begin_edit()
+                view.replace(edit, sublime.Region(0, view.size()), self.fail_safe_view["buffer"])
+                view.end_edit(edit)
+                view.set_scratch(True)
+                view.set_read_only(True)
+                view.sel().add(sublime.Region(ADDRESS_OFFSET, ADDRESS_OFFSET))
+                view.add_regions(
+                    "hex_edit",
+                    self.fail_safe_view["edits"],
+                    highlight_scope,
+                    highlight_icon,
+                    style
+                )
+        self.reset()
+
+    def reset(self):
+        window = sublime.active_window()
+        if window != None and self.handshake != -1:
+            for v in window.views():
+                if self.handshake == v.id():
+                    view = v
+                    window.focus_view(v)
+                    window.run_command("close_file")
+        self.fail_safe_view = None
+        self.handshake = -1
+
+    def on_close(self, view):
+        if view.settings().has("hex_viewer_file_name") and is_hex_dirty(view):
+            window = sublime.active_window()
+            file_name = file_name = view.settings().get("hex_viewer_file_name")
+
+            if window != None and file_name != None:
+                # Save hex view settings
+                self.fail_safe_view = {
+                    "buffer": view.substr(sublime.Region(0, view.size())),
+                    "bits":  view.settings().get("hex_viewer_bits"),
+                    "bytes": view.settings().get("hex_viewer_bytes"),
+                    "actual": view.settings().get("hex_viewer_actual_bytes"),
+                    "name": file_name,
+                    "font_face": view.settings().get("font_face"),
+                    "font_size": view.settings().get("font_size"),
+                    "edits": view.get_regions("hex_edit")
+                }
+
+                # Keep window from closing by creating a view
+                # If the last is getting closed
+                # Use this buffer as the restore view if restore occurs
+                count = 0
+                for v in window.views():
+                    if not v.settings().get("is_widget"):
+                        count += 1
+                if count == 1:
+                    view = sublime.active_window().new_file()
+                    if view != None:
+                        self.handshake = view.id()
+
+                # Alert user that they can restore
+                window.show_input_panel(
+                    ("Restore %s? (yes | no):" % basename(file_name)),
+                    "yes",
+                    self.restore,
+                    None,
+                    lambda: self.restore(value="yes")
+                )
 
 
 class HexDiscardEditsCommand(sublime_plugin.WindowCommand):
@@ -63,19 +184,21 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         # Is this the same view as earlier?
         if self.handshake != -1 and self.handshake == self.view.id():
             total_chars = self.total_bytes * 2
-            selection = self.line["selection"]
+            selection = self.line["selection"].replace(" ", "")
 
             # Transform string if provided
             if re.match("^s\:", value) != None:
                 edits = value[2:len(value)].encode("hex")
             else:
-                edits = value.strip().replace(" ", "").lower()
+                edits = value.replace(" ", "").lower()
 
             # See if change occured and if changes are valid
             if len(edits) != total_chars:
-                sublime.error_message("Expected %d byte(s) of data, but recieved %d!" % (self.total_bytes, len(edits) * 2))
+                self.edit_panel(value, "Unexpected # of bytes!")
+                return
             elif re.match("[\da-f]{" + str(total_chars) + "}", edits) == None:
-                sublime.error_message("Request contains invalid data!")
+                self.edit_panel(value,"Invalid data!")
+                return
             elif selection != edits:
                 # Get previous dirty markers before modifying buffer
                 regions = self.view.get_regions("hex_edit")
@@ -203,6 +326,16 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                     hex_pos += 1
         return start, end, bytes
 
+    def edit_panel(self, value, error=None):
+        msg = "Edit:" if error == None else "Edit (" + error + "):"
+        self.window.show_input_panel(
+            msg,
+            value,
+            self.apply_edit,
+            None,
+            self.reset
+        )
+
     def run(self):
         self.view = self.window.active_view()
 
@@ -241,19 +374,14 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                     self.total_bytes = bytes
                     self.start_pos = start
                     self.end_pos = end + 1
+                    selection = self.view.substr(sublime.Region(start, end + 1))
                     self.line = {
                         "range": line,
                         "address": self.view.substr(sublime.Region(line.begin(), line.begin() + ADDRESS_OFFSET)),
-                        "selection": self.view.substr(sublime.Region(start, end + 1)).strip().replace(" ", ""),
-                        "data1": self.view.substr(sublime.Region(hex_range.begin(), start)).strip().replace(" ", ""),
-                        "data2": self.view.substr(sublime.Region(end + 1, hex_range.end() + 1)).strip().replace(" ", "")
+                        "selection": selection.replace(" ", ""),
+                        "data1": self.view.substr(sublime.Region(hex_range.begin(), start)).replace(" ", ""),
+                        "data2": self.view.substr(sublime.Region(end + 1, hex_range.end() + 1)).replace(" ", "")
                     }
 
                     # Send selected bytes to be edited
-                    self.window.show_input_panel(
-                        "Edit:",
-                        self.view.substr(sublime.Region(start, end + 1)).strip(),
-                        self.apply_edit,
-                        None,
-                        None
-                    )
+                    self.edit_panel(selection.strip())

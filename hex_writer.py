@@ -51,7 +51,6 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         if self.handshake != -1 and self.handshake == self.view.id():
             try:
                 with open(self.export_path, "wb") as bin:
-                    print self.export_path
                     r_buffer = self.view.split_by_newlines(sublime.Region(0, self.view.size()))
                     for line in r_buffer:
                         data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).strip().replace(" ", "")

@@ -205,6 +205,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 else:
                     sublime.error_message("Target view is no longer in focus!  Hex view aborted.")
             else:
+                clear_edits(self.view)
                 self.read_file(self.file_name)
         self.reset()
 
