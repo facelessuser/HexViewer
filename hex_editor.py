@@ -84,7 +84,6 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
         if window != None and self.handshake != -1:
             for v in window.views():
                 if self.handshake == v.id():
-                    view = v
                     window.focus_view(v)
                     window.run_command("close_file")
         self.fail_safe_view = None
@@ -197,7 +196,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                 self.edit_panel(value, "Unexpected # of bytes!")
                 return
             elif re.match("[\da-f]{" + str(total_chars) + "}", edits) == None:
-                self.edit_panel(value,"Invalid data!")
+                self.edit_panel(value, "Invalid data!")
                 return
             elif selection != edits:
                 # Get previous dirty markers before modifying buffer
