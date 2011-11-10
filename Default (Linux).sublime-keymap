@@ -1,6 +1,6 @@
 [
 	{
-		"keys": ["ctr+shift+b","ctrl+shift+h"],
+		"keys": ["ctrl+shift+b","ctrl+shift+h"],
 		"command": "hex_viewer"
 	},
 	{
