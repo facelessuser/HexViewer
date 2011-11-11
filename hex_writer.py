@@ -59,7 +59,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
                 with open(self.export_path, "wb") as bin:
                     r_buffer = self.view.split_by_newlines(sublime.Region(0, self.view.size()))
                     for line in r_buffer:
-                        data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).strip().replace(" ", "")
+                        data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).replace(" ", "")
                         bin.write(data.decode("hex"))
                 self.view.settings().set("hex_viewer_file_name", self.export_path)
                 clear_edits(self.view)
