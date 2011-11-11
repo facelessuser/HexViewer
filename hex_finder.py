@@ -1,3 +1,9 @@
+'''
+Hex Viewer
+Licensed under MIT
+Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
+'''
+
 import sublime
 import sublime_plugin
 from hex_common import *
