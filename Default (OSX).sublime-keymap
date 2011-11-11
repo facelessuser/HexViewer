@@ -20,7 +20,7 @@
 		"command": "hex_writer"
 	},
 	{
-		"keys": ["super+shift+b","super+shift+v"],
+		"keys": ["super+shift+b","super+shift+u"],
 		"command": "hex_discard_edits"
 	}
 ]
