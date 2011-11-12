@@ -4,17 +4,77 @@ Hex Viewer is a plugin for Sublime Text 2 that allows the toggling of a file int
 <img src="http://dl.dropbox.com/u/342698/HexViewer/preview.png" border="0"/>
 
 # Installation 
-- Drop the folder into your Sublime Text 2 packages directory.
-- You may need to restart Sublime Text 2
+- Download is available in Package Control or you can download directly and drop into your Sublime Text 2 packages directory (plugin folder must be named HexViewer)
+- You may need to restart Sublime Text 2 after installation
 
 # Features
 - Toggling a file into hex view mode
 - Search bytes by address
-- Customizable highlight of byte and corresponding ascii representation
+- Customizable highlight of byte and corresponding ASCII representation
 - Customizable byte grouping and bytes per line
 - Hex inspector to view current selected bytes as different unit types (endianness is configurable.)
 - Display total selected number of bytes and addresses of first group of consecutive bytes in status bar
 - Hex editing
+- Checksumming of files
+
+# Commands
+
+## Overview
+There are 10 commands available via the command palette or by key-bindings.
+
+- Hex Viewer: Toggle Hex View
+- Hex Viewer: Show Hex Inspector
+- Hex Viewer: Toggle Endianness (Big|Little)
+- Hex Viewer: Set Bits Per Group
+- Hex Viewer: Set Bytes Per Line
+- Hex Viewer: Find By Address
+- Hex Viewer: Show Hex Edit Panel
+- Hex Viewer: Discard All Edits
+- Hex Viewer: Export Bin
+- Hex Viewer: Get Checksum
+
+## Hex Viewer: Toggle Hex View
+Toggle file in or out of hex view
+
+## Hex Viewer: Show Hex Inspector
+Show the Hex Inspector panel.  The Hex Inspector is a panel which shows the current selected byte as different unit types: byte (8 bit), short(unsigned 8 bit), word (16 bit), int (unsigned 16 bit), dword (double word 32 bit), longint (unsigned 32 bit), float (32 bit floating point), double (floating point 64 bit), and binary (8 bit binary).
+
+## Hex Viewer: Toggle Endiannes (Big|Little)
+Toggle the parsing of bytes to big or little endian when showing unit types in Hex Inspector
+
+## Hex Viewer: Set Bits Per Group
+Allows selection from the quick panel the grouping of bytes by 8, 16, 32, 64, and 128 bits.  This will reload the file with this formatting.  All edits will be lost, so export your changes before you do this.
+
+## Hex Viewer: Set Bytes Per Line
+Allows selection form the quick panel the the number of bytes to be shown on a line: 8, 10, 16, 24, 32, 48, 64, 128, 256, 512.  If the selected value is not divisible by the "bits per group", the closet number of bytes per line will be used.
+
+## Hex Viewer: Find By Address
+Find the byte at the specified address.  Input is received through the input panel.
+
+## Hex Viewer: Show Hex Edit Panel
+Invoking this command will take the currently selected bytes on a line and display them in an input panel.  They can then be modified and submitted to replace the original bytes.  Strings can also be used by using the "s:" prefix followed by the equivalent ASCII characters that are to replace the selected bytes.
+
+## Hex Viewer: Discard All Edits
+If at any time you would like to discard all of the changes you have currently made to the hex view, you can invoke this command, and a clean hex view will be reloaded.
+
+## Hex Viewer: Export Bin
+This command exports the current hex view to a binary file, and if the option is enabled, it will display the checksum of the newly generated binary file.
+
+## Hex Viewer: Get Checksum
+This retrieves the checksum of the file when in hex view.
+
+# Configurable settings
+Settings are configurable in the hex_viewer.sublime-settings file.
+
+- configure byte highlight color, icon, and style
+- configure edit highlight color, icon, and style
+- set default bits per group
+- set default bytes per line
+- custom font and font size
+- whether to auto show the Hex Inspector panel on hex view load
+- whether Hex Inspector is enabled at all
+- hash algorithm to use when checksumming
+- whether to checksum on file export automatically
 
 # Source Code
 https://github.com/facelessuser/HexViewer/zipball/master
