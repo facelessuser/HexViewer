@@ -156,7 +156,14 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
         ascii_range = view.extract_scope(sel.begin())
 
         # Determine if selection is within ascii range
-        if start >= ascii_range.begin() and end <= ascii_range.end() + 1:
+        if (
+                start >= ascii_range.begin() and
+                (
+                    # Single selection should ignore the end of line selection
+                    (end == start and end < ascii_range.end() - 1) or
+                    (end != start and end < ascii_range.end())
+                )
+            ):
             # Single char selection
             if sel.size() == 0:
                 bytes = 1

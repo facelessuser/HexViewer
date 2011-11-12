@@ -10,6 +10,8 @@ from os.path import dirname, exists
 import re
 from hex_common import *
 
+USE_CHECKSUM_ON_SAVE = True
+
 
 class HexWriterCommand(sublime_plugin.WindowCommand):
     export_path = ""
@@ -56,16 +58,26 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         self.view = self.window.active_view()
         if self.handshake != -1 and self.handshake == self.view.id():
             try:
+                hex_data = ''
                 with open(self.export_path, "wb") as bin:
                     r_buffer = self.view.split_by_newlines(sublime.Region(0, self.view.size()))
                     for line in r_buffer:
                         data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).replace(" ", "")
-                        bin.write(data.decode("hex"))
-                self.view.settings().set("hex_viewer_file_name", self.export_path)
-                clear_edits(self.view)
+                        hex_data += data.decode("hex")
+                    bin.write(hex_data)
             except:
                 sublime.error_message("Faild to export to " + self.export_path)
+                self.reset()
+                return
+            if hv_settings.get("checksum_on_save", USE_CHECKSUM_ON_SAVE) and hex_data != '':
+                self.window.run_command(
+                    "hex_checksum_eval", 
+                    {"hash_algorithm": hv_settings.get("checksom_algorithm", "md5"), "data": hex_data}
+                )
+            self.view.settings().set("hex_viewer_file_name", self.export_path)
+            clear_edits(self.view)
             self.reset()
+            
         else:
             sublime.error_message("Hex view is no longer in focus! File not saved.")
             self.reset()

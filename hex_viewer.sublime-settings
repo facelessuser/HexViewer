@@ -36,5 +36,10 @@
 
 	// Style? (solid|outline|underline|none)
 	"highlight_style" : "solid",
-	"highlight_edit_style" : "underline"
+	"highlight_edit_style" : "underline",
+
+	// Checksum algorithm? (md5|sha1|sha224|sha256|sha384|sha512)
+	"hash_algorithm" : "md5",
+
+	"checksum_on_save" : true
 }

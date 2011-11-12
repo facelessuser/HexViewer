@@ -22,5 +22,9 @@
 	{
 		"keys": ["ctrl+shift+b","ctrl+shift+u"],
 		"command": "hex_discard_edits"
+	},
+	{
+		"keys": ["ctrl+shift+b","ctrl+shift+="],
+		"command": "hex_checksum"
 	}
 ]

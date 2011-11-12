@@ -36,5 +36,9 @@
 	{
 		"caption": "Hex Viewer: Export Bin",
 		"command": "hex_writer"
+	},
+	{
+		"caption": "Hex Viewer: Get Checksum",
+		"command": "hex_checksum"
 	}
 ]
