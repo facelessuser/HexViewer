@@ -37,7 +37,7 @@ There are 10 commands available via the command palette or by key-bindings.
 Toggle file in or out of hex view
 
 ## Hex Viewer: Show Hex Inspector
-Show the Hex Inspector panel.  The Hex Inspector is a panel which shows the current selected byte as different unit types: byte (8 bit), short(unsigned 8 bit), word (16 bit), int (unsigned 16 bit), dword (double word 32 bit), longint (unsigned 32 bit), float (32 bit floating point), double (floating point 64 bit), and binary (8 bit binary).
+Show the Hex Inspector panel.  The Hex Inspector is a panel which shows the current selected byte as different unit types: byte (8 bit), short(signed 8 bit), word (16 bit), int (signed 16 bit), dword (double word 32 bit), longint (signed 32 bit), float (32 bit floating point), double (floating point 64 bit), and binary (8 bit binary).
 
 ## Hex Viewer: Toggle Endiannes (Big|Little)
 Toggle the parsing of bytes to big or little endian when showing unit types in Hex Inspector
