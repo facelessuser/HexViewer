@@ -62,20 +62,25 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
                 with open(self.export_path, "wb") as bin:
                     r_buffer = self.view.split_by_newlines(sublime.Region(0, self.view.size()))
                     for line in r_buffer:
-                        data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).replace(" ", "")
-                        hex_data += data.decode("hex")
-                    bin.write(hex_data)
+                        hex_data += re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).replace(" ", "")
+                    bin.write(hex_data.decode("hex"))
             except:
                 sublime.error_message("Faild to export to " + self.export_path)
                 self.reset()
                 return
+            # TODO: avoid double hex decode (currently once in writer and once in checksum)
             if hv_settings.get("checksum_on_save", USE_CHECKSUM_ON_SAVE) and hex_data != '':
                 self.window.run_command(
                     "hex_checksum_eval", 
                     {"hash_algorithm": hv_settings.get("checksom_algorithm", "md5"), "data": hex_data}
                 )
+            # Update the tab name
+            self.view.set_name(basename(self.export_path) + ".hex")
+            # Update the internal path
             self.view.settings().set("hex_viewer_file_name", self.export_path)
+            # Clear the marked edits
             clear_edits(self.view)
+            # Reset class
             self.reset()
             
         else:

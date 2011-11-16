@@ -6,6 +6,7 @@ Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
 
 import sublime
 import sublime_plugin
+import math
 from struct import unpack
 from hex_common import *
 
@@ -135,15 +136,23 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
                 "longint", "--"
             ) + nl
         if bytes32 != None:
-            i_buffer += item_float % (
-                "float", unpack(endian + "f", bytes32.decode('hex'))[0]
-            )
+            s_float = unpack(endian + "f", bytes32.decode('hex'))[0]
+            if math.isnan(s_float):
+                i_buffer += item_str % ("float", "NaN")
+            else:
+                i_buffer += item_float % (
+                    "float", s_float
+                )
         else:
             i_buffer += item_str % ("float", "--")
         if bytes64 != None:
-            i_buffer += item_double % (
-                "double", unpack(endian + "d", bytes64.decode('hex'))[0]
-            ) + nl
+            d_float = unpack(endian + "d", bytes64.decode('hex'))[0]
+            if math.isnan(d_float):
+                i_buffer += item_str % ("double", "NaN") + nl
+            else:
+                i_buffer += item_double % (
+                    "double", d_float
+                ) + nl
         else:
             i_buffer += item_str % ("double", "--") + nl
         if byte8 != None:

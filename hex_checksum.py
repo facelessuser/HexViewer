@@ -13,7 +13,7 @@ class HexChecksumEvalCommand(sublime_plugin.WindowCommand):
         if not hash_algorithm in VALID_HASH:
             hash_algorithm = DEFAULT_CHECKSUM
         h = getattr(hashlib, hash_algorithm)
-        self.window.show_input_panel(hash_algorithm + ":", str(h(data).hexdigest()), None, None, None)
+        self.window.show_input_panel(hash_algorithm + ":", str(h(data.decode("hex")).hexdigest()), None, None, None)
 
 
 class HexChecksumCommand(sublime_plugin.WindowCommand):
@@ -28,6 +28,5 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
             r_buffer = view.split_by_newlines(sublime.Region(0, view.size()))
             hex_data = ''
             for line in r_buffer:
-                data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "")
-                hex_data += data.decode("hex")
+                hex_data += re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "")
             self.window.run_command("hex_checksum_eval", {"hash_algorithm": hash_algorithm, "data": hex_data})
