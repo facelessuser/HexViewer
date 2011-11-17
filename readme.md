@@ -95,8 +95,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - Hide Inspector tmLanguage file
 - Chunk checksum and export for faster, more linear performance with large files
 - Thread binary file reading and show progress of bytes parsed in status bar
-- If command hex view command is issued while a file is being converted, abort the conversion
-- Simply logic with hex view; always close original tab and load in new one opposed to conditional logic (easier with threading)
+- If hex view command is issued while a file is being converted, abort the conversion
+- Simplify logic with hex view; always close original tab and load in new one opposed to conditional logic (easier with threading)
 - Add setting to throttle highlighting selected bytes
 - Add divider in settings menu
 
