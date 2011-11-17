@@ -9,6 +9,7 @@ import sublime_plugin
 from os.path import dirname, exists
 import re
 from hex_common import *
+from hex_checksum import checksum
 
 USE_CHECKSUM_ON_SAVE = True
 
@@ -57,23 +58,25 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
     def export(self):
         self.view = self.window.active_view()
         if self.handshake != -1 and self.handshake == self.view.id():
+            hex_hash = None
+            # Get checksum if required
+            if hv_settings.get("checksum_on_save", USE_CHECKSUM_ON_SAVE):
+                hex_hash = checksum(hv_settings.get("checksom_algorithm", "md5"))
             try:
-                hex_data = ''
                 with open(self.export_path, "wb") as bin:
                     r_buffer = self.view.split_by_newlines(sublime.Region(0, self.view.size()))
                     for line in r_buffer:
-                        hex_data += re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).replace(" ", "")
-                    bin.write(hex_data.decode("hex"))
+                        hex_data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).replace(" ", "").decode("hex")
+                        bin.write(hex_data)
+                        if hex_hash != None:
+                            hex_hash.update(hex_data)
             except:
-                sublime.error_message("Faild to export to " + self.export_path)
+                sublime.error_message("Failed to export to " + self.export_path)
                 self.reset()
                 return
-            # TODO: avoid double hex decode (currently once in writer and once in checksum)
-            if hv_settings.get("checksum_on_save", USE_CHECKSUM_ON_SAVE) and hex_data != '':
-                self.window.run_command(
-                    "hex_checksum_eval", 
-                    {"hash_algorithm": hv_settings.get("checksom_algorithm", "md5"), "data": hex_data}
-                )
+            # Display checksum if required
+            if hex_hash != None:
+                hex_hash.display(self.window)
             # Update the tab name
             self.view.set_name(basename(self.export_path) + ".hex")
             # Update the internal path
@@ -82,7 +85,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             clear_edits(self.view)
             # Reset class
             self.reset()
-            
+
         else:
             sublime.error_message("Hex view is no longer in focus! File not saved.")
             self.reset()

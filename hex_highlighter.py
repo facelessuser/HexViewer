@@ -13,6 +13,7 @@ HIGHLIGHT_SCOPE = "string"
 HIGHLIGHT_ICON = "dot"
 HIGHLIGHT_STYLE = "solid"
 MS_HIGHLIGHT_DELAY = 500
+MAX_HIGHIGHT = 1000
 
 
 class HexHighlighterListenerCommand(sublime_plugin.EventListener):
@@ -46,6 +47,7 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
         # Get Seetings from settings file
         group_size = self.view.settings().get("hex_viewer_bits", None)
         self.inspector_enabled = hv_inspector_enable
+        self.max_highlight = hv_settings.get("highlight_max_bytes", MAX_HIGHIGHT)
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
         self.highlight_scope = hv_settings.get("highlight_scope", HIGHLIGHT_SCOPE)
         self.highlight_icon = hv_settings.get("highlight_icon", HIGHLIGHT_ICON)
@@ -205,6 +207,10 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
     def get_highlights(self):
         self.first_all = -1
         for sel in self.view.sel():
+            # Kick out if total bytes exceeds limit
+            if self.total_bytes >= self.max_highlight:
+                return
+
             if self.view.score_selector(sel.begin(), 'comment'):
                 self.ascii_to_hex(sel)
             else:

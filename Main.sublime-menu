@@ -25,6 +25,7 @@
                                 "args": {"file": "${packages}/User/hex_viewer.sublime-settings"},
                                 "caption": "Settings – User"
                             },
+                            { "caption": "-" },
                             {
                                 "command": "open_file",
                                 "args": {

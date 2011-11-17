@@ -8,12 +8,25 @@ VALID_HASH = ["md5", "sha1", "sha224", "sha256", "sha384", "sha512"]
 DEFAULT_CHECKSUM = VALID_HASH[0]
 
 
-class HexChecksumEvalCommand(sublime_plugin.WindowCommand):
-    def run(self, data, hash_algorithm=DEFAULT_CHECKSUM):
+class checksum:
+    def __init__(self, hash_algorithm=DEFAULT_CHECKSUM):
+        if hash_algorithm != None and not hash_algorithm in VALID_HASH:
+            hash_algorithm = hv_settings.get("checksom_algorithm", DEFAULT_CHECKSUM)
         if not hash_algorithm in VALID_HASH:
             hash_algorithm = DEFAULT_CHECKSUM
-        h = getattr(hashlib, hash_algorithm)
-        self.window.show_input_panel(hash_algorithm + ":", str(h(data.decode("hex")).hexdigest()), None, None, None)
+        self.hash = getattr(hashlib, hash_algorithm)()
+        self.name = hash_algorithm
+
+    def update(self, hex_data):
+        self.hash.update(hex_data)
+
+    def display(self, window):
+        window.show_input_panel(self.name + ":", str(self.hash.hexdigest()), None, None, None)
+
+
+class HexChecksumEvalCommand(sublime_plugin.WindowCommand):
+    def run(self, data, hash_algorithm=DEFAULT_CHECKSUM):
+        checksum(hash_algorithm).update(data.decode("hex")).display(self.window)
 
 
 class HexChecksumCommand(sublime_plugin.WindowCommand):
@@ -23,10 +36,9 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
     def run(self, hash_algorithm=None):
         view = self.window.active_view()
         if view != None:
-            if hash_algorithm != None and not hash_algorithm in VALID_HASH:
-                hash_algorithm = hv_settings.get("checksom_algorithm", DEFAULT_CHECKSUM)
+            hex_hash = checksum(hash_algorithm)
             r_buffer = view.split_by_newlines(sublime.Region(0, view.size()))
-            hex_data = ''
             for line in r_buffer:
-                hex_data += re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "")
-            self.window.run_command("hex_checksum_eval", {"hash_algorithm": hash_algorithm, "data": hex_data})
+                hex_data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "").decode("hex")
+                hex_hash.update(hex_data)
+            hex_hash.display(self.window)

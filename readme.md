@@ -91,6 +91,15 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#Version 0.4
+- Hide Inspector tmLanguage file
+- Chunk checksum and export for faster, more linear performance with large files
+- Thread binary file reading and show progress of bytes parsed in status bar
+- If command hex view command is issued while a file is being converted, abort the conversion
+- Simply logic with hex view; always close original tab and load in new one opposed to conditional logic (easier with threading)
+- Add setting to throttle highlighting selected bytes
+- Add divider in settings menu
+
 #Version 0.3
 - On export, rename tab to new export name
 - Fix checksum failing when passing certain data through Sublime Text run_command API

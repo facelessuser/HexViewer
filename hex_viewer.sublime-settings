@@ -25,6 +25,13 @@
 	// Show inspector panel on hex view load and hide on hex view hide
 	"inspector_auto_show" : true,
 
+	// Approximate max byte selection.
+	// The highlighter will highlight individual selections until
+	// the max number of bytes is found.  The selection containing
+	// the maximum byte will still be finished even if it has more
+	// bytes than the max.
+	"highlight_max_bytes" : 1000,
+
 	// Scope? (Defined in theme files.)
 	// Examples: (keyword|string|number)
 	"highlight_scope" : "string",

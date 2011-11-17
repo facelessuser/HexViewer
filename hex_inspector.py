@@ -20,7 +20,7 @@ class HexShowInspectorCommand(sublime_plugin.WindowCommand):
     def run(self):
         # Setup inspector window
         view = self.window.get_output_panel('hex_viewer_inspector')
-        view.set_syntax_file("Packages/HexViewer/HexInspect.tmLanguage")
+        view.set_syntax_file("Packages/HexViewer/HexInspect.hidden-tmLanguage")
         view.settings().set("draw_white_space", "none")
         view.settings().set("draw_indent_guides", False)
         view.settings().set("gutter", "none")
