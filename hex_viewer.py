@@ -174,7 +174,6 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
     def read_bin(self, file_name):
         self.abort = False
         self.current_view = self.view
-        # self.abort_hex_view()
         self.thread = ReadBin(file_name, self.bytes_wide, self.group_size)
         self.thread.start()
         self.handle_thread()
@@ -237,11 +236,14 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             sublime.status_message("Hex View aborted!")
             sublime.set_timeout(lambda: self.reset_thread(), 500)
             return
+        ratio = float(self.thread.read_count) / float(self.thread.file_size)
+        percent = int(ratio * 10)
+        leftover = 10 - percent
+        message = "[" + "-" * percent + ">" + "-" * leftover + ("] %3d%%" % int(ratio * 100)) + " converted to hex"
+        sublime.status_message(message)
         if not self.thread.is_alive():
-            sublime.status_message("%d of %d bytes read" % (self.thread.file_size, self.thread.file_size))
             sublime.set_timeout(lambda: self.load_hex_view(), 100)
         else:
-            sublime.status_message("%d of %d bytes read" % (self.thread.read_count, self.thread.file_size))
             sublime.set_timeout(lambda: self.handle_thread(), 100)
 
     def abort_hex_load(self):

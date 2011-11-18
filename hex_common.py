@@ -39,19 +39,15 @@ def is_hex_dirty(view):
     return True if len(view.get_regions("hex_edit")) != 0 else False
 
 
+def get_hex_char_range(group_size, bytes_wide):
+    return int((group_size * 2) * bytes_wide / (group_size) + bytes_wide / (group_size)) - 1
+
+
 def get_byte_count(start, end, group_size):
     return int((end - start - 1) / (group_size * 2 + 1)) * int(group_size) + int(((end - start - 1) % (group_size * 2 + 1)) / 2 + 1)
 
 
-def get_hex_range(line, group_size, bytes_wide):
-    hex_chars = int((group_size * 2) * bytes_wide / (group_size) + bytes_wide / (group_size)) - 1
-    return sublime.Region(
-        line.begin() + ADDRESS_OFFSET,
-        line.begin() + ADDRESS_OFFSET + hex_chars
-    )
-
-
-def ascii_to_hex_col(col, index, group_size):
+def ascii_to_hex_col(index, group_size):
     #   Calculate byte number              Account for address
     #
     # current_char   wanted_byte
@@ -83,7 +79,7 @@ def adjust_hex_sel(view, start, end, group_size):
         else:
             end -= 2
     if start != None and end != None:
-        bytes = get_byte_count(start, end, group_size)
+        bytes = get_byte_count(start, end + 1, group_size)
     return start, end, bytes
 
 

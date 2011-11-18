@@ -32,6 +32,9 @@
 	// bytes than the max.
 	"highlight_max_bytes" : 1000,
 
+	//Enable highlight throttling
+	"highlight_throttle" : false,
+
 	// Scope? (Defined in theme files.)
 	// Examples: (keyword|string|number)
 	"highlight_scope" : "string",

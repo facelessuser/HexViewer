@@ -14,6 +14,7 @@ HIGHLIGHT_ICON = "dot"
 HIGHLIGHT_STYLE = "solid"
 MS_HIGHLIGHT_DELAY = 500
 MAX_HIGHIGHT = 1000
+THROTTLING = False
 
 
 class HexHighlighterListenerCommand(sublime_plugin.EventListener):
@@ -47,6 +48,7 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
         # Get Seetings from settings file
         group_size = self.view.settings().get("hex_viewer_bits", None)
         self.inspector_enabled = hv_inspector_enable
+        self.throttle = hv_settings.get("highlight_throttle", THROTTLING)
         self.max_highlight = hv_settings.get("highlight_max_bytes", MAX_HIGHIGHT)
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
         self.highlight_scope = hv_settings.get("highlight_scope", HIGHLIGHT_SCOPE)
@@ -69,6 +71,7 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
         #Process hex grouping
         if group_size != None and self.bytes_wide != None:
             self.group_size = group_size / BITS_PER_BYTE
+            self.hex_char_range = get_hex_char_range(self.group_size, self.bytes_wide)
             init_status = True
         return init_status
 
@@ -98,15 +101,18 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
 
     def display_address(self):
         count = ''
-        if self.total_bytes == 0:
+        if self.total_bytes == 0 or len(self.address) != 2:
             self.view.set_status('hex_address', "Address: None")
             return
         # Display number of bytes whose address is not displayed
         if self.address_done:
             delta = 1 if self.address[1] == -1 else self.address[1] - self.address[0] + 1
-            counted_bytes = self.total_bytes - delta
-            if counted_bytes > 0:
-                count = " [+" + str(counted_bytes) + " bytes]"
+            if self.total_bytes == "?":
+                count = " [+?]"
+            else:
+                counted_bytes = self.total_bytes - delta
+                if counted_bytes > 0:
+                    count = " [+" + str(counted_bytes) + " bytes]"
         # Display adresses
         status = "Address: "
         if self.address[1] == -1:
@@ -117,11 +123,12 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
 
     def display_total_bytes(self):
         # Display total hex bytes
-        self.view.set_status('hex_total_bytes', "Total Bytes: " + str(self.total_bytes))
+        total = self.total_bytes if self.total_bytes == "?" else str(self.total_bytes)
+        self.view.set_status('hex_total_bytes', "Total Bytes: " + total)
 
     def hex_selection(self, start, bytes, first_pos):
         row, column = self.view.rowcol(first_pos)
-        column = ascii_to_hex_col(column, start, self.group_size)
+        column = ascii_to_hex_col(start, self.group_size)
         hex_pos = self.view.text_point(row, column)
 
         # Log first byte
@@ -185,7 +192,9 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
 
         # Get range of hex data
         line = view.line(start)
-        hex_range = get_hex_range(line, self.group_size, self.bytes_wide)
+        range_start = line.begin() + ADDRESS_OFFSET
+        range_end = range_start + self.hex_char_range
+        hex_range = sublime.Region(range_start, range_end)
 
         # Determine if selection is within hex range
         if start >= hex_range.begin() and end <= hex_range.end():
@@ -208,7 +217,10 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
         self.first_all = -1
         for sel in self.view.sel():
             # Kick out if total bytes exceeds limit
-            if self.total_bytes >= self.max_highlight:
+            if self.throttle and self.total_bytes >= self.max_highlight:
+                if len(self.address) == 2:
+                    self.address[1] = -1
+                self.total_bytes = "?"
                 return
 
             if self.view.score_selector(sel.begin(), 'comment'):

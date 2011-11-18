@@ -231,11 +231,25 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                     if value != original[start:byte_end]:
                         if change_start == None:
                             change_start = [hex_start_pos, ascii_start_pos]
+                            # Check if group end
+                            if count == self.group_size:
+                                regions.append(sublime.Region(change_start[0], hex_start_pos + 2))
+                                change_start[0] = None
+                        else:
+                            # Check if after group end
+                            if change_start[0] == None:
+                                change_start[0] = hex_start_pos
+                            # Check if group end
+                            if count == self.group_size:
+                                regions.append(sublime.Region(change_start[0], hex_start_pos + 2))
+                                change_start[0] = None
                     elif change_start != None:
                         if self.view.score_selector(hex_start_pos - 1, 'raw.nibble.lower'):
-                            regions.append(sublime.Region(change_start[0], hex_start_pos))
+                            if change_start[0] != None:
+                                regions.append(sublime.Region(change_start[0], hex_start_pos))
                         else:
-                            regions.append(sublime.Region(change_start[0], hex_start_pos - 1))
+                            if change_start[0] != None:
+                                regions.append(sublime.Region(change_start[0], hex_start_pos - 1))
                         regions.append(sublime.Region(change_start[1], ascii_start_pos))
                         change_start = None
 
@@ -256,7 +270,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
                 # Check for end of line case for highlight
                 if change_start != None:
-                    regions.append(sublime.Region(change_start[0], hex_start_pos))
+                    if change_start[0] != None:
+                        regions.append(sublime.Region(change_start[0], hex_start_pos))
                     regions.append(sublime.Region(change_start[1], ascii_start_pos))
                     change_start = None
 
@@ -313,7 +328,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
         if bytes != 0:
             row, column = self.view.rowcol(start)
-            column = ascii_to_hex_col(column, start - ascii_range.begin(), self.group_size)
+            column = ascii_to_hex_col(start - ascii_range.begin(), self.group_size)
             hex_pos = self.view.text_point(row, column)
             start = hex_pos
 
@@ -362,7 +377,9 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
             # Get range of hex data
             line = self.view.line(start)
-            hex_range = get_hex_range(line, self.group_size, self.bytes_wide)
+            range_start = line.begin() + ADDRESS_OFFSET
+            range_end = range_start + get_hex_char_range(self.group_size, self.bytes_wide)
+            hex_range = sublime.Region(range_start, range_end)
 
             if self.view.score_selector(start, "comment"):
                 start, end, bytes = self.ascii_to_hex(start, end)
