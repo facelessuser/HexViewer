@@ -40,5 +40,69 @@
 	{
 		"caption": "Hex Viewer: Get Checksum",
 		"command": "hex_checksum"
-	}
+	},
+	{
+        "caption": "Preferences: Hex Viewer Settings – Default",
+        "command": "open_file", 
+        "args": { "file": "${packages}/HexViewer/hex_viewer.sublime-settings" }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Settings – User",
+        "command": "open_file", 
+        "args": { "file": "${packages}/User/hex_viewer.sublime-settings" }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "command": "open_file",
+        "args": 
+        {
+            "file": "${packages}/HexViewer/Default (Windows).sublime-keymap",
+            "platform": "Windows"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "command": "open_file",
+        "args": 
+        {
+            "file": "${packages}/User/Default (Windows).sublime-keymap",
+            "platform": "Windows"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "command": "open_file",
+        "args": 
+        {
+            "file": "${packages}/HexViewer/Default (OSX).sublime-keymap",
+            "platform": "OSX"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "command": "open_file",
+        "args": 
+        {
+            "file": "${packages}/User/Default (OSX).sublime-keymap",
+            "platform": "OSX"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "command": "open_file",
+        "args": 
+        {
+            "file": "${packages}/HexViewer/Default (Linux).sublime-keymap",
+            "platform": "Linux"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "command": "open_file",
+        "args": 
+        {
+            "file": "${packages}/User/Default (Linux).sublime-keymap",
+            "platform": "Linux"
+        }
+    }
 ]
