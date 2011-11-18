@@ -6,54 +6,61 @@
         "children":
         [
             {
-                "id": "hex-viewer",
-                "caption": "Hex Viewer",
+                "id": "packages",
+                "caption": "Packages",
                 "children":
                 [
                     {
-                        "caption": "Toggle Hex View",
-                        "command": "hex_viewer"
-                    },
-                    {
-                        "caption": "-"
-                    },
-                    {
-                        "caption": "Show Hex Inspector",
-                        "command": "hex_show_inspector"
-                    },
-                    {
-                        "caption": "Toggle Endianness (Big|Little)",
-                        "command": "hex_toggle_inspector_endianness"
-                    },
-                    {
-                        "caption": "Set Bits Per Group",
-                        "command": "hex_viewer_options",
-                        "args"   : {"option": "bits"}
-                    },
-                    {
-                        "caption": "Set Bytes Per Line",
-                        "command": "hex_viewer_options",
-                        "args"   : {"option": "bytes"}
-                    },
-                    {
-                        "caption": "Find By Address",
-                        "command": "hex_finder"
-                    },
-                    {
-                        "caption": "Show Hex Edit Panel",
-                        "command": "hex_editor"
-                    },
-                    {
-                        "caption": "Discard All Edits",
-                        "command": "hex_discard_edits"
-                    },
-                    {
-                        "caption": "Export Bin",
-                        "command": "hex_writer"
-                    },
-                    {
-                        "caption": "Get Checksum",
-                        "command": "hex_checksum"
+                        "id": "hex-viewer",
+                        "caption": "Hex Viewer",
+                        "children":
+                        [
+                            {
+                                "caption": "Toggle Hex View",
+                                "command": "hex_viewer"
+                            },
+                            {
+                                "caption": "-"
+                            },
+                            {
+                                "caption": "Show Hex Inspector",
+                                "command": "hex_show_inspector"
+                            },
+                            {
+                                "caption": "Toggle Endianness (Big|Little)",
+                                "command": "hex_toggle_inspector_endianness"
+                            },
+                            {
+                                "caption": "Set Bits Per Group",
+                                "command": "hex_viewer_options",
+                                "args"   : {"option": "bits"}
+                            },
+                            {
+                                "caption": "Set Bytes Per Line",
+                                "command": "hex_viewer_options",
+                                "args"   : {"option": "bytes"}
+                            },
+                            {
+                                "caption": "Find By Address",
+                                "command": "hex_finder"
+                            },
+                            {
+                                "caption": "Show Hex Edit Panel",
+                                "command": "hex_editor"
+                            },
+                            {
+                                "caption": "Discard All Edits",
+                                "command": "hex_discard_edits"
+                            },
+                            {
+                                "caption": "Export Bin",
+                                "command": "hex_writer"
+                            },
+                            {
+                                "caption": "Get Checksum",
+                                "command": "hex_checksum"
+                            }
+                        ]
                     }
                 ]
             }
