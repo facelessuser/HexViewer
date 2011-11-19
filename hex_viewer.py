@@ -254,6 +254,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             if self.switch_type == "hex":
                 view = sublime.active_window().active_view()
                 if self.handshake == view.id():
+                    view.set_scratch(True)
                     self.read_bin(self.file_name)
                 else:
                     sublime.error_message("Target view is no longer in focus!  Hex view aborted.")

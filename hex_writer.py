@@ -61,7 +61,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             hex_hash = None
             # Get checksum if required
             if hv_settings.get("checksum_on_save", USE_CHECKSUM_ON_SAVE):
-                hex_hash = checksum(hv_settings.get("checksom_algorithm", "md5"))
+                hex_hash = checksum()
             try:
                 with open(self.export_path, "wb") as bin:
                     r_buffer = self.view.split_by_newlines(sublime.Region(0, self.view.size()))
