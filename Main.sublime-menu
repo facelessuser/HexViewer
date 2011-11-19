@@ -57,8 +57,58 @@
                                 "command": "hex_writer"
                             },
                             {
-                                "caption": "Get Checksum",
-                                "command": "hex_checksum"
+                                "id": "checksum",
+                                "caption": "Checksum",
+                                "children":
+                                [
+                                    {
+                                        "caption": "Default Checksum",
+                                        "command": "hex_checksum"
+                                    },
+                                    {
+                                        "caption": "-"
+                                    },
+                                    {
+                                        "caption": "MD5",
+                                        "command": "hex_checksum",
+                                        "args": {"hash_algorithm": "md5"}
+                                    },
+                                    {
+                                        "caption": "SHA-1",
+                                        "command": "hex_checksum",
+                                        "args": {"hash_algorithm": "sha1"}
+                                    },
+                                    {
+                                        "caption": "SHA-224",
+                                        "command": "hex_checksum",
+                                        "args": {"hash_algorithm": "sha224"}
+                                    },
+                                    {
+                                        "caption": "SHA-256",
+                                        "command": "hex_checksum",
+                                        "args": {"hash_algorithm": "sha256"}
+                                    },
+                                    {
+                                        "caption": "SHA-384",
+                                        "command": "hex_checksum",
+                                        "args": {"hash_algorithm": "sha384"}
+                                    },
+                                    {
+                                        "caption": "SHA-512",
+                                        "command": "hex_checksum",
+                                        "args": {"hash_algorithm": "sha512"}
+                                    },
+                                    {
+                                        "caption": "CRC32",
+                                        "command": "hex_checksum",
+                                        "args": {"hash_algorithm": "crc32"}
+                                    },
+                                    {
+                                        "caption": "ADLER32",
+                                        "command": "hex_checksum",
+                                        "args": {"hash_algorithm": "adler32"}
+                                    }
+                                ]
                             }
                         ]
                     }
