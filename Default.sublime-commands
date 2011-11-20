@@ -38,7 +38,8 @@
 		"command": "hex_writer"
 	},
 	{
-		"caption": "Hex Viewer: Get Checksum",
-		"command": "hex_checksum"
+		"caption": "Hex Viewer: Run Checksum",
+		"command": "hex_checksum",
+		"args": {"panel": true}
 	}
 ]

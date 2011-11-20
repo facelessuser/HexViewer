@@ -48,7 +48,8 @@
 	"highlight_style" : "solid",
 	"highlight_edit_style" : "underline",
 
-	// Checksum algorithm? (md5|sha1|sha224|sha256|sha384|sha512|crc32|adler32)
+	// Checksum algorithm default? (the default is what is applied to a file when saving)
+	// (mdc2|md4|md5|sha|sha1|sha224|sha256|sha384|sha512|ripemd160|crc32|adler32)
 	"hash_algorithm" : "md5",
 
 	"checksum_on_save" : true

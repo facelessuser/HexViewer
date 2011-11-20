@@ -60,8 +60,8 @@ If at any time you would like to discard all of the changes you have currently m
 ## Hex Viewer: Export Bin
 This command exports the current hex view to a binary file, and if the option is enabled, it will display the checksum of the newly generated binary file.
 
-## Hex Viewer: Get Checksum
-This retrieves the checksum of the file when in hex view.
+## Hex Viewer: Run Checksum
+By default, it opens up a quick panel with all available hashes that can be used as a checksum.  When an algorithm is selected, it is used to retrieve the checksum for the current file in hex view mode.
 
 # Configurable settings
 Settings are configurable in the hex_viewer.sublime-settings file.
@@ -90,6 +90,11 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+#Version 0.7
+- New hash algorithms from openssl: sha, mdc2, md4, ripemd160 (dynamcially added if system supports them)
+- Rename "Get Checksum" command to "Run Checksum"
+- When invoking shortcut or command for checksumming, show quick panel with all valid hash algorithms to choose from
 
 #Version 0.6
 - Commands accessible from menu Tools > Packages > Hex Viewer

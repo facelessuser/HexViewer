@@ -25,6 +25,7 @@
 	},
 	{
 		"keys": ["super+shift+b","super+shift+="],
-		"command": "hex_checksum"
+		"command": "hex_checksum",
+		"args": {"panel": true}
 	}
 ]

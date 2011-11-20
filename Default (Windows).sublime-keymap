@@ -25,6 +25,7 @@
 	},
 	{
 		"keys": ["ctrl+shift+b","ctrl+shift+="],
-		"command": "hex_checksum"
+		"command": "hex_checksum",
+		"args": {"panel": true}
 	}
 ]
