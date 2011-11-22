@@ -63,6 +63,9 @@ This command exports the current hex view to a binary file, and if the option is
 ## Hex Viewer: Run Checksum
 By default, it opens up a quick panel with all available hashes that can be used as a checksum.  When an algorithm is selected, it is used to retrieve the checksum for the current file in hex view mode.
 
+## Hex Viewer: Generate Hash
+Shows a quick panel allowing you to select the desired hash, and then shows an input panel that allows you to specify the string to be hashed. A panel is then displayed with your generated hash accoriding to specifications.
+
 # Configurable settings
 Settings are configurable in the hex_viewer.sublime-settings file.
 
@@ -90,6 +93,12 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+#Version 0.7
+- New hash algorithms: Whirlpool and Tiger-192
+- Checksums are now threaded
+- Exposed new command to tap into hashes called "Hex Viewer: Generate Hash"
+- Rework logic to determine which hashes are available
 
 #Version 0.7
 - New hash algorithms from openssl: sha, mdc2, md4, ripemd160 (dynamcially added if system supports them)

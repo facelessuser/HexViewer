@@ -1,26 +1,50 @@
+'''
+Hex Viewer
+Licensed under MIT
+Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
+'''
+
 import sublime
 import sublime_plugin
 import re
 from hex_common import *
+import threading
 import hashlib
 import zlib
+import sys
+
+# Try and include additional hashes
+try:
+    import whirlpool
+except:
+    whirlpool = None
+
+try:
+    import tiger
+except:
+    tiger = None
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
 
+active_thread = None
 
-def verify_hashes(names):
+
+def verify_hashes(hashes):
     global VALID_HASH
-    for name in names:
-        if name in dir(hashlib):
-            VALID_HASH.append(name)
-        elif name in dir(zlib):
-            VALID_HASH.append(name)
+    for item in hashes:
+        module = item.split(":")
+        if len(module) == 2:
+            try:
+                getattr(sys.modules[module[0]], module[1])
+                VALID_HASH.append(module[1])
+            except:
+                print "Hex Viewer: " + module[1] + " hash is not available!"
         else:
             try:
-                hashlib.new(name)
-                VALID_HASH.append(name)
-            except ValueError:
+                hashlib.new(item)
+                VALID_HASH.append(item)
+            except:
                 print "Hex Viewer: " + name + " hash is not available!"
 
 
@@ -125,24 +149,89 @@ class adler32(zlib_algorithm):
 
 # Sublime Text Commands
 class checksum:
-    def __init__(self, hash_algorithm=None, arg=""):
+    thread = None
+
+    def __init__(self, hash_algorithm=None, data=""):
         if hash_algorithm == None or not hash_algorithm in VALID_HASH:
             hash_algorithm = hv_settings.get("hash_algorithm", DEFAULT_CHECKSUM)
         if not hash_algorithm in VALID_HASH:
             hash_algorithm = DEFAULT_CHECKSUM
-        self.hash = getattr(hashlib, hash_algorithm)(arg)
+        self.hash = getattr(hashlib, hash_algorithm)(data)
         self.name = hash_algorithm
 
-    def update(self, hex_data):
-        self.hash.update(hex_data)
+    def update(self, data=""):
+        if isinstance(data, basestring):
+            self.hash.update(data)
 
-    def display(self, window):
+    def threaded_update(self, data=[]):
+        if not isinstance(data, basestring):
+            global active_thread
+            self.thread = hash_thread(data, self.hash)
+            self.thread.start()
+            self.chunk_thread()
+            active_thread = self
+
+    def chunk_thread(self):
+        ratio = float(self.thread.chunk) / float(self.thread.chunks)
+        percent = int(ratio * 10)
+        leftover = 10 - percent
+        message = "[" + "-" * percent + ">" + "-" * leftover + ("] %3d%%" % int(ratio * 100)) + " chunks hashed"
+        sublime.status_message(message)
+        if not self.thread.is_alive():
+            if self.thread.abort == True:
+                sublime.status_message("Hash calculation aborted!")
+                sublime.set_timeout(lambda: self.reset_thread(), 500)
+            else:
+                sublime.set_timeout(lambda: self.display(), 1000)
+        else:
+            sublime.set_timeout(lambda: self.chunk_thread(), 1000)
+
+    def reset_thread(self):
+        self.thread = None
+
+    def display(self, window=None):
+        if window == None:
+            window = sublime.active_window()
         window.show_input_panel(self.name + ":", str(self.hash.hexdigest()), None, None, None)
 
+class hash_thread(threading.Thread):
+    def __init__(self, data, obj):
+        self.hash = False
+        self.data = data
+        self.obj = obj
+        self.chunk = 0
+        self.chunks = len(data)
+        self.abort = False
+        threading.Thread.__init__(self)
 
-class HexChecksumEvalCommand(sublime_plugin.WindowCommand):
-    def run(self, data, hash_algorithm=None):
-        checksum(hash_algorithm).update(data.decode("hex")).display(self.window)
+    def run(self):
+        for chunk in self.data:
+            self.chunk += 1
+            if self.abort:
+                return
+            else:
+                self.obj.update(chunk)
+
+
+class HashEvalCommand(sublime_plugin.WindowCommand):
+    algorithm = "md5"
+
+    def hash_eval(self, value):
+        checksum(self.algorithm, value).display(self.window)
+
+    def select_hash(self, value):
+        if value != -1:
+            self.algorithm = VALID_HASH[value]
+            self.window.show_input_panel(
+                "hash input:",
+                "",
+                self.hash_eval,
+                None,
+                None
+            )
+
+    def run(self, hash_algorithm=None):
+        self.window.show_quick_panel(VALID_HASH, self.select_hash)
 
 
 class HexChecksumCommand(sublime_plugin.WindowCommand):
@@ -150,10 +239,14 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
         return is_enabled()
 
     def run(self, hash_algorithm=None, panel=False):
-        if not panel:
-            self.get_checksum(hash_algorithm)
+        global active_thread
+        if active_thread != None and active_thread.thread != None and active_thread.thread.is_alive():
+            active_thread.thread.abort = True
         else:
-            self.window.show_quick_panel(VALID_HASH, self.select_checksum)
+            if not panel:
+                self.get_checksum(hash_algorithm)
+            else:
+                self.window.show_quick_panel(VALID_HASH, self.select_checksum)
 
     def select_checksum(self, value):
         if value != -1:
@@ -162,21 +255,14 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
     def get_checksum(self, hash_algorithm=None):
         view = self.window.active_view()
         if view != None:
+            sublime.set_timeout(lambda: sublime.status_message("Checksumming..."), 0)
             hex_hash = checksum(hash_algorithm)
             r_buffer = view.split_by_newlines(sublime.Region(0, view.size()))
+            hex_data = []
             for line in r_buffer:
-                hex_data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "").decode("hex")
-                hex_hash.update(hex_data)
-            hex_hash.display(self.window)
+                hex_data.append(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "").decode("hex"))
+            hex_hash.threaded_update(hex_data)
 
-
-# Define extra hash classes as members of hashlib
-hashlib.mdc2 = mdc2
-hashlib.md4 = md4
-hashlib.sha = sha
-hashlib.ripemd160 = ripemd160
-hashlib.crc32 = crc32
-hashlib.adler32 = adler32
 
 # Compose list of hashes
 verify_hashes(
@@ -184,6 +270,18 @@ verify_hashes(
         'mdc2', 'md4', 'md5',
         'sha', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512',
         'ripemd160',
-        'crc32', 'adler32'
+        'zlib:crc32', 'zlib:adler32',
+        'whirlpool:whirlpool',
+        'tiger:tiger'
     ]
 )
+
+#Define extra hash classes as members of hashlib
+hashlib.mdc2 = mdc2
+hashlib.md4 = md4
+hashlib.sha = sha
+hashlib.ripemd160 = ripemd160
+hashlib.crc32 = crc32
+hashlib.adler32 = adler32
+hashlib.whirlpool = whirlpool.whirlpool
+hashlib.tiger = tiger.tiger

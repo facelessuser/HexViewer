@@ -43,6 +43,10 @@
 		"args": {"panel": true}
 	},
 	{
+		"caption": "Hex Viewer: Generate Hash",
+		"command": "hash_eval"
+	},
+	{
 		"caption": "Preferences: Hex Viewer Settings – Default",
 		"command": "open_file", 
 		"args": { "file": "${packages}/HexViewer/hex_viewer.sublime-settings" }

@@ -23,6 +23,13 @@
                                 "caption": "-"
                             },
                             {
+                                "caption": "Generate Hash",
+                                "command": "hash_eval"
+                            },
+                            {
+                                "caption": "-"
+                            },
+                            {
                                 "caption": "Show Hex Inspector",
                                 "command": "hex_show_inspector"
                             },

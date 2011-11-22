@@ -27,5 +27,9 @@
 		"keys": ["ctrl+shift+b","ctrl+shift+="],
 		"command": "hex_checksum",
 		"args": {"panel": true}
+	},
+	{
+		"keys": ["ctrl+shift+b","ctrl+shift+g"]
+		"command": "hash_eval"
 	}
 ]
