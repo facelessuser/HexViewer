@@ -17,12 +17,16 @@ import sys
 try:
     import whirlpool
 except:
-    whirlpool = None
+    class whirlpool(object):
+        pass
+    whirlpool.whirlpool = None
 
 try:
     import tiger
 except:
-    tiger = None
+    class tiger(object):
+        pass
+    tiger.tiger = None
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
@@ -194,6 +198,7 @@ class checksum:
             window = sublime.active_window()
         window.show_input_panel(self.name + ":", str(self.hash.hexdigest()), None, None, None)
 
+
 class hash_thread(threading.Thread):
     def __init__(self, data, obj):
         self.hash = False
@@ -217,7 +222,7 @@ class HashEvalCommand(sublime_plugin.WindowCommand):
     algorithm = "md5"
 
     def hash_eval(self, value):
-        checksum(self.algorithm, value).display(self.window)
+        checksum(self.algorithm, ''.join(chr(ord(c)) for c in value)).display(self.window)
 
     def select_hash(self, value):
         if value != -1:
