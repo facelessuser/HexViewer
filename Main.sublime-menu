@@ -1,6 +1,6 @@
 [
     {
-        
+
         "id": "tools",
         "caption": "Tools",
         "children":
@@ -91,12 +91,12 @@
                         "children":
                         [
                             {
-                                "command": "open_file", 
+                                "command": "open_file",
                                 "args": {"file": "${packages}/HexViewer/hex_viewer.sublime-settings"},
                                 "caption": "Settings – Default"
                             },
                             {
-                                "command": "open_file", 
+                                "command": "open_file",
                                 "args": {"file": "${packages}/User/hex_viewer.sublime-settings"},
                                 "caption": "Settings – User"
                             },

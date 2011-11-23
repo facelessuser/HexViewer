@@ -29,7 +29,7 @@
 		"args": {"panel": true}
 	},
 	{
-		"keys": ["ctrl+shift+b","ctrl+shift+g"]
+		"keys": ["ctrl+shift+b","ctrl+shift+g"],
 		"command": "hash_eval"
 	}
 ]
