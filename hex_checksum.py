@@ -45,7 +45,7 @@ def verify_hashes(hashes):
                 hashlib.new(item)
                 VALID_HASH.append(item)
             except:
-                print "Hex Viewer: " + name + " hash is not available!"
+                print "Hex Viewer: " + item + " hash is not available!"
 
 
 # Extra hash SSL and ZLIB classes
