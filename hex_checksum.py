@@ -53,12 +53,6 @@ class ssl_algorithm(object):
     __algorithm = None
     __name = None
 
-    def algorithm(self, name, digest_size, arg):
-        self.__algorithm = hashlib.new(name)
-        self.__name = name
-        self.__digest_size = digest_size
-        self.update(arg)
-
     @property
     def name(self):
         return self.__name
@@ -66,6 +60,12 @@ class ssl_algorithm(object):
     @property
     def digest_size(self):
         return self.__digest_size
+
+    def algorithm(self, name, digest_size, arg):
+        self.__algorithm = hashlib.new(name)
+        self.__name = name
+        self.__digest_size = digest_size
+        self.update(arg)
 
     def copy(self):
         return None if self.__algorithm == None else self.__algorithm.copy()

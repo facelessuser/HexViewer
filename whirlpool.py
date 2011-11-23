@@ -30,14 +30,22 @@ DIGESTBITS = 512
 
 
 class whirlpool:
-    name = 'whirlpool'
-    digest_size = DIGESTBYTES
+    __name = 'whirlpool'
+    __digest_size = DIGESTBYTES
 
     def __init__(self, arg=""):
         self.ctx = WhirlpoolStruct()
         if arg != "" and arg != None:
             self.update(arg)
         self.digest_status = 0
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def digest_size(self):
+        return self.__digest_size
 
     def update(self, arg):
         if arg != "" and arg != None:

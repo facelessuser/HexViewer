@@ -20,12 +20,20 @@ import struct
 
 
 class tiger:
-    name = 'tiger'
-    digest_size = 24
+    __name = 'tiger'
+    __digest_size = 24
 
     def __init__(self, arg=""):
         self.tig = TigerStruct()
         self.update(arg)
+
+    @property
+    def name(self):
+        return self.__name
+
+    @property
+    def digest_size(self):
+        return self.__digest_size
 
     def update(self, arg):
         tiger_add(arg, self.tig)
