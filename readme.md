@@ -16,6 +16,7 @@ Hex Viewer is a plugin for Sublime Text 2 that allows the toggling of a file int
 - Display total selected number of bytes and addresses of first group of consecutive bytes in status bar
 - Hex editing
 - Checksumming of files
+- Generate a hash from a string
 
 # Commands
 
@@ -32,6 +33,7 @@ There are 10 commands available via the command palette or by key-bindings.
 - Hex Viewer: Discard All Edits
 - Hex Viewer: Export Bin
 - Hex Viewer: Get Checksum
+- Hex Viewer: Generate Hash
 
 ## Hex Viewer: Toggle Hex View
 Toggle file in or out of hex view
