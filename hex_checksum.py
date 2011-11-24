@@ -121,6 +121,11 @@ class zlib_algorithm(object):
 
 
 # Additional Hashes
+class md2(ssl_algorithm):
+    def __init__(self, arg=''):
+        self.algorithm('md2', 16, arg)
+
+
 class mdc2(ssl_algorithm):
     def __init__(self, arg=''):
         self.algorithm('mdc2', 16, arg)
@@ -272,7 +277,7 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
 # Compose list of hashes
 verify_hashes(
     [
-        'mdc2', 'md4', 'md5',
+        'md2', 'mdc2', 'md4', 'md5',
         'sha', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512',
         'ripemd160',
         'zlib:crc32', 'zlib:adler32',
@@ -282,6 +287,7 @@ verify_hashes(
 )
 
 #Define extra hash classes as members of hashlib
+hashlib.md2 = md2
 hashlib.mdc2 = mdc2
 hashlib.md4 = md4
 hashlib.sha = sha

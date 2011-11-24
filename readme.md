@@ -4,7 +4,7 @@ Hex Viewer is a plugin for Sublime Text 2 that allows the toggling of a file int
 <img src="http://dl.dropbox.com/u/342698/HexViewer/preview.png" border="0"/>
 
 # Installation 
-- Download is available in Package Control or you can download directly and drop into your Sublime Text 2 packages directory (plugin folder must be named HexViewer)
+- Download is available in Package Control or you can download or clone directly and drop into your Sublime Text 2 packages directory (plugin folder must be named HexViewer)
 - You may need to restart Sublime Text 2 after installation
 
 # Features
@@ -95,6 +95,9 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+#Version 1.1
+- Add MD2 so Windows OS can find it (Mac and Linux do not have this one; Mac uses MDC2 for some reason)
 
 #Version 1.0
 - Allow unicode text in "Generate Hash"
