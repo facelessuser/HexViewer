@@ -222,7 +222,7 @@ class HashEvalCommand(sublime_plugin.WindowCommand):
     algorithm = "md5"
 
     def hash_eval(self, value):
-        checksum(self.algorithm, ''.join(chr(ord(c)) for c in value)).display(self.window)
+        checksum(self.algorithm, ''.join(unichr(ord(c)).encode('utf-8') for c in value)).display(self.window)
 
     def select_hash(self, value):
         if value != -1:
