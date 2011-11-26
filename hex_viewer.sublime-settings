@@ -58,9 +58,6 @@
 	// Auto open binary files in hex viewer (uses auto_open_patterns)
 	"auto_open" : false,
 
-	// Pause before opening a binary file preview (go to anything peview etc.) into a hex view
-	"preview_buffer_delay" : 2000,
-
 	// Auto open patterns to open in hex viewer
 	"auto_open_patterns" : ["*.bin", "*.pyc"]
 }

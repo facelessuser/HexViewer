@@ -18,7 +18,6 @@ DEFAULT_BYTES_WIDE = 24
 VALID_BITS = [8, 16, 32, 64, 128]
 VALID_BYTES = [8, 10, 16, 24, 32, 48, 64, 128, 256, 512]
 AUTO_OPEN = False
-MS_PREVIEW_DELAY = 2000
 
 
 class ReadBin(threading.Thread):
@@ -128,6 +127,9 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
                 view = window.active_view()
         # Open bin file in hex viewer
         if window and view and (open_now or view.file_name() == self.open_me):
+            is_preview = window and view.file_name() not in [file.file_name() for file in window.views()]
+            if is_preview:
+                return
             view.settings().set("hex_no_auto_open", True)
             window.run_command('hex_viewer')
 
@@ -140,7 +142,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
                 # Handle previw or direct open
                 if is_preview:
                     self.open_me = file_name
-                    sublime.set_timeout(lambda: self.open_bin_file(), hv_settings.get("preview_buffer_delay", MS_PREVIEW_DELAY))
+                    sublime.set_timeout(lambda: self.open_bin_file(), 100)
                 else:
                     self.open_me = file_name
                     self.open_bin_file(view, window)
@@ -150,7 +152,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
         if hv_settings.get("auto_open", AUTO_OPEN) and not view.settings().get('is_widget'):
             window = view.window()
             is_preview = window and view.file_name() not in [file.file_name() for file in window.views()]
-            if is_preview and view.settings().get("hex_view_postpone_hexview", True) and not view.is_loading():
+            if view.settings().get("hex_view_postpone_hexview", True) and not view.is_loading():
                 self.auto_load(view, window, is_preview)
 
     def on_load(self, view):
