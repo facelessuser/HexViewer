@@ -11,11 +11,14 @@ import threading
 from os.path import basename
 from os.path import getsize as get_file_size
 from hex_common import *
+from fnmatch import fnmatch
 
 DEFAULT_BIT_GROUP = 16
 DEFAULT_BYTES_WIDE = 24
 VALID_BITS = [8, 16, 32, 64, 128]
 VALID_BYTES = [8, 10, 16, 24, 32, 48, 64, 128, 256, 512]
+AUTO_OPEN = False
+MS_PREVIEW_DELAY = 2000
 
 
 class ReadBin(threading.Thread):
@@ -102,6 +105,62 @@ class ReadBin(threading.Thread):
 
 
 class HexViewerListenerCommand(sublime_plugin.EventListener):
+    open_me = None
+
+    def is_bin_file(self, file_path):
+        match = False
+        patterns = hv_settings.get("auto_open_patterns", [])
+        for pattern in patterns:
+            match |= fnmatch(file_path, pattern)
+            if match:
+                break
+        return match
+
+    def open_bin_file(self, view=None, window=None):
+        open_now = False
+        if view != None and window != None:
+            # Direct open file
+            open_now = True
+        else:
+            # Preview view of file
+            window = sublime.active_window()
+            if window != None:
+                view = window.active_view()
+        # Open bin file in hex viewer
+        if window and view and (open_now or view.file_name() == self.open_me):
+            view.settings().set("hex_no_auto_open", True)
+            window.run_command('hex_viewer')
+
+    def auto_load(self, view, window, is_preview):
+        file_name = view.file_name()
+        # Make sure we have a file name and that we haven't already processed the view
+        if file_name != None and not view.settings().get("hex_no_auto_open", False):
+            # Make sure the file is specified in our binary file list
+            if self.is_bin_file(file_name):
+                # Handle previw or direct open
+                if is_preview:
+                    self.open_me = file_name
+                    sublime.set_timeout(lambda: self.open_bin_file(), hv_settings.get("preview_buffer_delay", MS_PREVIEW_DELAY))
+                else:
+                    self.open_me = file_name
+                    self.open_bin_file(view, window)
+
+    def on_activated(self, view):
+        # Logic for preview windows
+        if hv_settings.get("auto_open", AUTO_OPEN) and not view.settings().get('is_widget'):
+            window = view.window()
+            is_preview = window and view.file_name() not in [file.file_name() for file in window.views()]
+            if is_preview and view.settings().get("hex_view_postpone_hexview", True) and not view.is_loading():
+                self.auto_load(view, window, is_preview)
+
+    def on_load(self, view):
+        # Logic for direct open files
+        if hv_settings.get("auto_open", AUTO_OPEN) and not view.settings().get('is_widget'):
+            window = view.window()
+            is_preview = window and view.file_name() not in [file.file_name() for file in window.views()]
+            if window and not is_preview and view.settings().get("hex_view_postpone_hexview", True):
+                self.auto_load(view, window, is_preview)
+
     def on_pre_save(self, view):
         # We are saving the file so it will now reference itself
         # Instead of the original binary file, so reset settings.
@@ -205,6 +264,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         view.settings().set("hex_viewer_bytes", self.bytes)
         view.settings().set("hex_viewer_actual_bytes", self.bytes_wide)
         view.settings().set("hex_viewer_file_name", file_name)
+        view.settings().set("hex_no_auto_open", True)
 
         # Show hex content in view; make read only
         view.set_scratch(True)
@@ -223,6 +283,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         if hv_settings.get("inspector", False):
             self.window.run_command("hex_hide_inspector")
         view = self.window.open_file(file_name)
+        view.settings().set("hex_no_auto_open", True)
         self.window.focus_view(self.view)
         self.window.run_command("close_file")
         self.window.focus_view(view)

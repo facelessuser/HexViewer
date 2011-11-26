@@ -52,5 +52,15 @@
 	// (mdc2|md4|md5|sha|sha1|sha224|sha256|sha384|sha512|ripemd160|crc32|adler32)
 	"hash_algorithm" : "md5",
 
-	"checksum_on_save" : true
+	// Enable checksum on save
+	"checksum_on_save" : true,
+
+	// Auto open binary files in hex viewer (uses auto_open_patterns)
+	"auto_open" : false,
+
+	// Pause before opening a binary file preview (go to anything peview etc.) into a hex view
+	"preview_buffer_delay" : 2000,
+
+	// Auto open patterns to open in hex viewer
+	"auto_open_patterns" : ["*.bin", "*.pyc"]
 }
