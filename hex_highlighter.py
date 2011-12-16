@@ -18,20 +18,33 @@ THROTTLING = False
 
 
 class HexHighlighterListenerCommand(sublime_plugin.EventListener):
+    def __init__(self):
+        self.debounce_id = 0
+
     def check_debounce(self, debounce_id):
         if self.debounce_id == debounce_id:
             sublime.active_window().run_command('hex_highlighter')
             self.debounce_id = 0
+        else:
+            debounce_id = randrange(1, 999999)
+            self.debounce_id = debounce_id
+            sublime.set_timeout(
+                lambda: self.check_debounce(debounce_id=debounce_id),
+                MS_HIGHLIGHT_DELAY
+            )
 
     def debounce(self):
         # Check if debunce not currently active, or if of same type,
         # but let edit override selection for undos
         debounce_id = randrange(1, 999999)
-        self.debounce_id = debounce_id
-        sublime.set_timeout(
-            lambda: self.check_debounce(debounce_id=debounce_id),
-            MS_HIGHLIGHT_DELAY
-        )
+        if self.debounce_id == 0:
+            self.debounce_id = debounce_id
+            sublime.set_timeout(
+                lambda: self.check_debounce(debounce_id=debounce_id),
+                MS_HIGHLIGHT_DELAY
+            )
+        else:
+            self.debounce_id = debounce_id
 
     def on_selection_modified(self, view):
         self.debounce()
