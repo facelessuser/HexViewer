@@ -79,7 +79,7 @@ def adjust_hex_sel(view, start, end, group_size):
         else:
             end -= 2
     if start != None and end != None:
-        bytes = get_byte_count(start, end + 1, group_size)
+        bytes = get_byte_count(start, end, group_size)
     return start, end, bytes
 
 
