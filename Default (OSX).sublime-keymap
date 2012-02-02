@@ -29,6 +29,10 @@
 		"args": {"panel": true}
 	},
 	{
+		"keys": ["super+shift+b","super+shift+-"],
+		"command": "hash_selection"
+	},
+	{
 		"keys": ["super+shift+b","super+shift+g"],
 		"command": "hash_eval"
 	}

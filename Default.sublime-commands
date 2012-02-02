@@ -47,6 +47,10 @@
 		"command": "hash_eval"
 	},
 	{
+		"caption": "Hex Viewer: Generate Hash from Selection",
+		"command": "hash_selection"
+	},
+	{
 		"caption": "Preferences: Hex Viewer Settings – Default",
 		"command": "open_file",
 		"args": { "file": "${packages}/HexViewer/hex_viewer.sublime-settings" }

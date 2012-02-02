@@ -191,9 +191,9 @@ class checksum:
                 sublime.status_message("Hash calculation aborted!")
                 sublime.set_timeout(lambda: self.reset_thread(), 500)
             else:
-                sublime.set_timeout(lambda: self.display(), 1000)
+                sublime.set_timeout(lambda: self.display(), 500)
         else:
-            sublime.set_timeout(lambda: self.chunk_thread(), 1000)
+            sublime.set_timeout(lambda: self.chunk_thread(), 500)
 
     def reset_thread(self):
         self.thread = None
@@ -223,11 +223,47 @@ class hash_thread(threading.Thread):
                 self.obj.update(chunk)
 
 
+class HashSelectionCommand(sublime_plugin.WindowCommand):
+    algorithm = "md5"
+
+    def has_selections(self):
+        single = False
+        view = self.window.active_view()
+        if view != None:
+            if len(view.sel()) > 0:
+                single = True
+        return single
+
+    def hash_eval(self, value):
+        if value != -1:
+            self.algorithm = VALID_HASH[value]
+            if self.has_selections():
+                # Initialize hasher and related values
+                data = []
+                view = self.window.active_view()
+                hasher = checksum(self.algorithm)
+                # Walk through all selections breaking up data by lines
+                for sel in view.sel():
+                    lines = view.substr(sel).splitlines(True)
+                    for line in lines:
+                        data.append(''.join(unichr(ord(c)).encode('utf-8') for c in line))
+                hasher.threaded_update(data)
+
+    def run(self):
+        if self.has_selections():
+            self.window.show_quick_panel(VALID_HASH, self.hash_eval)
+
+
 class HashEvalCommand(sublime_plugin.WindowCommand):
     algorithm = "md5"
 
     def hash_eval(self, value):
-        checksum(self.algorithm, ''.join(unichr(ord(c)).encode('utf-8') for c in value)).display(self.window)
+        data = []
+        hasher = checksum(self.algorithm)
+        lines = value.splitlines(True)
+        for line in lines:
+            data.append(''.join(unichr(ord(c)).encode('utf-8') for c in line))
+        hasher.threaded_update(data)
 
     def select_hash(self, value):
         if value != -1:

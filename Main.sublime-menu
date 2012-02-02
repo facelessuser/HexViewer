@@ -27,6 +27,10 @@
                                 "command": "hash_eval"
                             },
                             {
+                                "caption": "Generate Hash from Selection",
+                                "command": "hash_selection"
+                            },
+                            {
                                 "caption": "-"
                             },
                             {

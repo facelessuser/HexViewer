@@ -16,7 +16,7 @@ Hex Viewer is a plugin for Sublime Text 2 that allows the toggling of a file int
 - Display total selected number of bytes and addresses of first group of consecutive bytes in status bar
 - Hex editing
 - Checksumming of files
-- Generate a hash from a string
+- Generate a hash from a entered string or selection
 - Auto open binary files in Hex Viewer (disabled by default)
 
 # Commands
@@ -69,6 +69,9 @@ By default, it opens up a quick panel with all available hashes that can be used
 ## Hex Viewer: Generate Hash
 Shows a quick panel allowing you to select the desired hash, and then shows an input panel that allows you to specify the string to be hashed. A panel is then displayed with your generated hash accoriding to specifications.
 
+## Hex Viewer: Generate Hash from Selection
+Allows you to genrate hashes from your current selection(s).  Multiselect regions' content will be combined and evaluated together.  If a region contains newlines, they will be hashed as well.
+
 # Configurable settings
 Settings are configurable in the hex_viewer.sublime-settings file.
 
@@ -98,43 +101,48 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#Version 1.4
+# Version 1.5
+- Allow the hashing of current selection(s).  Multiselect regions's content will be combined and evaluated together
+- Update hash progress quicker
+- Chunk hashes entered in the input panel in case very large amounts of data are pasted in
+
+# Version 1.4
 - Fix issue where some selections will select an extra hex char that is not really selected
 - Update missing item from changelog
 
-#Version 1.3
+# Version 1.3
 - Decrease debounce threads to one
 
-#Version 1.2
+# Version 1.2
 - Auto open specified binary files in Hex Viewer (disabled by default)
 
-#Version 1.1
+# Version 1.1
 - Add MD2 so Windows OS can find it (Mac and Linux do not have this one; Mac uses MDC2 for some reason)
 
-#Version 1.0
+# Version 1.0
 - Allow unicode text in "Generate Hash"
 
-#Version 0.9
+# Version 0.9
 - String to hash not always working now fixed
 - Fixes for when certain hashes are not found
 
-#Version 0.8
+# Version 0.8
 - New hash algorithms: Whirlpool and Tiger-192
 - Checksums are now threaded
 - Exposed new command to tap into hashes called "Hex Viewer: Generate Hash"
 - Rework logic to determine which hashes are available
 
-#Version 0.7
+# Version 0.7
 - New hash algorithms from openssl: sha, mdc2, md4, ripemd160 (dynamcially added if system supports them)
 - Rename "Get Checksum" command to "Run Checksum"
 - When invoking shortcut or command for checksumming, show quick panel with all valid hash algorithms to choose from
 
-#Version 0.6
+# Version 0.6
 - Commands accessible from menu Tools > Packages > Hex Viewer
 - Fix checksum not responding to settings change
 - Add CRC32 and ADLER32 hash algorithms for checksums
 
-#Version 0.5
+# Version 0.5
 - New progress animation in status bar when reading bin file
 - Setting to enable or disable highlight throttling (default is disabled)
 - Don't display incorrect byte count when highlight is throttled
@@ -142,7 +150,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - Better highlighting of edits
 - A little cleanup
 
-#Version 0.4
+# Version 0.4
 - Hide Inspector tmLanguage file
 - Chunk checksum and export for faster, more linear performance with large files
 - Thread binary file reading and show progress of bytes parsed in status bar
@@ -151,14 +159,14 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - Add setting to throttle highlighting selected bytes
 - Add divider in settings menu
 
-#Version 0.3
+# Version 0.3
 - On export, rename tab to new export name
 - Fix checksum failing when passing certain data through Sublime Text run_command API
 - Account for NaNs in floats and doubles in Hex Inspector
 
-#Version 0.2
+# Version 0.2
 - Fix issue where large blocks get highlighted when the end of line is selected
 - Add checksum command (also runs when export is made)
 
-#Version 0.1
+# Version 0.1
 - Initial release
