@@ -18,6 +18,8 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 import array
 import struct
 
+BIG_ENDIAN = True
+
 
 class tiger:
     __name = 'tiger'
@@ -39,12 +41,21 @@ class tiger:
         tiger_add(arg, self.tig)
 
     def digest(self):
-        tiger_finalize(self.tig)
-        return (
-            ((self.tig.res[0] & 0xFFFFFFFFFFFFFFFF) << 32 * 4) |
-            ((self.tig.res[1] & 0xFFFFFFFFFFFFFFFF) << 16 * 4) |
-            ((self.tig.res[2] & 0xFFFFFFFFFFFFFFFF))
-        )
+        if BIG_ENDIAN:
+            tiger_finalize(self.tig)
+            big_endian = struct.unpack("<QQQ", struct.pack(">QQQ", self.tig.res[0], self.tig.res[1], self.tig.res[2]))
+            return (
+                ((big_endian[0] & 0xFFFFFFFFFFFFFFFF) << 32 * 4) |
+                ((big_endian[1] & 0xFFFFFFFFFFFFFFFF) << 16 * 4) |
+                ((big_endian[2] & 0xFFFFFFFFFFFFFFFF))
+            )
+        else:
+            tiger_finalize(self.tig)
+            return (
+                ((self.tig.res[0] & 0xFFFFFFFFFFFFFFFF) << 32 * 4) |
+                ((self.tig.res[1] & 0xFFFFFFFFFFFFFFFF) << 16 * 4) |
+                ((self.tig.res[2] & 0xFFFFFFFFFFFFFFFF))
+            )
 
     def hexdigest(self):
         return "%048x" % self.digest()
@@ -716,7 +727,7 @@ def tiger_finalize(tig):
     while len(temp) > 56:
         temp.pop(56)
 
-    temp.fromstring(struct.pack('Q', length << 3))
+    temp.fromstring(struct.pack('<Q', length << 3))
     tiger_compress(temp, tig.res)
 
 
@@ -758,3 +769,7 @@ def test_tiger_hash():
     test.update('The quick brown fox jumps over the lazy dog')
     assert test.hexdigest() == \
         "33b3d0fbc7b8a2559b7b4689357d928c7202768b4c655f49"
+
+# BIG_ENDIAN = False
+# test_tiger_hash()
+# BIG_ENDIAN = True
