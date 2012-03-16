@@ -6,8 +6,9 @@ Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
 
 import sublime
 import sublime_plugin
-from random import randrange
 from hex_common import *
+from time import time, sleep
+import thread
 
 HIGHLIGHT_SCOPE = "string"
 HIGHLIGHT_ICON = "dot"
@@ -17,40 +18,17 @@ MAX_HIGHIGHT = 1000
 THROTTLING = False
 
 
-class HexHighlighterListenerCommand(sublime_plugin.EventListener):
-    def __init__(self):
-        self.debounce_id = 0
+class Pref:
+    def load(self):
+        Pref.wait_time = 0.12
+        Pref.time = time()
+        Pref.modified = False
+        Pref.ignore_all = False
 
-    def check_debounce(self, debounce_id):
-        if self.debounce_id == debounce_id:
-            sublime.active_window().run_command('hex_highlighter')
-            self.debounce_id = 0
-        else:
-            debounce_id = randrange(1, 999999)
-            self.debounce_id = debounce_id
-            sublime.set_timeout(
-                lambda: self.check_debounce(debounce_id=debounce_id),
-                MS_HIGHLIGHT_DELAY
-            )
-
-    def debounce(self):
-        # Check if debunce not currently active, or if of same type,
-        # but let edit override selection for undos
-        debounce_id = randrange(1, 999999)
-        if self.debounce_id == 0:
-            self.debounce_id = debounce_id
-            sublime.set_timeout(
-                lambda: self.check_debounce(debounce_id=debounce_id),
-                MS_HIGHLIGHT_DELAY
-            )
-        else:
-            self.debounce_id = debounce_id
-
-    def on_selection_modified(self, view):
-        self.debounce()
+Pref().load()
 
 
-class HexHighlighterCommand(sublime_plugin.WindowCommand):
+class HexHighlighter():
     def init(self):
         init_status = False
         self.address_done = False
@@ -87,9 +65,6 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
             self.hex_char_range = get_hex_char_range(self.group_size, self.bytes_wide)
             init_status = True
         return init_status
-
-    def is_enabled(self):
-        return is_enabled()
 
     def get_address(self, start, bytes, line):
         lines = line
@@ -241,7 +216,10 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
             else:
                 self.hex_to_ascii(sel)
 
-    def run(self):
+    def run(self, window):
+        if window == None:
+            return
+        self.window = window
         view = self.window.active_view()
         self.view = view
 
@@ -271,3 +249,51 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
         # Display selected byte addresses and total bytes selected
         self.display_address()
         self.display_total_bytes()
+
+hh_highlight = HexHighlighter().run
+
+
+class HexHighlighterCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        if Pref.ignore_all:
+            return
+        Pref.modified = True
+
+    def is_enabled(self):
+        return is_enabled()
+
+
+class HexHighlighterListenerCommand(sublime_plugin.EventListener):
+    def on_selection_modified(self, view):
+        if not is_enabled() or Pref.ignore_all:
+            return
+        now = time()
+        if now - Pref.time > Pref.wait_time:
+            sublime.set_timeout(lambda: hh_run(), 0)
+        else:
+            Pref.modified = True
+            Pref.time = now
+
+
+# Kick off hex highlighting
+def hh_run():
+    Pref.modified = False
+    # Ignore selection and edit events inside the routine
+    Pref.ignore_all = True
+    hh_highlight(sublime.active_window())
+    Pref.ignore_all = False
+    Pref.time = time()
+
+
+# Start thread that will ensure highlighting happens after a barage of events
+# Initial highlight is instant, but subsequent events in close succession will
+# be ignored and then accounted for with one match by this thread
+def hh_loop():
+    while True:
+        if Pref.modified == True and time() - Pref.time > Pref.wait_time:
+            sublime.set_timeout(lambda: hh_run(), 0)
+        sleep(0.5)
+
+if not 'running_hh_loop' in globals():
+    running_hh_loop = True
+    thread.start_new_thread(hh_loop, ())

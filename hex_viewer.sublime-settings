@@ -1,63 +1,63 @@
 {
-	// Group bytes together by bits
-	// Valid Settings (8|16|32|64|128)
-	"group_bytes_by_bits" : 16,
+    // Group bytes together by bits
+    // Valid Settings (8|16|32|64|128)
+    "group_bytes_by_bits" : 16,
 
-	// Number of 8 bit bytes per line.
-	// Will use closet number of bytes if group bytes
-	// does not align.
-	// Valid Settings (8|10|16|24|32|48|64|128|256|512)
-	"bytes_per_line" : 24,
+    // Number of 8 bit bytes per line.
+    // Will use closet number of bytes if group bytes
+    // does not align.
+    // Valid Settings (8|10|16|24|32|48|64|128|256|512)
+    "bytes_per_line" : 24,
 
-	// Use a custom font and/or font size in hex view.
-	// Use None to use the current Sublime Text font.
-	"custom_font" : "none",
+    // Use a custom font and/or font size in hex view.
+    // Use None to use the current Sublime Text font.
+    "custom_font" : "none",
 
-	// Use zero to use the current Sublime Text font size.
-	"custom_font_size" : 0,
+    // Use zero to use the current Sublime Text font size.
+    "custom_font_size" : 0,
 
-	// Show inspector panel
-	"inspector" : true,
+    // Show inspector panel
+    "inspector" : true,
 
-	// endian? (big|little)
-	"inspector_endian" : "big",
+    // endian? (big|little)
+    "inspector_endian" : "big",
 
-	// Show inspector panel on hex view load and hide on hex view hide
-	"inspector_auto_show" : true,
+    // Show inspector panel on hex view load and hide on hex view hide
+    "inspector_auto_show" : true,
 
-	// Approximate max byte selection.
-	// The highlighter will highlight individual selections until
-	// the max number of bytes is found.  The selection containing
-	// the maximum byte will still be finished even if it has more
-	// bytes than the max.
-	"highlight_max_bytes" : 1000,
+    // Approximate max byte selection.
+    // The highlighter will highlight individual selections until
+    // the max number of bytes is found.  The selection containing
+    // the maximum byte will still be finished even if it has more
+    // bytes than the max.
+    "highlight_max_bytes" : 1000,
 
-	//Enable highlight throttling
-	"highlight_throttle" : false,
+    //Enable highlight throttling
+    "highlight_throttle" : false,
 
-	// Scope? (Defined in theme files.)
-	// Examples: (keyword|string|number)
-	"highlight_scope" : "string",
-	"highlight_edit_scope": "keyword",
+    // Scope? (Defined in theme files.)
+    // Examples: (keyword|string|number)
+    "highlight_scope" : "string",
+    "highlight_edit_scope": "keyword",
 
-	// Icon? (dot|circle|bookmark|cross|none)
-	"highlight_icon" : "dot",
-	"highlight_edit_icon" : "none",
+    // Icon? (dot|circle|bookmark|cross|none)
+    "highlight_icon" : "none",
+    "highlight_edit_icon" : "none",
 
-	// Style? (solid|outline|underline|none)
-	"highlight_style" : "solid",
-	"highlight_edit_style" : "underline",
+    // Style? (solid|outline|underline|none)
+    "highlight_style" : "solid",
+    "highlight_edit_style" : "underline",
 
-	// Checksum algorithm default? (the default is what is applied to a file when saving)
-	// (mdc2|md4|md5|sha|sha1|sha224|sha256|sha384|sha512|ripemd160|crc32|adler32)
-	"hash_algorithm" : "md5",
+    // Checksum algorithm default? (the default is what is applied to a file when saving)
+    // (mdc2|md4|md5|sha|sha1|sha224|sha256|sha384|sha512|ripemd160|crc32|adler32)
+    "hash_algorithm" : "md5",
 
-	// Enable checksum on save
-	"checksum_on_save" : true,
+    // Enable checksum on save
+    "checksum_on_save" : true,
 
-	// Auto open binary files in hex viewer (uses auto_open_patterns)
-	"auto_open" : false,
+    // Auto open binary files in hex viewer (uses auto_open_patterns)
+    "auto_open" : false,
 
-	// Auto open patterns to open in hex viewer
-	"auto_open_patterns" : ["*.bin", "*.pyc"]
+    // Auto open patterns to open in hex viewer
+    "auto_open_patterns" : ["*.bin", "*.pyc"]
 }
