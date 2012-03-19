@@ -15,12 +15,16 @@ hv_settings = sublime.load_settings('hex_viewer.sublime-settings')
 hv_inspector_enable = hv_settings.get("inspector", False)
 
 
-def is_enabled():
+def is_enabled(current_view=None):
     window = sublime.active_window()
     if window == None:
         return False
     view = window.active_view()
     if view == None:
+        return False
+    # Check not only if active main view is hex,
+    # check if current view is the main active view
+    if current_view != None and current_view.id() != view.id():
         return False
     syntax = view.settings().get('syntax')
     language = basename(syntax).replace('.tmLanguage', '').lower() if syntax != None else "plain text"

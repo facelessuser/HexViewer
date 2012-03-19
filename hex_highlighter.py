@@ -265,7 +265,7 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
 
 class HexHighlighterListenerCommand(sublime_plugin.EventListener):
     def on_selection_modified(self, view):
-        if not is_enabled() or Pref.ignore_all:
+        if not is_enabled(view) or Pref.ignore_all:
             return
         now = time()
         if now - Pref.time > Pref.wait_time:
