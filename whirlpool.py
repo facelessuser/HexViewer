@@ -29,7 +29,7 @@ DIGESTBYTES = 64
 DIGESTBITS = 512
 
 
-class whirlpool:
+class whirlpool(object):
     __name = 'whirlpool'
     __digest_size = DIGESTBYTES
 
@@ -623,7 +623,7 @@ rc = [
 ]
 
 
-class WhirlpoolStruct:
+class WhirlpoolStruct(object):
     def __init__(self):
         self.bitLength = [0] * 32
         self.buffer = [0] * DIGESTBYTES

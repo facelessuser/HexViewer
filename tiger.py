@@ -21,7 +21,7 @@ import struct
 BIG_ENDIAN = True
 
 
-class tiger:
+class tiger(object):
     __name = 'tiger'
     __digest_size = 24
 
@@ -590,7 +590,7 @@ t4 = [
 ]
 
 
-class TigerStruct:
+class TigerStruct(object):
     def __init__(self):
         self.res = [0x0123456789ABCDEF, 0xFEDCBA9876543210, 0xF096A5B4C3B2E187]
         self.length = 0
@@ -732,6 +732,7 @@ def tiger_finalize(tig):
 
 
 def test_tiger_hash():
+    # TODO: Re-generate hashes with default endian
     #Tests
     assert tiger('').hexdigest() == \
         '24f0130c63ac933216166e76b1bb925ff373de2d49584e7a'
@@ -769,7 +770,3 @@ def test_tiger_hash():
     test.update('The quick brown fox jumps over the lazy dog')
     assert test.hexdigest() == \
         "33b3d0fbc7b8a2559b7b4689357d928c7202768b4c655f49"
-
-# BIG_ENDIAN = False
-# test_tiger_hash()
-# BIG_ENDIAN = True

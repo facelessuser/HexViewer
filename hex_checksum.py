@@ -157,7 +157,7 @@ class adler32(zlib_algorithm):
 
 
 # Sublime Text Commands
-class checksum:
+class checksum(object):
     thread = None
 
     def __init__(self, hash_algorithm=None, data=""):

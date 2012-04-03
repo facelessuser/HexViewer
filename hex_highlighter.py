@@ -18,17 +18,18 @@ MAX_HIGHIGHT = 1000
 THROTTLING = False
 
 
-class Pref:
-    def load(self):
-        Pref.wait_time = 0.12
-        Pref.time = time()
-        Pref.modified = False
-        Pref.ignore_all = False
+class Pref(object):
+    @classmethod
+    def load(cls):
+        cls.wait_time = 0.12
+        cls.time = time()
+        cls.modified = False
+        cls.ignore_all = False
 
-Pref().load()
+Pref.load()
 
 
-class HexHighlighter():
+class HexHighlighter(object):
     def init(self):
         init_status = False
         self.address_done = False
