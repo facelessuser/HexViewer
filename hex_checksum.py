@@ -18,15 +18,13 @@ try:
     import whirlpool
 except:
     class whirlpool(object):
-        pass
-    whirlpool.whirlpool = None
+        whirlpool = None
 
 try:
     import tiger
 except:
     class tiger(object):
-        pass
-    tiger.tiger = None
+        tiger = None
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
