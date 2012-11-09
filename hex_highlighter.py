@@ -29,6 +29,10 @@ class Pref(object):
 Pref.load()
 
 
+class HhThreadMgr(object):
+    restart = False
+
+
 class HexHighlighter(object):
     def init(self):
         init_status = False
@@ -290,11 +294,17 @@ def hh_run():
 # Initial highlight is instant, but subsequent events in close succession will
 # be ignored and then accounted for with one match by this thread
 def hh_loop():
-    while True:
+    while not HhThreadMgr.restart:
         if Pref.modified == True and time() - Pref.time > Pref.wait_time:
             sublime.set_timeout(lambda: hh_run(), 0)
         sleep(0.5)
 
+    if HhThreadMgr.restart:
+        HhThreadMgr.restart = False
+        sublime.set_timeout(lambda: thread.start_new_thread(hh_loop, ()), 0)
+
 if not 'running_hh_loop' in globals():
     running_hh_loop = True
     thread.start_new_thread(hh_loop, ())
+else:
+    HhThreadMgr.restart = True

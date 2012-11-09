@@ -23,7 +23,7 @@ class HexShowInspectorCommand(sublime_plugin.WindowCommand):
         view.set_syntax_file("Packages/HexViewer/HexInspect.hidden-tmLanguage")
         view.settings().set("draw_white_space", "none")
         view.settings().set("draw_indent_guides", False)
-        view.settings().set("gutter", "none")
+        view.settings().set("gutter", False)
         view.settings().set("line_numbers", False)
         # Show
         self.window.run_command("show_panel", {"panel": "output.hex_viewer_inspector"})
