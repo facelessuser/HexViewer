@@ -1,15 +1,15 @@
-'''
+"""
 Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
-'''
+"""
 
 import sublime
 import sublime_plugin
 from os.path import dirname, exists
 import re
-from hex_common import *
-from hex_checksum import checksum
+from HexViewer.hex_common import *
+from HexViewer.hex_checksum import checksum
 
 USE_CHECKSUM_ON_SAVE = True
 

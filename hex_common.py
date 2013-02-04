@@ -1,8 +1,8 @@
-'''
+"""
 Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
-'''
+"""
 
 import sublime
 from os.path import basename
@@ -10,9 +10,6 @@ from os.path import basename
 ADDRESS_OFFSET = 11
 ASCII_OFFSET = 3
 BITS_PER_BYTE = 8
-
-hv_settings = sublime.load_settings('hex_viewer.sublime-settings')
-hv_inspector_enable = hv_settings.get("inspector", False)
 
 
 def is_enabled(current_view=None):
@@ -97,3 +94,10 @@ def underline(selected_bytes):
             new_regions.append(sublime.Region(start))
             start += 1
     return new_regions
+
+
+def plugin_loaded():
+    global hv_settings
+    global hv_inspector_enable
+    hv_settings = sublime.load_settings('hex_viewer.sublime-settings')
+    hv_inspector_enable = hv_settings.get("inspector", False)

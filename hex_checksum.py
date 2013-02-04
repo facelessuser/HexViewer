@@ -1,30 +1,19 @@
-'''
+"""
 Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
-'''
+"""
 
 import sublime
 import sublime_plugin
 import re
-from hex_common import *
+from HexViewer.hex_common import *
 import threading
 import hashlib
 import zlib
 import sys
+from HexViewer import whirlpool, tiger
 
-# Try and include additional hashes
-try:
-    import whirlpool
-except:
-    class whirlpool(object):
-        whirlpool = None
-
-try:
-    import tiger
-except:
-    class tiger(object):
-        tiger = None
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
@@ -41,13 +30,13 @@ def verify_hashes(hashes):
                 getattr(sys.modules[module[0]], module[1])
                 VALID_HASH.append(module[1])
             except:
-                print "Hex Viewer: " + module[1] + " hash is not available!"
+                print("Hex Viewer: " + module[1] + " hash is not available!")
         else:
             try:
                 hashlib.new(item)
                 VALID_HASH.append(item)
             except:
-                print "Hex Viewer: " + item + " hash is not available!"
+                print("Hex Viewer: " + item + " hash is not available!")
 
 
 # Extra hash SSL and ZLIB classes
@@ -315,8 +304,8 @@ verify_hashes(
         'sha', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512',
         'ripemd160',
         'zlib:crc32', 'zlib:adler32',
-        'whirlpool:whirlpool',
-        'tiger:tiger'
+        'HexViewer.whirlpool:whirlpool',
+        'HexViewer.tiger:tiger'
     ]
 )
 

@@ -1,14 +1,14 @@
-'''
+"""
 Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
-'''
+"""
 
 import sublime
 import sublime_plugin
-from hex_common import *
+from HexViewer.hex_common import *
 from time import time, sleep
-import thread
+import _thread as thread
 
 HIGHLIGHT_SCOPE = "string"
 HIGHLIGHT_ICON = "dot"
@@ -255,8 +255,6 @@ class HexHighlighter(object):
         self.display_address()
         self.display_total_bytes()
 
-hh_highlight = HexHighlighter().run
-
 
 class HexHighlighterCommand(sublime_plugin.WindowCommand):
     def run(self):
@@ -303,8 +301,14 @@ def hh_loop():
         HhThreadMgr.restart = False
         sublime.set_timeout(lambda: thread.start_new_thread(hh_loop, ()), 0)
 
-if not 'running_hh_loop' in globals():
-    running_hh_loop = True
-    thread.start_new_thread(hh_loop, ())
-else:
-    HhThreadMgr.restart = True
+
+def plugin_loaded():
+    global hh_highlight
+    hh_highlight = HexHighlighter().run
+
+    if not 'running_hh_loop' in globals():
+        global running_hh_loop
+        running_hh_loop = True
+        thread.start_new_thread(hh_loop, ())
+    else:
+        HhThreadMgr.restart = True

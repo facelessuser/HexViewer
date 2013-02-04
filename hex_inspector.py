@@ -1,16 +1,14 @@
-'''
+"""
 Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
-'''
+"""
 
 import sublime
 import sublime_plugin
 import math
 from struct import unpack
-from hex_common import *
-
-hv_endianness = hv_settings.get("inspector_endian", "little")
+from HexViewer.hex_common import *
 
 
 class HexShowInspectorCommand(sublime_plugin.WindowCommand):
@@ -178,3 +176,8 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         if not reset and first_byte != None and bytes_wide != None:
             byte8, bytes16, bytes32, bytes64 = self.get_bytes(int(first_byte), int(bytes_wide))
         self.display(self.window.get_output_panel('hex_viewer_inspector'), byte8, bytes16, bytes32, bytes64)
+
+
+def plugin_loaded():
+    global hv_endianness
+    hv_endianness = hv_settings.get("inspector_endian", "little")

@@ -1,8 +1,8 @@
-'''
+"""
 Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
-'''
+"""
 
 import sublime
 import sublime_plugin
@@ -10,7 +10,7 @@ import struct
 import threading
 from os.path import basename
 from os.path import getsize as get_file_size
-from hex_common import *
+from HexViewer.hex_common import *
 from fnmatch import fnmatch
 
 DEFAULT_BIT_GROUP = 16
@@ -20,10 +20,25 @@ VALID_BYTES = [8, 10, 16, 24, 32, 48, 64, 128, 256, 512]
 AUTO_OPEN = False
 
 
+class HexGlobal(object):
+    bfr = None
+    region = None
+
+    @classmethod
+    def clear(cls):
+        cls.bfr = None
+        cls.region = None
+
+
+class HexShowContent(sublime_plugin.TextCommand):
+    def run(self, edit):
+        self.view.replace(edit, HexGlobal.region, HexGlobal.bfr)
+
+
 class ReadBin(threading.Thread):
     def __init__(self, file_name, bytes_wide, group_size):
-        self.bytes_wide = bytes_wide
-        self.group_size = group_size
+        self.bytes_wide = int(bytes_wide)
+        self.group_size = int(group_size)
         self.file_name = file_name
         self.file_size = get_file_size(file_name)
         self.read_count = 0
@@ -49,9 +64,9 @@ class ReadBin(threading.Thread):
                 bytes = bin.read(blocksize)
 
     def run(self):
-        translate_table = ("." * 32) + "".join(chr(c) for c in xrange(32, 127)) + ("." * 129)
+        translate_table = ("." * 32) + "".join(chr(c) for c in range(32, 127)) + ("." * 129)
         def_struct = struct.Struct("=" + ("B" * self.bytes_wide))
-        def_template = (("%02x" * self.group_size) + " ") * (self.bytes_wide / self.group_size)
+        def_template = (("%02x" * self.group_size) + " ") * int(self.bytes_wide / self.group_size)
 
         line = 0
         b_buffer = []
@@ -80,19 +95,19 @@ class ReadBin(threading.Thread):
                 values = struct.unpack("=" + ("B" * len(bytes)), bytes)
 
                 # Add hex value
-                remain_group = len(bytes) / self.group_size
+                remain_group = int(len(bytes) / self.group_size)
                 remain_extra = len(bytes) % self.group_size
                 l_buffer.append(((("%02x" * self.group_size) + " ") * (remain_group) + ("%02x" * remain_extra)) % values)
 
                 # Append printable chars to incomplete line
                 delta = self.bytes_wide - len(bytes)
-                group_space = delta / self.group_size
+                group_space = int(delta / self.group_size)
                 extra_space = (1 if delta % self.group_size else 0)
 
                 l_buffer.append(" " * (group_space + extra_space + delta * 2))
 
             # Append printable chars
-            l_buffer.append(" :" + bytes.translate(translate_table))
+            l_buffer.append(" :" + str(bytes).translate(translate_table))
 
             # Add line to buffer
             b_buffer.append("".join(l_buffer))
@@ -241,7 +256,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
     def load_hex_view(self):
         file_name = self.thread.file_name
-        b_buffer = self.thread.buffer
+        HexGlobal.bfr = self.thread.buffer
         self.thread = None
 
         # Show binary data
@@ -270,16 +285,16 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
         # Show hex content in view; make read only
         view.set_scratch(True)
-        edit = view.begin_edit()
         view.sel().clear()
-        view.replace(edit, sublime.Region(0, view.size()), b_buffer)
-        view.end_edit(edit)
+        HexGlobal.region = sublime.Region(0, view.size())
+        view.run_command('hex_show_content')
+        HexGlobal.clear()
         view.set_read_only(True)
 
         # Offset past address to first byte
         view.sel().add(sublime.Region(ADDRESS_OFFSET, ADDRESS_OFFSET))
-        if hv_settings.get("inspector", False) and hv_settings.get("inspector_auto_show", False):
-            view.window().run_command("hex_show_inspector")
+        # if hv_settings.get("inspector", False) and hv_settings.get("inspector_auto_show", False):
+            # view.window().run_command("hex_show_inspector")
 
     def read_file(self, file_name):
         if hv_settings.get("inspector", False):

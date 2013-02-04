@@ -1,15 +1,15 @@
-'''
+"""
 Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
-'''
+"""
 
 import sublime
 import sublime_plugin
 import re
 from os.path import basename
 from struct import unpack
-from hex_common import *
+from HexViewer.hex_common import *
 
 HIGHLIGHT_EDIT_SCOPE = "keyword"
 HIGHLIGHT_EDIT_ICON = "none"
