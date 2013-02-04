@@ -42,9 +42,9 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
             # Restore view
             if view != None:
                 # Get highlight settings
-                highlight_scope = hv_settings.get("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
-                highlight_icon = hv_settings.get("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
-                style = hv_settings.get("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
+                highlight_scope = hv_settings("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
+                highlight_icon = hv_settings("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
+                style = hv_settings("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
 
                 # No icon?
                 if highlight_icon == "none":
@@ -154,9 +154,9 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         init_status = False
 
         # Get highlight settings
-        self.highlight_scope = hv_settings.get("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
-        self.highlight_icon = hv_settings.get("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
-        style = hv_settings.get("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
+        self.highlight_scope = hv_settings("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
+        self.highlight_icon = hv_settings("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
+        style = hv_settings("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
 
         # No icon?
         if self.highlight_icon == "none":

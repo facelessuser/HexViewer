@@ -60,7 +60,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         if self.handshake != -1 and self.handshake == self.view.id():
             hex_hash = None
             # Get checksum if required
-            if hv_settings.get("checksum_on_save", USE_CHECKSUM_ON_SAVE):
+            if hv_settings("checksum_on_save", USE_CHECKSUM_ON_SAVE):
                 hex_hash = checksum()
             try:
                 with open(self.export_path, "wb") as bin:

@@ -96,8 +96,8 @@ def underline(selected_bytes):
     return new_regions
 
 
-def plugin_loaded():
-    global hv_settings
-    global hv_inspector_enable
-    hv_settings = sublime.load_settings('hex_viewer.sublime-settings')
-    hv_inspector_enable = hv_settings.get("inspector", False)
+def hv_settings(key=None, default=None):
+    if key is not None:
+        return sublime.load_settings('hex_viewer.sublime-settings').get(key, default)
+    else:
+        return sublime.load_settings('hex_viewer.sublime-settings')

@@ -9,11 +9,12 @@ import sublime_plugin
 import math
 from struct import unpack
 from HexViewer.hex_common import *
+from binascii import unhexlify
 
 
 class HexShowInspectorCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
-        return is_enabled() and hv_inspector_enable
+        return is_enabled() and hv_settings("inspector", False)
 
     def run(self):
         # Setup inspector window
@@ -30,7 +31,7 @@ class HexShowInspectorCommand(sublime_plugin.WindowCommand):
 
 class HexHideInspectorCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
-        return is_enabled() and hv_inspector_enable
+        return is_enabled() and hv_settings("inspector", False)
 
     def run(self):
         self.window.run_command("hide_panel", {"panel": "output.hex_viewer_inspector"})
@@ -38,12 +39,27 @@ class HexHideInspectorCommand(sublime_plugin.WindowCommand):
 
 class HexToggleInspectorEndiannessCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
-        return is_enabled() and hv_inspector_enable
+        return is_enabled() and hv_settings("inspector", False)
 
     def run(self):
         global hv_endianness
         hv_endianness = "big" if hv_endianness == "little" else "little"
         self.window.run_command('hex_highlighter')
+
+
+class HexInspectGlobal(object):
+    bfr = None
+    region = None
+
+    @classmethod
+    def clear(cls):
+        cls.bfr = None
+        cls.region = None
+
+
+class HexInspectorApplyCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        self.view.replace(edit, HexInspectGlobal.region, HexInspectGlobal.bfr)
 
 
 class HexInspectorCommand(sublime_plugin.WindowCommand):
@@ -105,8 +121,8 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         i_buffer = "%28s:%-28s" % ("Hex Inspector ", (" Big Endian" if self.endian == "big" else " Little Endian")) + nl
         if byte8 != None:
             i_buffer += item_dec * 2 % (
-                "byte", unpack(endian + "B", byte8.decode("hex"))[0],
-                "short", unpack(endian + "b", byte8.decode("hex"))[0]
+                "byte", unpack(endian + "B", unhexlify(byte8))[0],
+                "short", unpack(endian + "b", unhexlify(byte8))[0]
             ) + nl
         else:
             i_buffer += item_str * 2 % (
@@ -115,8 +131,8 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
             ) + nl
         if bytes16 != None:
             i_buffer += item_dec * 2 % (
-                "word", unpack(endian + "H", bytes16.decode("hex"))[0],
-                "int", unpack(endian + "h", bytes16.decode("hex"))[0]
+                "word", unpack(endian + "H", unhexlify(bytes16))[0],
+                "int", unpack(endian + "h", unhexlify(bytes16))[0]
             ) + nl
         else:
             i_buffer += item_str * 2 % (
@@ -125,8 +141,8 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
             ) + nl
         if bytes32 != None:
             i_buffer += item_dec * 2 % (
-                "dword", unpack(endian + "I", bytes32.decode("hex"))[0],
-                "longint", unpack(endian + "i", bytes32.decode("hex"))[0]
+                "dword", unpack(endian + "I", unhexlify(bytes32))[0],
+                "longint", unpack(endian + "i", unhexlify(bytes32))[0]
             ) + nl
         else:
             i_buffer += item_str * 2 % (
@@ -134,7 +150,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
                 "longint", "--"
             ) + nl
         if bytes32 != None:
-            s_float = unpack(endian + "f", bytes32.decode('hex'))[0]
+            s_float = unpack(endian + "f", unhexlify(bytes32))[0]
             if math.isnan(s_float):
                 i_buffer += item_str % ("float", "NaN")
             else:
@@ -144,7 +160,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         else:
             i_buffer += item_str % ("float", "--")
         if bytes64 != None:
-            d_float = unpack(endian + "d", bytes64.decode('hex'))[0]
+            d_float = unpack(endian + "d", unhexlify(bytes64))[0]
             if math.isnan(d_float):
                 i_buffer += item_str % ("double", "NaN") + nl
             else:
@@ -154,15 +170,16 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         else:
             i_buffer += item_str % ("double", "--") + nl
         if byte8 != None:
-            i_buffer += item_str % ("binary", '{0:08b}'.format(unpack(endian + "B", byte8.decode("hex"))[0])) + nl
+            i_buffer += item_str % ("binary", '{0:08b}'.format(unpack(endian + "B", unhexlify(byte8))[0])) + nl
         else:
             i_buffer += item_str % ("binary", "--") + nl
 
         # Update content
         view.set_read_only(False)
-        edit = view.begin_edit()
-        view.replace(edit, sublime.Region(0, view.size()), i_buffer)
-        view.end_edit(edit)
+        HexInspectGlobal.bfr = i_buffer
+        HexInspectGlobal.region = sublime.Region(0, view.size())
+        view.run_command("hex_inspector_apply")
+        HexInspectGlobal.clear()
         view.set_read_only(True)
         view.sel().clear()
 
@@ -180,4 +197,4 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
 
 def plugin_loaded():
     global hv_endianness
-    hv_endianness = hv_settings.get("inspector_endian", "little")
+    hv_endianness = hv_settings("inspector_endian", "little")

@@ -43,13 +43,13 @@ class HexHighlighter(object):
 
         # Get Seetings from settings file
         group_size = self.view.settings().get("hex_viewer_bits", None)
-        self.inspector_enabled = hv_inspector_enable
-        self.throttle = hv_settings.get("highlight_throttle", THROTTLING)
-        self.max_highlight = hv_settings.get("highlight_max_bytes", MAX_HIGHIGHT)
+        self.inspector_enabled = hv_settings("inspector", False)
+        self.throttle = hv_settings("highlight_throttle", THROTTLING)
+        self.max_highlight = hv_settings("highlight_max_bytes", MAX_HIGHIGHT)
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
-        self.highlight_scope = hv_settings.get("highlight_scope", HIGHLIGHT_SCOPE)
-        self.highlight_icon = hv_settings.get("highlight_icon", HIGHLIGHT_ICON)
-        style = hv_settings.get("highlight_style", HIGHLIGHT_STYLE)
+        self.highlight_scope = hv_settings("highlight_scope", HIGHLIGHT_SCOPE)
+        self.highlight_icon = hv_settings("highlight_icon", HIGHLIGHT_ICON)
+        style = hv_settings("highlight_style", HIGHLIGHT_STYLE)
 
         # No icon?
         if self.highlight_icon == "none":

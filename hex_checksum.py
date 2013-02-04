@@ -149,7 +149,7 @@ class checksum(object):
 
     def __init__(self, hash_algorithm=None, data=""):
         if hash_algorithm == None or not hash_algorithm in VALID_HASH:
-            hash_algorithm = hv_settings.get("hash_algorithm", DEFAULT_CHECKSUM)
+            hash_algorithm = hv_settings("hash_algorithm", DEFAULT_CHECKSUM)
         if not hash_algorithm in VALID_HASH:
             hash_algorithm = DEFAULT_CHECKSUM
         self.hash = getattr(hashlib, hash_algorithm)(data)

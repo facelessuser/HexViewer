@@ -53,25 +53,25 @@ class ReadBin(threading.Thread):
             blocksize = maxblocksize - (maxblocksize % bytes_wide)
 
             start = 0
-            bytes = bin.read(blocksize)
-            while bytes:
-                outbytes = bytes[start:start + bytes_wide]
+            bytearray = bin.read(blocksize)
+            while bytearray:
+                outbytes = bytearray[start:start + bytes_wide]
                 while outbytes:
                     yield outbytes
                     start += bytes_wide
-                    outbytes = bytes[start:start + bytes_wide]
+                    outbytes = bytearray[start:start + bytes_wide]
                 start = 0
-                bytes = bin.read(blocksize)
+                bytearray = bin.read(blocksize)
 
     def run(self):
-        translate_table = ("." * 32) + "".join(chr(c) for c in range(32, 127)) + ("." * 129)
+        translate_table = str.maketrans("".join([chr(c) for c in range(0, 256)]), "".join(["."] * 32 + [chr(c) for c in range(32, 127)] + ["."] * 129))
         def_struct = struct.Struct("=" + ("B" * self.bytes_wide))
         def_template = (("%02x" * self.group_size) + " ") * int(self.bytes_wide / self.group_size)
 
         line = 0
         b_buffer = []
         read_count = 0
-        for bytes in self.iterfile():
+        for bytearray in self.iterfile():
             if self.abort:
                 return
             l_buffer = []
@@ -85,29 +85,29 @@ class ReadBin(threading.Thread):
             try:
                 # Complete line
                 # Convert to decimal value
-                values = def_struct.unpack(bytes)
+                values = def_struct.unpack(bytearray)
 
                 # Add hex value
                 l_buffer.append(def_template % values)
             except struct.error:
                 # Incomplete line
                 # Convert to decimal value
-                values = struct.unpack("=" + ("B" * len(bytes)), bytes)
+                values = struct.unpack("=" + ("B" * len(bytearray)), bytearray)
 
                 # Add hex value
-                remain_group = int(len(bytes) / self.group_size)
-                remain_extra = len(bytes) % self.group_size
+                remain_group = int(len(bytearray) / self.group_size)
+                remain_extra = len(bytearray) % self.group_size
                 l_buffer.append(((("%02x" * self.group_size) + " ") * (remain_group) + ("%02x" * remain_extra)) % values)
 
                 # Append printable chars to incomplete line
-                delta = self.bytes_wide - len(bytes)
+                delta = self.bytes_wide - len(bytearray)
                 group_space = int(delta / self.group_size)
                 extra_space = (1 if delta % self.group_size else 0)
 
                 l_buffer.append(" " * (group_space + extra_space + delta * 2))
 
             # Append printable chars
-            l_buffer.append(" :" + str(bytes).translate(translate_table))
+            l_buffer.append(" :" + "".join([chr(translate_table[b]) for b in bytearray]))
 
             # Add line to buffer
             b_buffer.append("".join(l_buffer))
@@ -123,7 +123,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
     def is_bin_file(self, file_path):
         match = False
-        patterns = hv_settings.get("auto_open_patterns", [])
+        patterns = hv_settings("auto_open_patterns", [])
         for pattern in patterns:
             match |= fnmatch(file_path, pattern)
             if match:
@@ -164,7 +164,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
     def on_activated(self, view):
         # Logic for preview windows
-        if hv_settings.get("auto_open", AUTO_OPEN) and not view.settings().get('is_widget'):
+        if hv_settings("auto_open", AUTO_OPEN) and not view.settings().get('is_widget'):
             window = view.window()
             is_preview = window and view.file_name() not in [file.file_name() for file in window.views()]
             if view.settings().get("hex_view_postpone_hexview", True) and not view.is_loading():
@@ -172,7 +172,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
     def on_load(self, view):
         # Logic for direct open files
-        if hv_settings.get("auto_open", AUTO_OPEN) and not view.settings().get('is_widget'):
+        if hv_settings("auto_open", AUTO_OPEN) and not view.settings().get('is_widget'):
             window = view.window()
             is_preview = window and view.file_name() not in [file.file_name() for file in window.views()]
             if window and not is_preview and view.settings().get("hex_view_postpone_hexview", True):
@@ -219,13 +219,13 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         elif offset != 0:
             self.bytes_wide -= offset
 
-    def buffer_init(self, bits, bytes):
+    def buffer_init(self, bits, bytearray):
         self.view = self.window.active_view()
         file_name = None
         if self.view != None:
             # Get font settings
-            self.font = hv_settings.get('custom_font', 'None')
-            self.font_size = hv_settings.get('custom_font_size', 0)
+            self.font = hv_settings('custom_font', 'None')
+            self.font_size = hv_settings('custom_font_size', 0)
 
             #Get file name
             file_name = self.view.settings().get("hex_viewer_file_name", self.view.file_name())
@@ -235,15 +235,15 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             # If none are found, use default
             current_bits = self.view.settings().get(
                 'hex_viewer_bits',
-                hv_settings.get('group_bytes_by_bits', DEFAULT_BIT_GROUP)
+                hv_settings('group_bytes_by_bits', DEFAULT_BIT_GROUP)
             )
             current_bytes = self.view.settings().get(
                 'hex_viewer_bytes',
-                hv_settings.get('bytes_per_line', DEFAULT_BYTES_WIDE)
+                hv_settings('bytes_per_line', DEFAULT_BYTES_WIDE)
             )
             # Use passed in bit and byte settings if available
             self.bits = bits if bits != None else int(current_bits)
-            self.bytes = bytes if bytes != None else int(current_bytes)
+            self.bytes = bytearray if bytearray != None else int(current_bytes)
             self.set_format()
         return file_name
 
@@ -293,11 +293,11 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
         # Offset past address to first byte
         view.sel().add(sublime.Region(ADDRESS_OFFSET, ADDRESS_OFFSET))
-        # if hv_settings.get("inspector", False) and hv_settings.get("inspector_auto_show", False):
-            # view.window().run_command("hex_show_inspector")
+        if hv_settings("inspector", False) and hv_settings("inspector_auto_show", False):
+            view.window().run_command("hex_show_inspector")
 
     def read_file(self, file_name):
-        if hv_settings.get("inspector", False):
+        if hv_settings("inspector", False):
             self.window.run_command("hex_hide_inspector")
         view = self.window.open_file(file_name)
         view.settings().set("hex_no_auto_open", True)
@@ -354,14 +354,14 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.file_name = ""
         self.type = None
 
-    def run(self, bits=None, bytes=None):
+    def run(self, bits=None, bytearray=None):
         # If thread is active cancel thread
         if self.thread != None and self.thread.is_alive():
             self.abort_hex_load()
             return
 
         # Init Buffer
-        file_name = self.buffer_init(bits, bytes)
+        file_name = self.buffer_init(bits, bytearray)
 
         # Identify view
         if self.handshake != -1 and self.handshake == self.view.id():
@@ -374,13 +374,13 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 self.view_type = "hex"
                 if is_hex_dirty(self.view):
                     self.file_name = file_name
-                    if bits == None and bytes == None:
+                    if bits == None and bytearray == None:
                         self.switch_type = "file"
                     else:
                         self.switch_type = "hex"
                     self.discard_panel()
                 else:
-                    if bits == None and bytes == None:
+                    if bits == None and bytearray == None:
                         # Switch back to traditional output
                         self.read_file(file_name)
                     else:
@@ -422,6 +422,6 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
                         option_list.append(str(bits) + " bits")
                     self.window.show_quick_panel(option_list, self.set_bits)
                 elif option == "bytes":
-                    for bytes in VALID_BYTES:
-                        option_list.append(str(bytes) + " bytes")
+                    for bytearray in VALID_BYTES:
+                        option_list.append(str(bytearray) + " bytes")
                     self.window.show_quick_panel(option_list, self.set_bytes)
