@@ -110,37 +110,37 @@ class zlib_algorithm(object):
 
 # Additional Hashes
 class md2(ssl_algorithm):
-    def __init__(self, arg=''):
+    def __init__(self, arg=b''):
         self.algorithm('md2', 16, arg)
 
 
 class mdc2(ssl_algorithm):
-    def __init__(self, arg=''):
+    def __init__(self, arg=b''):
         self.algorithm('mdc2', 16, arg)
 
 
 class md4(ssl_algorithm):
-    def __init__(self, arg=''):
+    def __init__(self, arg=b''):
         self.algorithm('md4', 16, arg)
 
 
 class sha(ssl_algorithm):
-    def __init__(self, arg=''):
+    def __init__(self, arg=b''):
         self.algorithm('sha', 20, arg)
 
 
 class ripemd160(ssl_algorithm):
-    def __init__(self, arg=''):
+    def __init__(self, arg=b''):
         self.algorithm('ripemd160', 20, arg)
 
 
 class crc32(zlib_algorithm):
-    def __init__(self, arg=''):
+    def __init__(self, arg=b''):
         self.algorithm('crc32', 4, 0, arg)
 
 
 class adler32(zlib_algorithm):
-    def __init__(self, arg=''):
+    def __init__(self, arg=b''):
         self.algorithm('adler32', 4, 1, arg)
 
 
@@ -148,7 +148,7 @@ class adler32(zlib_algorithm):
 class checksum(object):
     thread = None
 
-    def __init__(self, hash_algorithm=None, data=""):
+    def __init__(self, hash_algorithm=None, data=b""):
         if hash_algorithm == None or not hash_algorithm in VALID_HASH:
             hash_algorithm = hv_settings("hash_algorithm", DEFAULT_CHECKSUM)
         if not hash_algorithm in VALID_HASH:
@@ -157,11 +157,11 @@ class checksum(object):
         self.name = hash_algorithm
 
     def update(self, data=""):
-        if isinstance(data, basestring):
+        if isinstance(data, str):
             self.hash.update(data)
 
     def threaded_update(self, data=[]):
-        if not isinstance(data, basestring):
+        if not isinstance(data, str):
             global active_thread
             self.thread = hash_thread(data, self.hash)
             self.thread.start()
@@ -294,7 +294,7 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
             r_buffer = view.split_by_newlines(sublime.Region(0, view.size()))
             hex_data = []
             for line in r_buffer:
-                hex_data.append(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', unhexlify(view.substr(line)).replace(" ", "")))
+                hex_data.append(unhexlify(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "")))
             hex_hash.threaded_update(hex_data)
 
 

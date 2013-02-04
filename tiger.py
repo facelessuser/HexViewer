@@ -17,6 +17,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 
 import array
 import struct
+from binascii import hexlify
 
 BIG_ENDIAN = True
 
@@ -594,7 +595,7 @@ class TigerStruct(object):
     def __init__(self):
         self.res = [0x0123456789ABCDEF, 0xFEDCBA9876543210, 0xF096A5B4C3B2E187]
         self.length = 0
-        self.leftover = ""
+        self.leftover = b""
 
 
 def tiger_round(a, b, c, x, mul):
@@ -635,7 +636,7 @@ def tiger_compress(str, res):
     x = []
 
     for j in range(0, 8):
-        x.append(struct.unpack('Q', str[j * 8:j * 8 + 8])[0])
+        x.append(struct.unpack('Q', bytes(str[j * 8:j * 8 + 8]))[0])
 
     # compress
     aa = a
@@ -703,32 +704,32 @@ def tiger_add(input_str, tig):
 
 def tiger_finalize(tig):
     length = tig.length
-    temp = array.array('c', tig.leftover)
+    temp = list(tig.leftover)
     j = len(temp)
-    temp.append(chr(0x01))
+    temp.append(0x01)
     j += 1
 
     while j & 7 != 0:
-        temp.append(chr(0))
+        temp.append(0)
         j += 1
 
     if j > 56:
         while j < 64:
-            temp.append(chr(0))
+            temp.append(0)
             j += 1
         tiger_compress(temp, tig.res)
         j = 0
 
     # make the first 56 bytes 0
-    temp.extend([chr(0) for i in range(0, 56 - j)])
+    temp.extend([0 for i in range(0, 56 - j)])
     while j < 56:
-        temp[j] = chr(0)
+        temp[j] = 0
         j += 1
     while len(temp) > 56:
         temp.pop(56)
 
-    temp.fromstring(struct.pack('<Q', length << 3))
-    tiger_compress(temp, tig.res)
+    temp += list([c for c in struct.pack('<Q', length << 3)])
+    tiger_compress(("".join([chr(c) for c in temp])).encode('utf8'), tig.res)
 
 
 def test_tiger_hash():
