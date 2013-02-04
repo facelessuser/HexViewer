@@ -13,6 +13,7 @@ import hashlib
 import zlib
 import sys
 from HexViewer import whirlpool, tiger
+from binascii import unhexlify
 
 
 DEFAULT_CHECKSUM = "md5"
@@ -293,7 +294,7 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
             r_buffer = view.split_by_newlines(sublime.Region(0, view.size()))
             hex_data = []
             for line in r_buffer:
-                hex_data.append(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "").decode("hex"))
+                hex_data.append(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', unhexlify(view.substr(line)).replace(" ", "")))
             hex_hash.threaded_update(hex_data)
 
 

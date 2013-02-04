@@ -14,7 +14,7 @@ from binascii import unhexlify
 
 class HexShowInspectorCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
-        return is_enabled() and hv_settings("inspector", False)
+        return bool(is_enabled() and hv_settings("inspector", False))
 
     def run(self):
         # Setup inspector window
@@ -31,7 +31,7 @@ class HexShowInspectorCommand(sublime_plugin.WindowCommand):
 
 class HexHideInspectorCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
-        return is_enabled() and hv_settings("inspector", False)
+        return bool(is_enabled() and hv_settings("inspector", False))
 
     def run(self):
         self.window.run_command("hide_panel", {"panel": "output.hex_viewer_inspector"})
@@ -39,7 +39,7 @@ class HexHideInspectorCommand(sublime_plugin.WindowCommand):
 
 class HexToggleInspectorEndiannessCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
-        return is_enabled() and hv_settings("inspector", False)
+        return bool(is_enabled() and hv_settings("inspector", False))
 
     def run(self):
         global hv_endianness

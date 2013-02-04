@@ -25,7 +25,7 @@ def is_enabled(current_view=None):
         return False
     syntax = view.settings().get('syntax')
     language = basename(syntax).replace('.tmLanguage', '').lower() if syntax != None else "plain text"
-    return (language == "hex")
+    return bool(language == "hex")
 
 
 def clear_edits(view):

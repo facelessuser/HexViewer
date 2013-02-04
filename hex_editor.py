@@ -10,10 +10,26 @@ import re
 from os.path import basename
 from struct import unpack
 from HexViewer.hex_common import *
+from binascii import unhexlify
 
 HIGHLIGHT_EDIT_SCOPE = "keyword"
 HIGHLIGHT_EDIT_ICON = "none"
 HIGHLIGHT_EDIT_STYLE = "underline"
+
+
+class HexEditGlobal(object):
+    bfr = None
+    region = None
+
+    @classmethod
+    def clear(cls):
+        cls.bfr = None
+        cls.region = None
+
+
+class HexEditApplyCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        self.view.replace(edit, HexEditGlobal.region, HexEditGlobal.bfr)
 
 
 class HexEditorListenerCommand(sublime_plugin.EventListener):
@@ -70,9 +86,10 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
                 view.settings().set("font_size", self.fail_safe_view["font_size"])
                 view.set_syntax_file("Packages/HexViewer/Hex.tmLanguage")
                 view.sel().clear()
-                edit = view.begin_edit()
-                view.replace(edit, sublime.Region(0, view.size()), self.fail_safe_view["buffer"])
-                view.end_edit(edit)
+                HexEditGlobal.bfr = self.fail_safe_view["buffer"]
+                HexEditGlobal.region = sublime.Region(0, view.size())
+                view.run_command("hex_edit_apply")
+                HexEditGlobal.clear()
                 view.set_scratch(True)
                 view.set_read_only(True)
                 view.sel().add(sublime.Region(ADDRESS_OFFSET, ADDRESS_OFFSET))
@@ -137,7 +154,7 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
 
 class HexDiscardEditsCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
-        return is_enabled() and len(self.window.active_view().get_regions("hex_edit"))
+        return bool(is_enabled() and len(self.window.active_view().get_regions("hex_edit")))
 
     def run(self):
         view = self.window.active_view()
@@ -261,8 +278,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                         count = 0
 
                     # Copy valid printible ascii chars over or substitute with "."
-                    dec = unpack("=B", value.decode("hex"))[0]
-                    ascii += chr(dec) if dec in xrange(32, 127) else "."
+                    dec = unpack("=B", unhexlify(value))[0]
+                    ascii += chr(dec) if dec in range(32, 127) else "."
                     start += 2
                     count += 1
                     hex_start_pos += 2
@@ -278,14 +295,15 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                 # Append ascii chars to line accounting for missing bytes in line
                 delta = int(self.bytes_wide) - len(edits) / 2
                 group_space = int(delta / self.group_size) + (1 if delta % self.group_size else 0)
-                l_buffer += " " * (group_space + delta * 2) + ascii
+                l_buffer += " " * int(group_space + delta * 2) + ascii
 
                 # Apply buffer edit
                 self.view.sel().clear()
                 self.view.set_read_only(False)
-                edit = self.view.begin_edit()
-                self.view.replace(edit, self.line["range"], l_buffer)
-                self.view.end_edit(edit)
+                HexEditGlobal.bfr = l_buffer
+                HexEditGlobal.region = self.line["range"]
+                self.view.run_command("hex_edit_apply")
+                HexEditGlobal.clear()
                 self.view.set_read_only(True)
                 self.view.sel().add(sublime.Region(self.start_pos, self.end_pos))
 
