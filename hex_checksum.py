@@ -234,7 +234,7 @@ class HashSelectionCommand(sublime_plugin.WindowCommand):
                 for sel in view.sel():
                     lines = view.substr(sel).splitlines(True)
                     for line in lines:
-                        data.append(''.join(unichr(ord(c)).encode('utf-8') for c in line))
+                        data.append(line.encode("utf-8"))
                 hasher.threaded_update(data)
 
     def run(self):
@@ -250,7 +250,7 @@ class HashEvalCommand(sublime_plugin.WindowCommand):
         hasher = checksum(self.algorithm)
         lines = value.splitlines(True)
         for line in lines:
-            data.append(''.join(unichr(ord(c)).encode('utf-8') for c in line))
+            data.append(line.encode("utf-8"))
         hasher.threaded_update(data)
 
     def select_hash(self, value):
