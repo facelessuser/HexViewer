@@ -53,7 +53,7 @@ class sum16(sum8):
 
 
 class sum24(sum8):
-    __name = "sum16"
+    __name = "sum24"
     __digest_size = 3
 
     def digest(self):
