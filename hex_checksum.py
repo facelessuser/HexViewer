@@ -12,7 +12,7 @@ import threading
 import hashlib
 import zlib
 import sys
-from HexViewer import whirlpool, tiger
+from HexViewer import whirlpool, tiger, sum_hashes
 from binascii import unhexlify
 
 
@@ -306,7 +306,11 @@ verify_hashes(
         'ripemd160',
         'zlib:crc32', 'zlib:adler32',
         'HexViewer.whirlpool:whirlpool',
-        'HexViewer.tiger:tiger'
+        'HexViewer.tiger:tiger',
+        "HexViewer.sum_hashes:sum8",
+        "HexViewer.sum_hashes:sum16",
+        "HexViewer.sum_hashes:sum32",
+        "HexViewer.sum_hashes:sum24"
     ]
 )
 
@@ -320,3 +324,7 @@ hashlib.crc32 = crc32
 hashlib.adler32 = adler32
 hashlib.whirlpool = whirlpool.whirlpool
 hashlib.tiger = tiger.tiger
+hashlib.sum8 = sum_hashes.sum8
+hashlib.sum16 = sum_hashes.sum16
+hashlib.sum24 = sum_hashes.sum24
+hashlib.sum32 = sum_hashes.sum32
