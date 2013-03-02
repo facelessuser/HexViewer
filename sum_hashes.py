@@ -72,3 +72,18 @@ class sum32(sum8):
 
     def hexdigest(self):
         return "%08x" % self.digest()
+
+
+class xor8(sum8):
+    __name = "xor8"
+    __digest_size = 1
+
+    def update(self, arg):
+        for b in arg:
+            self.sum ^= int(b) & 0xFF
+
+    def digest(self):
+        return int(self.sum)
+
+    def hexdigest(self):
+        return "%02x" % self.digest()
