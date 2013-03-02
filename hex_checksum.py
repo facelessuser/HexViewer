@@ -307,7 +307,8 @@ verify_hashes(
         'zlib:crc32', 'zlib:adler32',
         'whirlpool:whirlpool',
         'tiger:tiger',
-        'sum_hashes:sum8', 'sum_hashes:sum16', 'sum_hashes:sum24', 'sum_hashes:sum32'
+        'sum_hashes:sum8', 'sum_hashes:sum16', 'sum_hashes:sum24', 'sum_hashes:sum32',
+        'sum_hashes:xor8'
     ]
 )
 
@@ -325,3 +326,4 @@ hashlib.sum8 = sum_hashes.sum8
 hashlib.sum16 = sum_hashes.sum16
 hashlib.sum24 = sum_hashes.sum24
 hashlib.sum32 = sum_hashes.sum32
+hashlib.xor8 = sum_hashes.xor8
