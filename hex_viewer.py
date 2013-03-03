@@ -208,7 +208,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             self.group_size = self.bits / BITS_PER_BYTE
 
         # Set bytes per line
-        if self.bytes in VALID_BYTES:
+        if self.bytes in hv_settings("valid_bytes_per_line", VALID_BYTES):
             self.bytes_wide = self.bytes
 
         # Check if grouping and bytes per line do not align
@@ -402,11 +402,11 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
     def set_bits(self, value):
         if value != -1:
-            self.window.run_command('hex_viewer', {"bits": VALID_BITS[value]})
+            self.window.run_command('hex_viewer', {"bits": self.valid_bytes[value]})
 
     def set_bytes(self, value):
         if value != -1:
-            self.window.run_command('hex_viewer', {"bytes": VALID_BYTES[value]})
+            self.window.run_command('hex_viewer', {"bytearray": self.valid_bytes[value]})
 
     def is_enabled(self):
         return is_enabled()
@@ -414,6 +414,7 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
     def run(self, option):
         self.view = self.window.active_view()
         file_name = self.view.settings().get("hex_viewer_file_name", self.view.file_name())
+        self.valid_bytes = hv_settings("valid_bytes_per_line", VALID_BYTES)
         if file_name != None:
             if self.view.settings().has("hex_viewer_file_name"):
                 option_list = []
@@ -422,6 +423,6 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
                         option_list.append(str(bits) + " bits")
                     self.window.show_quick_panel(option_list, self.set_bits)
                 elif option == "bytes":
-                    for bytearray in VALID_BYTES:
+                    for bytearray in self.valid_bytes:
                         option_list.append(str(bytearray) + " bytes")
                     self.window.show_quick_panel(option_list, self.set_bytes)

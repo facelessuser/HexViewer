@@ -3,10 +3,11 @@
     // Valid Settings (8|16|32|64|128)
     "group_bytes_by_bits" : 16,
 
+    // These are the valid bytes per line options
+    "valid_bytes_per_line" : [8, 10, 16, 24, 32, 48, 64, 128, 256, 512],
+
     // Number of 8 bit bytes per line.
-    // Will use closet number of bytes if group bytes
-    // does not align.
-    // Valid Settings (8|10|16|24|32|48|64|128|256|512)
+    // See "valid_bytes_per_line" for valid options
     "bytes_per_line" : 24,
 
     // Use a custom font and/or font size in hex view.
