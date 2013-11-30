@@ -98,10 +98,11 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         return byte8, byte16, byte32, byte64
 
     def display(self, view, byte8, bytes16, bytes32, bytes64):
-        item_dec = "%-12s:  %-14d"
-        item_str = "%-12s:  %-14s"
-        item_float = "%-12s:  %-14e"
-        item_double = "%-12s:  %-14e"
+        item_dec = hv_settings.get("inspector_integer_format", "%-12s:  %-14d")
+        item_str = hv_settings.get("inspector_missing/bad_format", "%-12s:  %-14s")
+        item_float = hv_settings.get("insepctor_float_format", "%-12s:  %-14e")
+        item_double = hv_settings.get("inspector_double_format", "%-12s:  %-14e")
+        item_bin = hv_settings.get("inspector_binary_format", "%-12s:  %-14s")
         nl = "\n"
         endian = ">" if self.endian == "big" else "<"
         i_buffer = "%28s:%-28s" % ("Hex Inspector ", (" Big Endian" if self.endian == "big" else " Little Endian")) + nl
@@ -156,7 +157,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         else:
             i_buffer += item_str % ("double", "--") + nl
         if byte8 != None:
-            i_buffer += item_str % ("binary", '{0:08b}'.format(unpack(endian + "B", byte8.decode("hex"))[0])) + nl
+            i_buffer += item_bin % ("binary", '{0:08b}'.format(unpack(endian + "B", byte8.decode("hex"))[0])) + nl
         else:
             i_buffer += item_str % ("binary", "--") + nl
 

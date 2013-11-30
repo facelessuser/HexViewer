@@ -60,5 +60,20 @@
     "auto_open" : false,
 
     // Auto open patterns to open in hex viewer
-    "auto_open_patterns" : ["*.bin", "*.pyc"]
+    "auto_open_patterns" : ["*.bin", "*.pyc"],
+
+    // Inspector format strings: ints and unsigned ints
+    "inspector_integer_format": "%-12s:  %-14d",
+
+    // Inspector format strings: floating point decimals
+    "insepctor_float_format": "%-12s:  %-14e",
+
+    // Inspector format strings: double floating point decimal strings
+    "inspector_double_format": "%-12s:  %-14e",
+
+    // Inspector format strings: "NAN" and not enough bytes to show numbers "--"
+    "inspector_missing/bad_format": "%-12s:  %-14s",
+
+    // Binary number formatting
+    "inspector_binary_format": "%-12s:  %-14s"
 }
