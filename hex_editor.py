@@ -10,7 +10,7 @@ import re
 from os.path import basename
 from struct import unpack
 from HexViewer.hex_common import *
-from binascii import unhexlify
+from binascii import unhexlify, hexlify
 
 HIGHLIGHT_EDIT_SCOPE = "keyword"
 HIGHLIGHT_EDIT_ICON = "none"
@@ -210,7 +210,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
             # Transform string if provided
             if re.match("^s\:", value) != None:
-                edits = value[2:len(value)].encode("hex")
+                edits = hexlify(value[2:len(value)].encode("ascii")).decode("ascii")
             else:
                 edits = value.replace(" ", "").lower()
 
