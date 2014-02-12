@@ -402,7 +402,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
     def set_bits(self, value):
         if value != -1:
-            self.window.run_command('hex_viewer', {"bits": self.valid_bytes[value]})
+            self.window.run_command('hex_viewer', {"bits": VALID_BITS[value]})
 
     def set_bytes(self, value):
         if value != -1:
