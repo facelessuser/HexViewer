@@ -9,6 +9,7 @@ import sublime_plugin
 from HexViewer.hex_common import *
 from time import time, sleep
 import _thread as thread
+import re
 
 HIGHLIGHT_SCOPE = "string"
 HIGHLIGHT_ICON = "dot"
@@ -49,7 +50,22 @@ class HexHighlighter(object):
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
         self.highlight_scope = hv_settings("highlight_scope", HIGHLIGHT_SCOPE)
         self.highlight_icon = hv_settings("highlight_icon", HIGHLIGHT_ICON)
+        self.enable_fake_hex = hv_settings("enable_fake_hex_file", True)
         style = hv_settings("highlight_style", HIGHLIGHT_STYLE)
+
+        if group_size is None or self.bytes_wide is None and self.enable_fake_hex:
+            m = re.match(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', self.view.substr(self.view.line(0)))
+            if m is not None:
+                hex_chars = m.group(1).split(' ')
+                group_size = (len(hex_chars[0]) / 2) * 8
+                self.bytes_wide = (len(hex_chars[0]) / 2) * (len(hex_chars) - 1)
+                self.view.settings().set("hex_viewer_bits", group_size)
+                self.view.settings().set("hex_viewer_actual_bytes", self.bytes_wide)
+                self.view.settings().set("hex_viewer_fake", True)
+                self.view.set_read_only(True)
+                self.view.set_scratch(True)
+                if hv_settings("inspector", False) and hv_settings("inspector_auto_show", False):
+                    self.view.window().run_command("hex_show_inspector")
 
         # No icon?
         if self.highlight_icon == "none":

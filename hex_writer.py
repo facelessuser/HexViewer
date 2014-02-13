@@ -20,7 +20,8 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
     handshake = -1
 
     def is_enabled(self):
-        return is_enabled()
+        view = self.window.active_view()
+        return is_enabled() view is not None and not view.settings().get("hex_viewer_fake", False)
 
     def export_panel(self):
         self.window.show_input_panel(

@@ -198,7 +198,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         return init_status
 
     def is_enabled(self):
-        return is_enabled()
+        view = self.window.active_view()
+        return is_enabled() and view is not None and not view.settings().get("hex_viewer_fake", False)
 
     def apply_edit(self, value):
         edits = ""
