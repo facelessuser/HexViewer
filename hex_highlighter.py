@@ -53,7 +53,7 @@ class HexHighlighter(object):
         self.enable_fake_hex = hv_settings("enable_fake_hex_file", True)
         style = hv_settings("highlight_style", HIGHLIGHT_STYLE)
 
-        if group_size is None or self.bytes_wide is None and self.enable_fake_hex:
+        if (group_size is None or self.bytes_wide is None) and self.enable_fake_hex:
             m = re.match(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', self.view.substr(self.view.line(0)))
             if m is not None:
                 hex_chars = m.group(1).split(' ')
