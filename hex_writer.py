@@ -11,6 +11,7 @@ import re
 from HexViewer.hex_common import *
 from HexViewer.hex_checksum import checksum
 from binascii import unhexlify
+import traceback
 
 USE_CHECKSUM_ON_SAVE = True
 
@@ -69,7 +70,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
                     r_buffer = self.view.split_by_newlines(sublime.Region(0, self.view.size()))
                     h_buffer = []
                     for line in r_buffer:
-                        hex_data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', unhexlify(self.view.substr(line)).replace(" ", ""))
+                        hex_data = unhexlify(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).replace(" ", ""))
                         bin.write(hex_data)
                         if hex_hash != None:
                             h_buffer.append(hex_data)
@@ -78,6 +79,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
                     sublime.set_timeout(lambda: sublime.status_message("Checksumming..."), 0)
                     hex_hash.threaded_update(h_buffer)
             except:
+                # print(str(traceback.format_exc()))
                 sublime.error_message("Failed to export to " + self.export_path)
                 self.reset()
                 return
