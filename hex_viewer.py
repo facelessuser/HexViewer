@@ -132,13 +132,13 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
     def open_bin_file(self, view=None, window=None):
         open_now = False
-        if view != None and window != None:
+        if view is not None and window is not None:
             # Direct open file
             open_now = True
         else:
             # Preview view of file
             window = sublime.active_window()
-            if window != None:
+            if window is not None:
                 view = window.active_view()
         # Open bin file in hex viewer
         if window and view and (open_now or view.file_name() == self.open_me):
@@ -151,7 +151,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
     def auto_load(self, view, window, is_preview):
         file_name = view.file_name()
         # Make sure we have a file name and that we haven't already processed the view
-        if file_name != None and not view.settings().get("hex_no_auto_open", False):
+        if file_name is not None and not view.settings().get("hex_no_auto_open", False):
             # Make sure the file is specified in our binary file list
             if self.is_bin_file(file_name):
                 # Handle previw or direct open
@@ -222,12 +222,12 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
     def buffer_init(self, bits, bytearray):
         self.view = self.window.active_view()
         file_name = None
-        if self.view != None:
+        if self.view is not None:
             # Get font settings
             self.font = hv_settings('custom_font', 'None')
             self.font_size = hv_settings('custom_font_size', 0)
 
-            #Get file name
+            # Get file name
             file_name = self.view.settings().get("hex_viewer_file_name", self.view.file_name())
 
             # Get current bit and byte settings from view
@@ -242,8 +242,8 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 hv_settings('bytes_per_line', DEFAULT_BYTES_WIDE)
             )
             # Use passed in bit and byte settings if available
-            self.bits = bits if bits != None else int(current_bits)
-            self.bytes = bytearray if bytearray != None else int(current_bytes)
+            self.bits = bits if bits is not None else int(current_bits)
+            self.bytes = bytearray if bytearray is not None else int(current_bytes)
             self.set_format()
         return file_name
 
@@ -309,7 +309,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.thread = None
 
     def handle_thread(self):
-        if self.abort == True:
+        if self.abort is True:
             self.thread.abort = True
             sublime.status_message("Hex View aborted!")
             sublime.set_timeout(lambda: self.reset_thread(), 500)
@@ -360,7 +360,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
     def run(self, bits=None, bytearray=None):
         # If thread is active cancel thread
-        if self.thread != None and self.thread.is_alive():
+        if self.thread is not None and self.thread.is_alive():
             self.abort_hex_load()
             return
 
@@ -372,19 +372,19 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             self.reset()
         self.handshake = self.view.id()
 
-        if file_name != None:
+        if file_name is not None:
             # Decide whether to read in as a binary file or a traditional file
             if self.view.settings().has("hex_viewer_file_name"):
                 self.view_type = "hex"
                 if is_hex_dirty(self.view):
                     self.file_name = file_name
-                    if bits == None and bytearray == None:
+                    if bits is None and bytearray is None:
                         self.switch_type = "file"
                     else:
                         self.switch_type = "hex"
                     self.discard_panel()
                 else:
-                    if bits == None and bytearray == None:
+                    if bits is None and bytearray is None:
                         # Switch back to traditional output
                         self.read_file(file_name)
                     else:
@@ -420,7 +420,7 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
         self.view = self.window.active_view()
         file_name = self.view.settings().get("hex_viewer_file_name", self.view.file_name())
         self.valid_bytes = hv_settings("valid_bytes_per_line", VALID_BYTES)
-        if file_name != None:
+        if file_name is not None:
             if self.view.settings().has("hex_viewer_file_name"):
                 option_list = []
                 if option == "bits":

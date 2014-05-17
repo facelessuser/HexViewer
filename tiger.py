@@ -15,9 +15,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
-import array
 import struct
-from binascii import hexlify
 
 BIG_ENDIAN = True
 
@@ -628,7 +626,7 @@ def tiger_pass(a, b, c, mul, mystr):
 
 
 def tiger_compress(str, res):
-    #setup
+    # setup
     a = res[0]
     b = res[1]
     c = res[2]
@@ -734,7 +732,7 @@ def tiger_finalize(tig):
 
 def test_tiger_hash():
     # TODO: Re-generate hashes with default endian
-    #Tests
+    # Tests
     assert tiger('').hexdigest() == \
         '24f0130c63ac933216166e76b1bb925ff373de2d49584e7a'
     assert tiger('abc').hexdigest() == \
@@ -748,22 +746,22 @@ def test_tiger_hash():
     assert tiger("Tiger - A Fast New Hash Function, by Ross Anderson and Eli Biham").hexdigest() == \
         '0c410a042968868a1671da5a3fd29a725ec1e457d3cdb303'
     assert tiger(
-        "Tiger - A Fast New Hash Function, by Ross Anderson and Eli Biham, " \
+        "Tiger - A Fast New Hash Function, by Ross Anderson and Eli Biham, "
         "proceedings of Fast Software Encryption 3, Cambridge."
     ).hexdigest() == \
         'ebf591d5afa655ce7f22894ff87f54ac89c811b6b0da3193'
     assert tiger(
-        "Tiger - A Fast New Hash Function, by Ross Anderson and" \
+        "Tiger - A Fast New Hash Function, by Ross Anderson and"
         " Eli Biham, proceedings of Fast Software Encryption 3, Cambridge, 1996."
     ).hexdigest() == \
         '3d9aeb03d1bd1a6357b2774dfd6d5b24dd68151d503974fc'
     assert tiger(
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01" \
-        "23456789+-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345" \
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01"
+        "23456789+-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345"
         "6789+-"
     ).hexdigest() == \
         '00b83eb4e53440c576ac6aaee0a7485825fd15e70a59ffe4'
-    #Chunked
+    # Chunked
     test = tiger('The quick brown fox jumps over the lazy dog')
     test.update('The quick brown fox jumps over the lazy dog')
     test.update('The quick brown fox jumps over the lazy dog')

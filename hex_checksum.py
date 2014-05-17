@@ -60,16 +60,16 @@ class ssl_algorithm(object):
         self.update(arg)
 
     def copy(self):
-        return None if self.__algorithm == None else self.__algorithm.copy()
+        return None if self.__algorithm is None else self.__algorithm.copy()
 
     def digest(self):
-        return None if self.__algorithm == None else self.__algorithm.digest()
+        return None if self.__algorithm is None else self.__algorithm.digest()
 
     def hexdigest(self):
-        return None if self.__algorithm == None else self.__algorithm.hexdigest()
+        return None if self.__algorithm is None else self.__algorithm.hexdigest()
 
     def update(self, arg):
-        if self.__algorithm != None:
+        if self.__algorithm is not None:
             self.__algorithm.update(arg)
 
 
@@ -98,13 +98,13 @@ class zlib_algorithm(object):
         return self
 
     def digest(self):
-        return None if self.__algorithm == None else self.__hash & 0xffffffff
+        return None if self.__algorithm is None else self.__hash & 0xffffffff
 
     def hexdigest(self):
-        return None if self.__algorithm == None else '%08x' % (self.digest())
+        return None if self.__algorithm is None else '%08x' % (self.digest())
 
     def update(self, arg):
-        if self.__algorithm != None:
+        if self.__algorithm is not None:
             self.__hash = self.__algorithm(arg, self.__hash)
 
 
@@ -149,9 +149,9 @@ class checksum(object):
     thread = None
 
     def __init__(self, hash_algorithm=None, data=b""):
-        if hash_algorithm == None or not hash_algorithm in VALID_HASH:
+        if hash_algorithm is None or hash_algorithm not in VALID_HASH:
             hash_algorithm = hv_settings("hash_algorithm", DEFAULT_CHECKSUM)
-        if not hash_algorithm in VALID_HASH:
+        if hash_algorithm not in VALID_HASH:
             hash_algorithm = DEFAULT_CHECKSUM
         self.hash = getattr(hashlib, hash_algorithm)(data)
         self.name = hash_algorithm
@@ -175,7 +175,7 @@ class checksum(object):
         message = "[" + "-" * percent + ">" + "-" * leftover + ("] %3d%%" % int(ratio * 100)) + " chunks hashed"
         sublime.status_message(message)
         if not self.thread.is_alive():
-            if self.thread.abort == True:
+            if self.thread.abort is True:
                 sublime.status_message("Hash calculation aborted!")
                 sublime.set_timeout(lambda: self.reset_thread(), 500)
             else:
@@ -187,7 +187,7 @@ class checksum(object):
         self.thread = None
 
     def display(self, window=None):
-        if window == None:
+        if window is None:
             window = sublime.active_window()
         window.show_input_panel(self.name + ":", str(self.hash.hexdigest()), None, None, None)
 
@@ -217,7 +217,7 @@ class HashSelectionCommand(sublime_plugin.WindowCommand):
     def has_selections(self):
         single = False
         view = self.window.active_view()
-        if view != None:
+        if view is not None:
             if len(view.sel()) > 0:
                 single = True
         return single
@@ -274,7 +274,7 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
 
     def run(self, hash_algorithm=None, panel=False):
         global active_thread
-        if active_thread != None and active_thread.thread != None and active_thread.thread.is_alive():
+        if active_thread is not None and active_thread.thread is not None and active_thread.thread.is_alive():
             active_thread.thread.abort = True
         else:
             if not panel:
@@ -288,7 +288,7 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
 
     def get_checksum(self, hash_algorithm=None):
         view = self.window.active_view()
-        if view != None:
+        if view is not None:
             sublime.set_timeout(lambda: sublime.status_message("Checksumming..."), 0)
             hex_hash = checksum(hash_algorithm)
             r_buffer = view.split_by_newlines(sublime.Region(0, view.size()))
@@ -315,7 +315,7 @@ verify_hashes(
     ]
 )
 
-#Define extra hash classes as members of hashlib
+# Define extra hash classes as members of hashlib
 hashlib.md2 = md2
 hashlib.mdc2 = mdc2
 hashlib.md4 = md4
