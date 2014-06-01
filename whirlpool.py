@@ -1,29 +1,29 @@
-## whirlpool.py - pure Python implementation of the Whirlpool algorithm.
-## Bjorn Edstrom <be@bjrn.se> 16 december 2007.
-##
-## Copyrights
-## ==========
-##
-## This code is based on the reference implementation by
-## Paulo S.L.M. Barreto and Vincent Rijmen. The reference implementation
-## is placed in the public domain but has the following headers:
-##
-## * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
-## * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-## * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-## * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE
-## * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-## * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-## * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-## * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-## * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-## * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-## * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-## *
-## */
-## /* The code contained in this file (Whirlpool.c) is in the public domain. */
-##
-## This Python implementation is therefore also placed in the public domain.
+# whirlpool.py - pure Python implementation of the Whirlpool algorithm.
+# Bjorn Edstrom <be@bjrn.se> 16 december 2007.
+#
+# Copyrights
+# ==========
+#
+# This code is based on the reference implementation by
+# Paulo S.L.M. Barreto and Vincent Rijmen. The reference implementation
+# is placed in the public domain but has the following headers:
+#
+# * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
+# * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE
+# * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+# * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# *
+# */
+# /* The code contained in this file (Whirlpool.c) is in the public domain. */
+#
+# This Python implementation is therefore also placed in the public domain.
 
 DIGESTBYTES = 64
 DIGESTBITS = 512
@@ -35,7 +35,7 @@ class whirlpool(object):
 
     def __init__(self, arg=""):
         self.ctx = WhirlpoolStruct()
-        if arg != "" and arg != None:
+        if arg != "" and arg is not None:
             self.update(arg)
         self.digest_status = 0
 
@@ -48,7 +48,7 @@ class whirlpool(object):
         return self.__digest_size
 
     def update(self, arg):
-        if arg != "" and arg != None:
+        if arg != "" and arg is not None:
             WhirlpoolAdd(arg, len(arg) * 8, self.ctx)
         self.digest_status = 0
 
@@ -61,7 +61,7 @@ class whirlpool(object):
 
     def hexdigest(self):
         digest = self.digest()
-        if digest == None:
+        if digest is None:
             return None
         hex_digest = ''
         for byte in digest:
@@ -721,13 +721,13 @@ def WhirlpoolFinalize(ctx):
 
 def CDo(buf, a0, a1, a2, a3, a4, a5, a6, a7):
     return C0[((buf[a0] >> 56) % 0x100000000) & 0xff] ^ \
-           C1[((buf[a1] >> 48) % 0x100000000) & 0xff] ^ \
-           C2[((buf[a2] >> 40) % 0x100000000) & 0xff] ^ \
-           C3[((buf[a3] >> 32) % 0x100000000) & 0xff] ^ \
-           C4[((buf[a4] >> 24) % 0x100000000) & 0xff] ^ \
-           C5[((buf[a5] >> 16) % 0x100000000) & 0xff] ^ \
-           C6[((buf[a6] >> 8) % 0x100000000) & 0xff] ^ \
-           C7[((buf[a7] >> 0) % 0x100000000) & 0xff]
+        C1[((buf[a1] >> 48) % 0x100000000) & 0xff] ^ \
+        C2[((buf[a2] >> 40) % 0x100000000) & 0xff] ^ \
+        C3[((buf[a3] >> 32) % 0x100000000) & 0xff] ^ \
+        C4[((buf[a4] >> 24) % 0x100000000) & 0xff] ^ \
+        C5[((buf[a5] >> 16) % 0x100000000) & 0xff] ^ \
+        C6[((buf[a6] >> 8) % 0x100000000) & 0xff] ^ \
+        C7[((buf[a7] >> 0) % 0x100000000) & 0xff]
 
 
 def processBuffer(ctx):

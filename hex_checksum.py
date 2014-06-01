@@ -149,9 +149,9 @@ class checksum(object):
     thread = None
 
     def __init__(self, hash_algorithm=None, data=""):
-        if hash_algorithm is None or not hash_algorithm in VALID_HASH:
+        if hash_algorithm is None or hash_algorithm not in VALID_HASH:
             hash_algorithm = hv_settings.get("hash_algorithm", DEFAULT_CHECKSUM)
-        if not hash_algorithm in VALID_HASH:
+        if hash_algorithm not in VALID_HASH:
             hash_algorithm = DEFAULT_CHECKSUM
         self.hash = getattr(hashlib, hash_algorithm)(data)
         self.name = hash_algorithm
@@ -312,7 +312,7 @@ verify_hashes(
     ]
 )
 
-#Define extra hash classes as members of hashlib
+# Define extra hash classes as members of hashlib
 hashlib.md2 = md2
 hashlib.mdc2 = mdc2
 hashlib.md4 = md4

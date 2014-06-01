@@ -69,9 +69,9 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
                     for line in r_buffer:
                         hex_data = re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', self.view.substr(line)).replace(" ", "").decode("hex")
                         bin.write(hex_data)
-                        if hex_hash != None:
+                        if hex_hash is not None:
                             h_buffer.append(hex_data)
-                if hex_hash != None:
+                if hex_hash is not None:
                     # Checksum will be threaded and will show the result when done
                     sublime.set_timeout(lambda: sublime.status_message("Checksumming..."), 0)
                     hex_hash.threaded_update(h_buffer)

@@ -23,9 +23,9 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
     def restore(self, value):
         window = sublime.active_window()
         view = None
-        if value.strip().lower() == "yes" and self.fail_safe_view != None:
+        if value.strip().lower() == "yes" and self.fail_safe_view is not None:
             # Quit if cannot find window
-            if window == None:
+            if window is None:
                 self.reset()
                 return
 
@@ -36,11 +36,11 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
                         view = v
                         # Reset handshake so view won't be closed
                         self.handshake = -1
-            if view == None:
+            if view is None:
                 view = window.new_file()
 
             # Restore view
-            if view != None:
+            if view is not None:
                 # Get highlight settings
                 highlight_scope = hv_settings.get("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
                 highlight_icon = hv_settings.get("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
@@ -87,7 +87,7 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
 
     def reset(self):
         window = sublime.active_window()
-        if window != None and self.handshake != -1:
+        if window is not None and self.handshake != -1:
             for v in window.views():
                 if self.handshake == v.id():
                     window.focus_view(v)
@@ -100,11 +100,11 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
             window = sublime.active_window()
             file_name = file_name = view.settings().get("hex_viewer_file_name")
 
-            if window != None and file_name != None:
+            if window is not None and file_name is not None:
                 # Save hex view settings
                 self.fail_safe_view = {
                     "buffer": view.substr(sublime.Region(0, view.size())),
-                    "bits":  view.settings().get("hex_viewer_bits"),
+                    "bits": view.settings().get("hex_viewer_bits"),
                     "bytes": view.settings().get("hex_viewer_bytes"),
                     "actual": view.settings().get("hex_viewer_actual_bytes"),
                     "name": file_name,
@@ -122,7 +122,7 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
                         count += 1
                 if count == 1:
                     view = sublime.active_window().new_file()
-                    if view != None:
+                    if view is not None:
                         self.handshake = view.id()
 
                 # Alert user that they can restore
@@ -174,8 +174,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         # Get Seetings from settings file
         group_size = self.view.settings().get("hex_viewer_bits", None)
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
-        #Process hex grouping
-        if group_size != None and self.bytes_wide != None:
+        # Process hex grouping
+        if group_size is not None and self.bytes_wide is not None:
             self.group_size = group_size / BITS_PER_BYTE
             init_status = True
         return init_status
@@ -192,7 +192,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
             selection = self.line["selection"].replace(" ", "")
 
             # Transform string if provided
-            if re.match("^s\:", value) != None:
+            if re.match("^s\:", value) is not None:
                 edits = value[2:len(value)].encode("hex")
             else:
                 edits = value.replace(" ", "").lower()
@@ -201,7 +201,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
             if len(edits) != total_chars:
                 self.edit_panel(value, "Unexpected # of bytes!")
                 return
-            elif re.match("[\da-f]{" + str(total_chars) + "}", edits) == None:
+            elif re.match("[\da-f]{" + str(total_chars) + "}", edits) is None:
                 self.edit_panel(value, "Invalid data!")
                 return
             elif selection != edits:
@@ -229,7 +229,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
                     # Diff data and mark changed bytes
                     if value != original[start:byte_end]:
-                        if change_start == None:
+                        if change_start is None:
                             change_start = [hex_start_pos, ascii_start_pos]
                             # Check if group end
                             if count == self.group_size:
@@ -237,18 +237,18 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                                 change_start[0] = None
                         else:
                             # Check if after group end
-                            if change_start[0] == None:
+                            if change_start[0] is None:
                                 change_start[0] = hex_start_pos
                             # Check if group end
                             if count == self.group_size:
                                 regions.append(sublime.Region(change_start[0], hex_start_pos + 2))
                                 change_start[0] = None
-                    elif change_start != None:
+                    elif change_start is not None:
                         if self.view.score_selector(hex_start_pos - 1, 'raw.nibble.lower'):
-                            if change_start[0] != None:
+                            if change_start[0] is not None:
                                 regions.append(sublime.Region(change_start[0], hex_start_pos))
                         else:
-                            if change_start[0] != None:
+                            if change_start[0] is not None:
                                 regions.append(sublime.Region(change_start[0], hex_start_pos - 1))
                         regions.append(sublime.Region(change_start[1], ascii_start_pos))
                         change_start = None
@@ -269,8 +269,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                     ascii_start_pos += 1
 
                 # Check for end of line case for highlight
-                if change_start != None:
-                    if change_start[0] != None:
+                if change_start is not None:
+                    if change_start[0] is not None:
                         regions.append(sublime.Region(change_start[0], hex_start_pos))
                     regions.append(sublime.Region(change_start[1], ascii_start_pos))
                     change_start = None
@@ -332,7 +332,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
             hex_pos = self.view.text_point(row, column)
             start = hex_pos
 
-             # Traverse row finding the specified bytes
+            # Traverse row finding the specified bytes
             byte_count = bytes
             while byte_count:
                 # Byte rising edge
@@ -347,7 +347,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         return start, end, bytes
 
     def edit_panel(self, value, error=None):
-        msg = "Edit:" if error == None else "Edit (" + error + "):"
+        msg = "Edit:" if error is None else "Edit (" + error + "):"
         self.window.show_input_panel(
             msg,
             value,

@@ -13,14 +13,14 @@ class HexFinderCommand(sublime_plugin.WindowCommand):
     handshake = -1
 
     def go_to_address(self, address):
-        #init
+        # init
         view = self.window.active_view()
 
         if self.handshake != -1 and self.handshake == view.id():
             # Adress offset for line
             group_size = view.settings().get("hex_viewer_bits", None)
             bytes_wide = view.settings().get("hex_viewer_actual_bytes", None)
-            if group_size == None and bytes_wide == None:
+            if group_size is None and bytes_wide is None:
                 return
             group_size = group_size / BITS_PER_BYTE
 
@@ -60,7 +60,7 @@ class HexFinderCommand(sublime_plugin.WindowCommand):
         return is_enabled()
 
     def run(self):
-         # Identify view
+        # Identify view
         view = self.window.active_view()
         if self.handshake != -1 and self.handshake == view.id():
             self.reset()

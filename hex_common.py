@@ -17,17 +17,17 @@ hv_inspector_enable = hv_settings.get("inspector", False)
 
 def is_enabled(current_view=None):
     window = sublime.active_window()
-    if window == None:
+    if window is None:
         return False
     view = window.active_view()
-    if view == None:
+    if view is None:
         return False
     # Check not only if active main view is hex,
     # check if current view is the main active view
-    if current_view != None and current_view.id() != view.id():
+    if current_view is not None and current_view.id() != view.id():
         return False
     syntax = view.settings().get('syntax')
-    language = basename(syntax).replace('.tmLanguage', '').lower() if syntax != None else "plain text"
+    language = basename(syntax).replace('.tmLanguage', '').lower() if syntax is not None else "plain text"
     return (language == "hex")
 
 
@@ -74,7 +74,7 @@ def adjust_hex_sel(view, start, end, group_size):
         else:
             start = None
     # Adjust ending of selection to end of last selected byte
-    if size == 0 and start != None:
+    if size == 0 and start is not None:
         end = start + 1
         bytes = 1
     elif view.score_selector(end, 'raw.nibble.lower') == 0:
@@ -82,7 +82,7 @@ def adjust_hex_sel(view, start, end, group_size):
             end -= 1
         else:
             end -= 2
-    if start != None and end != None:
+    if start is not None and end is not None:
         bytes = get_byte_count(start, end, group_size)
     return start, end, bytes
 
