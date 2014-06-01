@@ -339,6 +339,10 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.file_name = ""
         self.type = None
 
+    def is_enabled(self):
+        view = self.window.active_view()
+        return view is not None and not view.settings().get("hex_viewer_fake", False)
+
     def run(self, bits=None, bytes=None):
         # If thread is active cancel thread
         if self.thread is not None and self.thread.is_alive():
@@ -394,7 +398,8 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
             self.window.run_command('hex_viewer', {"bytes": self.valid_bytes[value]})
 
     def is_enabled(self):
-        return is_enabled()
+        view = self.window.active_view()
+        return is_enabled() and view is not None and not view.settings().get("hex_viewer_fake", False)
 
     def run(self, option):
         self.view = self.window.active_view()

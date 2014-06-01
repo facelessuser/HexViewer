@@ -26,6 +26,14 @@
     // Show inspector panel on hex view load and hide on hex view hide
     "inspector_auto_show" : true,
 
+    // Treat files in hex syntax with proper format
+    // (usually .hex files; saved versions of hex output)
+    // as real hex views.  The following functionality will be omitted:
+    // hex toggle, editing, writing to file,
+    // and dynamic changing of bits and bytes functionality.
+    // Address searching, Hex inspector, etc. should work fine.
+    "enable_fake_hex_file": true,
+
     // Approximate max byte selection.
     // The highlighter will highlight individual selections until
     // the max number of bytes is found.  The selection containing
