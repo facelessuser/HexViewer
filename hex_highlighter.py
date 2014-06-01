@@ -50,7 +50,7 @@ class HexHighlighter(object):
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
         self.highlight_scope = hv_settings.get("highlight_scope", HIGHLIGHT_SCOPE)
         self.highlight_icon = hv_settings.get("highlight_icon", HIGHLIGHT_ICON)
-        self.enable_fake_hex = hv_settings("enable_fake_hex_file", True)
+        self.enable_fake_hex = hv_settings.get("enable_fake_hex_file", True)
         style = hv_settings.get("highlight_style", HIGHLIGHT_STYLE)
 
         if (group_size is None or self.bytes_wide is None) and self.enable_fake_hex:
@@ -64,7 +64,7 @@ class HexHighlighter(object):
                 self.view.settings().set("hex_viewer_fake", True)
                 self.view.set_read_only(True)
                 self.view.set_scratch(True)
-                if hv_settings("inspector", False) and hv_settings("inspector_auto_show", False):
+                if hv_settings.get("inspector", False) and hv_settings.get("inspector_auto_show", False):
                     self.view.window().run_command("hex_show_inspector")
 
         # No icon?
