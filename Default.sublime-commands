@@ -1,117 +1,129 @@
 [
-	{
-		"caption": "Hex Viewer: Toggle Hex View",
-		"command": "hex_viewer"
-	},
-	{
-		"caption": "Hex Viewer: Show Hex Inspector",
-		"command": "hex_show_inspector"
-	},
-	{
-		"caption": "Hex Viewer: Toggle Endianness (Big|Little)",
-		"command": "hex_toggle_inspector_endianness"
-	},
-	{
-		"caption": "Hex Viewer: Set Bits Per Group",
-		"command": "hex_viewer_options",
-		"args"   : {"option": "bits"}
-	},
-	{
-		"caption": "Hex Viewer: Set Bytes Per Line",
-		"command": "hex_viewer_options",
-		"args"   : {"option": "bytes"}
-	},
-	{
-		"caption": "Hex Viewer: Find By Address",
-		"command": "hex_finder"
-	},
-	{
-		"caption": "Hex Viewer: Show Hex Edit Panel",
-		"command": "hex_editor"
-	},
-	{
-		"caption": "Hex Viewer: Discard All Edits",
-		"command": "hex_discard_edits"
-	},
-	{
-		"caption": "Hex Viewer: Export Bin",
-		"command": "hex_writer"
-	},
-	{
-		"caption": "Hex Viewer: Run Checksum",
-		"command": "hex_checksum",
-		"args": {"panel": true}
-	},
-	{
-		"caption": "Hex Viewer: Generate Hash",
-		"command": "hash_eval"
-	},
-	{
-		"caption": "Hex Viewer: Generate Hash from Selection",
-		"command": "hash_selection"
-	},
-	{
-		"caption": "Preferences: Hex Viewer Settings – Default",
-		"command": "open_file",
-		"args": { "file": "${packages}/HexViewer/hex_viewer.sublime-settings" }
-	},
-	{
-		"caption": "Preferences: Hex Viewer Settings – User",
-		"command": "open_file",
-		"args": { "file": "${packages}/User/hex_viewer.sublime-settings" }
-	},
-	{
-		"caption": "Preferences: Hex Viewer Key Bindings – Default",
-		"command": "open_file",
-		"args":
-		{
-			"file": "${packages}/HexViewer/Default (Windows).sublime-keymap",
-			"platform": "Windows"
-		}
-	},
-	{
-		"caption": "Preferences: Hex Viewer Key Bindings – User",
-		"command": "open_file",
-		"args":
-		{
-			"file": "${packages}/User/Default (Windows).sublime-keymap",
-			"platform": "Windows"
-		}
-	},
-	{
-		"caption": "Preferences: Hex Viewer Key Bindings – Default",
-		"command": "open_file",
-		"args":
-		{
-			"file": "${packages}/HexViewer/Default (OSX).sublime-keymap",
-			"platform": "OSX"
-		}
-	},
-	{
-		"caption": "Preferences: Hex Viewer Key Bindings – User",
-		"command": "open_file",
-		"args":
-		{
-			"file": "${packages}/User/Default (OSX).sublime-keymap",
-			"platform": "OSX"
-		}
-	},
-	{
-		"caption": "Preferences: Hex Viewer Key Bindings – Default",
-		"command": "open_file",
-		"args":
-		{
-			"file": "${packages}/HexViewer/Default (Linux).sublime-keymap",
-			"platform": "Linux"
-		}
-	},
-	{
-		"caption": "Preferences: Hex Viewer Key Bindings – User",
-		"command": "open_file",
-		"args":
-		{
-			"file": "${packages}/User/Default (Linux).sublime-keymap",
-			"platform": "Linux"
-		}
-	}
+    {
+        "caption": "Hex Viewer: Toggle Hex View",
+        "command": "hex_viewer"
+    },
+    {
+        "caption": "Hex Viewer: Abort Hex View Conversion",
+        "command": "hex_viewer_abort"
+    },
+    {
+        "caption": "Hex Viewer: Show Hex Inspector",
+        "command": "hex_show_inspector"
+    },
+    {
+        "caption": "Hex Viewer: Toggle Endianness (Big|Little)",
+        "command": "hex_toggle_inspector_endianness"
+    },
+    {
+        "caption": "Hex Viewer: Set Bits Per Group",
+        "command": "hex_viewer_options",
+        "args"   : {"option": "bits"}
+    },
+    {
+        "caption": "Hex Viewer: Set Bytes Per Line",
+        "command": "hex_viewer_options",
+        "args"   : {"option": "bytes"}
+    },
+    {
+        "caption": "Hex Viewer: Find By Address",
+        "command": "hex_finder"
+    },
+    {
+        "caption": "Hex Viewer: Show Hex Edit Panel",
+        "command": "hex_editor"
+    },
+    {
+        "caption": "Hex Viewer: Discard All Edits",
+        "command": "hex_discard_edits"
+    },
+    {
+        "caption": "Hex Viewer: Export Bin",
+        "command": "hex_writer"
+    },
+    {
+        "caption": "Hex Viewer: Abort Export",
+        "command": "hex_writer_abort"
+    },
+    {
+        "caption": "Hex Viewer: Run Checksum",
+        "command": "hex_checksum",
+        "args": {"panel": true}
+    },
+    {
+        "caption": "Hex Viewer: Abort Checksum",
+        "command": "hex_checksum_abort"
+    },
+    {
+        "caption": "Hex Viewer: Generate Hash",
+        "command": "hash_eval"
+    },
+    {
+        "caption": "Hex Viewer: Generate Hash from Selection",
+        "command": "hash_selection"
+    },
+    {
+        "caption": "Preferences: Hex Viewer Settings – Default",
+        "command": "open_file",
+        "args": { "file": "${packages}/HexViewer/hex_viewer.sublime-settings" }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Settings – User",
+        "command": "open_file",
+        "args": { "file": "${packages}/User/hex_viewer.sublime-settings" }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "command": "open_file",
+        "args":
+        {
+            "file": "${packages}/HexViewer/Default (Windows).sublime-keymap",
+            "platform": "Windows"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "command": "open_file",
+        "args":
+        {
+            "file": "${packages}/User/Default (Windows).sublime-keymap",
+            "platform": "Windows"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "command": "open_file",
+        "args":
+        {
+            "file": "${packages}/HexViewer/Default (OSX).sublime-keymap",
+            "platform": "OSX"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "command": "open_file",
+        "args":
+        {
+            "file": "${packages}/User/Default (OSX).sublime-keymap",
+            "platform": "OSX"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "command": "open_file",
+        "args":
+        {
+            "file": "${packages}/HexViewer/Default (Linux).sublime-keymap",
+            "platform": "Linux"
+        }
+    },
+    {
+        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "command": "open_file",
+        "args":
+        {
+            "file": "${packages}/User/Default (Linux).sublime-keymap",
+            "platform": "Linux"
+        }
+    }
 ]
