@@ -22,6 +22,8 @@ VALID_BITS = [8, 16, 32, 64, 128]
 VALID_BYTES = [8, 10, 16, 24, 32, 48, 64, 128, 256, 512]
 AUTO_OPEN = False
 
+active_thread = None
+
 
 class ReadBin(threading.Thread):
     def __init__(self, file_name, bytes_wide, group_size):
@@ -248,6 +250,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         return file_name
 
     def read_bin(self, file_name):
+        global active_thread
         self.abort = False
         self.current_view = self.view
         self.thread = ReadBin(file_name, self.bytes_wide, self.group_size)
@@ -259,15 +262,23 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         else:
             self.thread.start()
             self.handle_thread()
+            active_thread = self.thread
 
     def load_hex_view(self):
         file_name = self.thread.file_name
         hex_name = self.thread.hex_name
+        abort = self.thread.abort
         self.thread = None
+
+        if abort:
+            sublime.status_message("Conversion aborted!")
+            if exists(hex_name):
+                remove(hex_name)
+            return
 
         # Show binary data
         view = self.window.open_file(hex_name)
-        view.set_name(basename(file_name) + ".hex")
+
         self.window.focus_view(self.view)
         if self.window.active_view().id() == self.view.id():
             self.window.run_command("close_file")
@@ -287,7 +298,6 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         view.settings().set("hex_no_auto_open", True)
         view.settings().set("hex_viewer_fake", False)
         view.settings().set("hex_viewer_temp_file", hex_name)
-
         # Show hex content in view; make read only
         view.set_scratch(True)
         view.set_read_only(True)
@@ -352,9 +362,17 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
     def is_enabled(self):
         view = self.window.active_view()
-        return view is not None and not view.settings().get("hex_viewer_fake", False)
+        return (
+            view is not None and
+            not view.settings().get("hex_viewer_fake", False) and
+            not(active_thread is not None and active_thread.is_alive())
+        )
 
     def run(self, bits=None, bytes=None):
+        global active_thread
+        if active_thread is not None and active_thread.is_alive():
+            sublime.error_message("HexViewer is already converting a file!\nPlease run the abort command to stop the current conversion.")
+            return
         # If thread is active cancel thread
         if self.thread is not None and self.thread.is_alive():
             self.abort_hex_load()
@@ -427,3 +445,14 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
                     for bytes in self.valid_bytes:
                         option_list.append(str(bytes) + " bytes")
                     self.window.show_quick_panel(option_list, self.set_bytes)
+
+
+class HexViewerAbortCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        global active_thread
+        if active_thread is not None and active_thread.is_alive():
+            active_thread.abort = True
+
+    def is_enabled(self):
+        global active_thread
+        return active_thread is not None and active_thread.is_alive()

@@ -1,11 +1,10 @@
 # About
-Hex Viewer is a plugin for Sublime Text 2 that allows the toggling of a file into a hex viewing mode.  Hex Viewer also supports hex editing.
+Hex Viewer is a plugin for Sublime Text that allows the toggling of a file into a hex viewing mode.  Hex Viewer also supports hex editing.
 
 <img src="http://dl.dropbox.com/u/342698/HexViewer/preview.png" border="0"/>
 
-# Installation 
-- Download is available in Package Control or you can download or clone directly and drop into your Sublime Text 2 packages directory (plugin folder must be named HexViewer)
-- You may need to restart Sublime Text 2 after installation
+# Installation
+Use Package Control
 
 # Features
 - Toggling a file into hex view mode
@@ -72,6 +71,9 @@ Shows a quick panel allowing you to select the desired hash, and then shows an i
 ## Hex Viewer: Generate Hash from Selection
 Allows you to genrate hashes from your current selection(s).  Multiselect regions' content will be combined and evaluated together.  If a region contains newlines, they will be hashed as well.
 
+## Hex Viewer: Abort (Hex Conversion|Export|Checksum)
+Abort the given action.
+
 # Configurable settings
 Settings are configurable in the hex_viewer.sublime-settings file.
 
@@ -100,84 +102,3 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-# Version 1.7.1
-- Prevent highlighter from hijacking cursor from inspector panel etc.
-
-# Version 1.7
-- More responsive highlighting
-- Turn off gutter icons for highlighting by default (does not seen needed)
-- Convert tabs to spaces in settings file
-
-# Version 1.6
-- Report Tiger-192 as big endian as most hashing programs do
-
-# Version 1.5
-- Allow the hashing of current selection(s).  Multiselect regions's content will be combined and evaluated together
-- Update hash progress quicker
-- Chunk hashes entered in the input panel in case very large amounts of data are pasted in
-
-# Version 1.4
-- Fix issue where some selections will select an extra hex char that is not really selected
-- Update missing item from changelog
-
-# Version 1.3
-- Decrease debounce threads to one
-
-# Version 1.2
-- Auto open specified binary files in Hex Viewer (disabled by default)
-
-# Version 1.1
-- Add MD2 so Windows OS can find it (Mac and Linux do not have this one; Mac uses MDC2 for some reason)
-
-# Version 1.0
-- Allow unicode text in "Generate Hash"
-
-# Version 0.9
-- String to hash not always working now fixed
-- Fixes for when certain hashes are not found
-
-# Version 0.8
-- New hash algorithms: Whirlpool and Tiger-192
-- Checksums are now threaded
-- Exposed new command to tap into hashes called "Hex Viewer: Generate Hash"
-- Rework logic to determine which hashes are available
-
-# Version 0.7
-- New hash algorithms from openssl: sha, mdc2, md4, ripemd160 (dynamcially added if system supports them)
-- Rename "Get Checksum" command to "Run Checksum"
-- When invoking shortcut or command for checksumming, show quick panel with all valid hash algorithms to choose from
-
-# Version 0.6
-- Commands accessible from menu Tools > Packages > Hex Viewer
-- Fix checksum not responding to settings change
-- Add CRC32 and ADLER32 hash algorithms for checksums
-
-# Version 0.5
-- New progress animation in status bar when reading bin file
-- Setting to enable or disable highlight throttling (default is disabled)
-- Don't display incorrect byte count when highlight is throttled
-- Get hex char range only once
-- Better highlighting of edits
-- A little cleanup
-
-# Version 0.4
-- Hide Inspector tmLanguage file
-- Chunk checksum and export for faster, more linear performance with large files
-- Thread binary file reading and show progress of bytes parsed in status bar
-- If hex view command is issued while a file is being converted, abort the conversion
-- Simplify logic with hex view; always close original tab and load in new one opposed to conditional logic (easier with threading)
-- Add setting to throttle highlighting selected bytes
-- Add divider in settings menu
-
-# Version 0.3
-- On export, rename tab to new export name
-- Fix checksum failing when passing certain data through Sublime Text run_command API
-- Account for NaNs in floats and doubles in Hex Inspector
-
-# Version 0.2
-- Fix issue where large blocks get highlighted when the end of line is selected
-- Add checksum command (also runs when export is made)
-
-# Version 0.1
-- Initial release
