@@ -14,12 +14,17 @@ import zlib
 import sys
 from HexViewer import whirlpool, tiger, sum_hashes
 from binascii import unhexlify
-
+from io import StringIO
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
 
 active_thread = None
+
+
+def parse_view_data(data_buffer):
+    for line in data_buffer:
+        yield unhexlify(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', line).replace(" ", ""))
 
 
 def verify_hashes(hashes):
@@ -160,13 +165,12 @@ class checksum(object):
         if isinstance(data, str):
             self.hash.update(data)
 
-    def threaded_update(self, data=[]):
-        if not isinstance(data, str):
-            global active_thread
-            self.thread = hash_thread(data, self.hash)
-            self.thread.start()
-            self.chunk_thread()
-            active_thread = self
+    def threaded_update(self, data_buffer=[], fmt_callback=None, count=None):
+        global active_thread
+        self.thread = hash_thread(data_buffer, self.hash, fmt_callback, count)
+        self.thread.start()
+        self.chunk_thread()
+        active_thread = self
 
     def chunk_thread(self):
         ratio = float(self.thread.chunk) / float(self.thread.chunks)
@@ -193,17 +197,22 @@ class checksum(object):
 
 
 class hash_thread(threading.Thread):
-    def __init__(self, data, obj):
+    def __init__(self, data, obj, fmt_callback=None, count=None):
         self.hash = False
         self.data = data
         self.obj = obj
         self.chunk = 0
-        self.chunks = len(data)
+        self.chunks = len(data) if count is None else count
         self.abort = False
+        self.fmt_callback = fmt_callback if fmt_callback is not None else self.format
         threading.Thread.__init__(self)
 
+    def format(self, data):
+        for x in data:
+            yield x
+
     def run(self):
-        for chunk in self.data:
+        for chunk in self.fmt_callback(self.data):
             self.chunk += 1
             if self.abort:
                 return
@@ -291,11 +300,13 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
         if view is not None:
             sublime.set_timeout(lambda: sublime.status_message("Checksumming..."), 0)
             hex_hash = checksum(hash_algorithm)
-            r_buffer = view.split_by_newlines(sublime.Region(0, view.size()))
-            hex_data = []
-            for line in r_buffer:
-                hex_data.append(unhexlify(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', view.substr(line)).replace(" ", "")))
-            hex_hash.threaded_update(hex_data)
+            # data_buffer = view.split_by_newlines()
+            row = view.rowcol(view.size())[0] - 1
+            hex_hash.threaded_update(
+                StringIO(view.substr(sublime.Region(0, view.size()))),
+                parse_view_data,
+                row
+            )
 
 
 # Compose list of hashes
