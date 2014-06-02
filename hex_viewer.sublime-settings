@@ -41,6 +41,9 @@
     // bytes than the max.
     "highlight_max_bytes" : 1000,
 
+    // Maximum allowed byte size that HexViewer will parse
+    "max_file_size_kb": 50000.0,
+
     //Enable highlight throttling
     "highlight_throttle" : false,
 
