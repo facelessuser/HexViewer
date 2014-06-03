@@ -4,6 +4,10 @@
         "command": "hex_viewer"
     },
     {
+        "caption": "Hex Viewer: Open in External Viewer",
+        "command": "hex_external_viewer"
+    },
+    {
         "caption": "Hex Viewer: Abort Hex View Conversion",
         "command": "hex_viewer_abort"
     },
