@@ -14,6 +14,7 @@ from os import remove
 from HexViewer.hex_common import *
 from fnmatch import fnmatch
 import tempfile
+import subprocess
 
 DEFAULT_BIT_GROUP = 16
 DEFAULT_BYTES_WIDE = 24
@@ -257,7 +258,11 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         file_size = float(self.thread.file_size) * 0.001
         max_file_size = float(hv_settings("max_file_size_kb", DEFAULT_MAX_FILE_SIZE))
         if file_size > max_file_size:
-            sublime.error_message("File size exceeded HexViewers configured max limit of %s KB" % str(max_file_size))
+            viewer = hv_settings("external_viewer", {}).get("viewer", "")
+            if exists(viewer):
+                self.view.run_command("hex_external_viewer")
+            else:
+                sublime.error_message("File size exceeded HexViewers configured max limit of %s KB" % str(max_file_size))
             self.reset_thread()
         else:
             self.thread.start()
@@ -445,6 +450,27 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
                     for bytearray in self.valid_bytes:
                         option_list.append(str(bytearray) + " bytes")
                     self.window.show_quick_panel(option_list, self.set_bytes)
+
+
+class HexExternalViewerCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        viewer = hv_settings("external_viewer", {}).get("viewer", "")
+        if not exists(viewer):
+            sublime.error_message("Can't find the external hex viewer!")
+            return
+
+        file_name = self.view.file_name()
+        if file_name is not None:
+            cmd = [viewer] + hv_settings("external_viewer", {}).get("args", [])
+
+            for x in range(0, len(cmd)):
+                cmd[x] = cmd[x].replace("${FILE}", file_name)
+
+            subprocess.Popen(cmd)
+
+    def is_enabled(self):
+        viewer = hv_settings("external_viewer", {}).get("viewer", "")
+        return exists(viewer) and self.view.file_name() is not None
 
 
 class HexViewerAbortCommand(sublime_plugin.WindowCommand):

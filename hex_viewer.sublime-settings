@@ -44,6 +44,14 @@
     // Maximum allowed byte size that HexViewer will parse
     "max_file_size_kb": 50000.0,
 
+    // External Hex Viewer if max size is exceeded.
+    // Viewer should be the absolute path.
+    // Args is an array of command line arguments. Use ${FILE} for the file path.
+    "external_viewer": {
+        "viewer": "",
+        "args": ["${FILE}"]
+    },
+
     //Enable highlight throttling
     "highlight_throttle" : false,
 
