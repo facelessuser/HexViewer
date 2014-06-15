@@ -12,6 +12,7 @@ from HexViewer.hex_checksum import checksum, parse_view_data
 import threading
 import traceback
 from io import StringIO
+from HexViewer.hex_notify import notify, error
 
 USE_CHECKSUM_ON_SAVE = True
 WRITE_GOOD = 0
@@ -103,7 +104,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             else:
                 self.export()
         else:
-            sublime.error_message("Directory does not exist!")
+            error("Directory does not exist!")
             self.export_path = self.view.settings().get("hex_viewer_file_name")
             self.export_panel()
 
@@ -137,14 +138,14 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         sublime.status_message(message)
         if not self.thread.is_alive():
             if self.thread.abort is True:
-                sublime.status_message("Write aborted!")
+                notify("Write aborted!")
                 sublime.set_timeout(lambda: self.reset_thread(), 500)
             else:
                 self.reset_thread()
                 if self.thread.status == WRITE_GOOD:
                     sublime.set_timeout(lambda: self.finish_export(), 500)
                 else:
-                    sublime.error_message("Failed to export to " + self.export_path)
+                    error("Failed to export to " + self.export_path)
         else:
             sublime.set_timeout(lambda: self.export_thread(), 500)
 
@@ -153,7 +154,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         self.view = self.window.active_view()
         if self.handshake != -1 and self.handshake == self.view.id():
             try:
-                sublime.set_timeout(lambda: sublime.status_message("Writting..."), 0)
+                sublime.set_timeout(lambda: sublime.status_message("Writing..."), 0)
                 self.row = self.view.rowcol(self.view.size())[0] - 1
                 self.hex_buffer = StringIO(self.view.substr(sublime.Region(0, self.view.size())))
                 self.thread = ThreadedWrite(self.hex_buffer, self.export_path, parse_view_data, self.row)
@@ -162,12 +163,12 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
                 active_thread = self.thread
             except:
                 print(str(traceback.format_exc()))
-                sublime.error_message("Failed to export to " + self.export_path)
+                error("Failed to export to " + self.export_path)
                 self.reset()
                 return
 
         else:
-            sublime.error_message("Hex view is no longer in focus! File not saved.")
+            error("Hex view is no longer in focus! File not saved.")
             self.reset()
 
     def reset(self):
@@ -178,7 +179,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
     def run(self):
         global active_thread
         if active_thread is not None and active_thread.is_alive():
-            sublime.error_message("HexViewer is already exporting a file!\nPlease run the abort command to stop the current export.")
+            error("HexViewer is already exporting a file!\nPlease run the abort command to stop the current export.")
         else:
             self.view = self.window.active_view()
 

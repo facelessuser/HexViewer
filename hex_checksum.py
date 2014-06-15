@@ -16,6 +16,7 @@ from HexViewer import whirlpool, tiger, sum_hashes
 from binascii import unhexlify
 from io import StringIO
 import traceback
+from HexViewer.hex_notify import notify, error
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
@@ -181,7 +182,7 @@ class checksum(object):
         sublime.status_message(message)
         if not self.thread.is_alive():
             if self.thread.abort is True:
-                sublime.status_message("Hash calculation aborted!")
+                notify("Hash calculation aborted!")
                 sublime.set_timeout(lambda: self.reset_thread(), 500)
             else:
                 sublime.set_timeout(lambda: self.display(), 500)
@@ -292,7 +293,7 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
     def run(self, hash_algorithm=None, panel=False):
         global active_thread
         if active_thread is not None and active_thread.is_alive():
-            sublime.error_message("HexViewer is already checksumming a file!\nPlease run the abort command to stop the current checksum.")
+            error("HexViewer is already checksumming a file!\nPlease run the abort command to stop the current checksum.")
         else:
             if not panel:
                 self.get_checksum(hash_algorithm)

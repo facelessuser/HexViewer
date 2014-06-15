@@ -3,10 +3,9 @@ Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
 """
-
-import sublime
 import sublime_plugin
 from HexViewer.hex_common import *
+from HexViewer.hex_notify import error
 
 
 class HexFinderCommand(sublime_plugin.WindowCommand):
@@ -50,7 +49,7 @@ class HexFinderCommand(sublime_plugin.WindowCommand):
             except:
                 pass
         else:
-            sublime.error_message("Hex view is no longer in focus! Find address canceled.")
+            error("Hex view is no longer in focus! Find address canceled.")
         self.reset()
 
     def reset(self):

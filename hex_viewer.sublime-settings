@@ -1,4 +1,7 @@
 {
+    // Use sub notify if available
+    "use_sub_notify": true,
+
     // Group bytes together by bits
     // Valid Settings (8|16|32|64|128)
     "group_bytes_by_bits" : 16,

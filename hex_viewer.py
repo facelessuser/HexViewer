@@ -15,6 +15,7 @@ from HexViewer.hex_common import *
 from fnmatch import fnmatch
 import tempfile
 import subprocess
+from HexViewer.hex_notify import notify, error
 
 DEFAULT_BIT_GROUP = 16
 DEFAULT_BYTES_WIDE = 24
@@ -262,7 +263,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             if exists(viewer):
                 self.view.run_command("hex_external_viewer")
             else:
-                sublime.error_message("File size exceeded HexViewers configured max limit of %s KB" % str(max_file_size))
+                error("File size exceeded HexViewers configured max limit of %s KB" % str(max_file_size))
             self.reset_thread()
         else:
             self.thread.start()
@@ -276,7 +277,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.thread = None
 
         if abort:
-            sublime.status_message("Conversion aborted!")
+            notify("Conversion aborted!")
             if exists(hex_name):
                 remove(hex_name)
             return
@@ -322,7 +323,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
     def handle_thread(self):
         if self.abort is True:
             self.thread.abort = True
-            sublime.status_message("Hex View aborted!")
+            notify("Hex View aborted!")
             sublime.set_timeout(lambda: self.reset_thread(), 500)
             return
         ratio = float(self.thread.read_count) / float(self.thread.file_size)
@@ -346,7 +347,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                     view.set_scratch(True)
                     self.read_bin(self.file_name)
                 else:
-                    sublime.error_message("Target view is no longer in focus!  Hex view aborted.")
+                    error("Target view is no longer in focus!  Hex view aborted.")
             else:
                 self.read_file(self.file_name)
         self.reset()
@@ -376,7 +377,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
     def run(self, bits=None, bytearray=None):
         global active_thread
         if active_thread is not None and active_thread.is_alive():
-            sublime.error_message("HexViewer is already converting a file!\nPlease run the abort command to stop the current conversion.")
+            error("HexViewer is already converting a file!\nPlease run the abort command to stop the current conversion.")
             return
         # If thread is active cancel thread
         if self.thread is not None and self.thread.is_alive():
@@ -456,7 +457,7 @@ class HexExternalViewerCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         viewer = hv_settings("external_viewer", {}).get("viewer", "")
         if not exists(viewer):
-            sublime.error_message("Can't find the external hex viewer!")
+            error("Can't find the external hex viewer!")
             return
 
         file_name = self.view.file_name()

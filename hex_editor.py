@@ -11,6 +11,7 @@ from os.path import basename
 from struct import unpack
 from HexViewer.hex_common import *
 from binascii import unhexlify, hexlify
+from HexViewer.hex_notify import error
 
 HIGHLIGHT_EDIT_SCOPE = "keyword"
 HIGHLIGHT_EDIT_ICON = "none"
@@ -324,7 +325,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                 # Update selection
                 self.window.run_command('hex_highlighter')
         else:
-            sublime.error_message("Hex view is no longer in focus! Edit Failed.")
+            error("Hex view is no longer in focus! Edit Failed.")
         # Clean up
         self.reset()
 
