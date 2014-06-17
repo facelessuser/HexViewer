@@ -78,8 +78,13 @@
     // Enable checksum on save
     "checksum_on_save" : true,
 
-    // Auto open binary files in hex viewer (uses auto_open_patterns)
+    // Auto open binary files in hex viewer
+    // Detects if view has encoding set to 'Hexidecimal'.
+    // Addtionally it can use 'auto_open_patterns' below.
     "auto_open" : false,
+
+    // Disable auto open based on 'Hexidecimal' encoding
+    "disable_auto_open_hex_encoding": false,
 
     // Auto open patterns to open in hex viewer
     "auto_open_patterns" : ["*.bin", "*.pyc"],

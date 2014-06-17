@@ -110,13 +110,16 @@ class ReadBin(threading.Thread):
 class HexViewerListenerCommand(sublime_plugin.EventListener):
     open_me = None
 
-    def is_bin_file(self, file_path):
+    def is_bin_file(self, file_path, encoding):
         match = False
-        patterns = hv_settings("auto_open_patterns", [])
-        for pattern in patterns:
-            match |= fnmatch(file_path, pattern)
-            if match:
-                break
+        if not hv_settings("disable_auto_open_hex_encoding", False) and encoding == "Hexadecimal":
+            match = True
+        else:
+            patterns = hv_settings("auto_open_patterns", [])
+            for pattern in patterns:
+                match |= fnmatch(file_path, pattern)
+                if match:
+                    break
         return match
 
     def open_bin_file(self, view=None, window=None):
@@ -139,10 +142,11 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
     def auto_load(self, view, window, is_preview):
         file_name = view.file_name()
+        encoding = view.encoding()
         # Make sure we have a file name and that we haven't already processed the view
         if file_name is not None and not view.settings().get("hex_no_auto_open", False):
             # Make sure the file is specified in our binary file list
-            if self.is_bin_file(file_name):
+            if self.is_bin_file(file_name, encoding):
                 # Handle previw or direct open
                 if is_preview:
                     self.open_me = file_name
