@@ -142,7 +142,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
     def auto_load(self, view, window, is_preview):
         file_name = view.file_name()
-        if not exists(file_name):
+        if file_name is not None and not exists(file_name):
             file_name = None
         encoding = view.encoding()
         # Make sure we have a file name and that we haven't already processed the view
