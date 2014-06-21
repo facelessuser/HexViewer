@@ -142,6 +142,8 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
     def auto_load(self, view, window, is_preview):
         file_name = view.file_name()
+        if not exists(file_name):
+            file_name = None
         encoding = view.encoding()
         # Make sure we have a file name and that we haven't already processed the view
         if file_name is not None and not view.settings().get("hex_no_auto_open", False):
@@ -396,7 +398,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             self.reset()
         self.handshake = self.view.id()
 
-        if file_name is not None:
+        if file_name is not None and exists(file_name):
             # Decide whether to read in as a binary file or a traditional file
             if self.view.settings().has("hex_viewer_file_name"):
                 self.view_type = "hex"
@@ -425,6 +427,11 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 else:
                     # Switch to hex output
                     self.read_bin(file_name)
+        else:
+            if file_name is None:
+                error("View does not exist on disk!")
+            else:
+                error("%s does not exist on disk!" % basename(file_name))
 
 
 class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
@@ -465,7 +472,7 @@ class HexExternalViewerCommand(sublime_plugin.TextCommand):
             return
 
         file_name = self.view.file_name()
-        if file_name is not None:
+        if file_name is not None and exists(file_name):
             cmd = [viewer] + hv_settings("external_viewer", {}).get("args", [])
 
             for x in range(0, len(cmd)):
