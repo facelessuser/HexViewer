@@ -150,6 +150,16 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
                 "dword", "--",
                 "longint", "--"
             ) + nl
+        if bytes64 is not None:
+            i_buffer += item_dec * 2 % (
+                "qword", unpack(endian + "Q", unhexlify(bytes64))[0],
+                "longlongint", unpack(endian + "q", unhexlify(bytes64))[0]
+            ) + nl
+        else:
+            i_buffer += item_str * 2 % (
+                "qword", "--",
+                "longlongint", "--"
+            ) + nl
         if bytes32 is not None:
             s_float = unpack(endian + "f", unhexlify(bytes32))[0]
             if math.isnan(s_float):
