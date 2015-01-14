@@ -234,7 +234,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         file_name = None
         if self.view is not None:
             # Get font settings
-            self.font = hv_settings('custom_font', 'None')
+            self.font = hv_settings('custom_font', 'none')
             self.font_size = hv_settings('custom_font_size', 0)
 
             # Get file name
