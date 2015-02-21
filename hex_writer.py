@@ -141,8 +141,9 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
                 notify("Write aborted!")
                 sublime.set_timeout(lambda: self.reset_thread(), 500)
             else:
+                status = self.thread.status
                 self.reset_thread()
-                if self.thread.status == WRITE_GOOD:
+                if status == WRITE_GOOD:
                     sublime.set_timeout(lambda: self.finish_export(), 500)
                 else:
                     error("Failed to export to " + self.export_path)
