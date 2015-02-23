@@ -32,6 +32,7 @@ Pref.load()
 
 class HhThreadMgr(object):
     restart = False
+    kill = False
 
 
 class HexHighlighter(object):
@@ -308,7 +309,7 @@ def hh_run():
 # Initial highlight is instant, but subsequent events in close succession will
 # be ignored and then accounted for with one match by this thread
 def hh_loop():
-    while not HhThreadMgr.restart:
+    while not HhThreadMgr.restart and not HhThreadMgr.kill:
         if Pref.modified is True and time() - Pref.time > Pref.wait_time:
             sublime.set_timeout(lambda: hh_run(), 0)
         sleep(0.5)
@@ -316,6 +317,11 @@ def hh_loop():
     if HhThreadMgr.restart:
         HhThreadMgr.restart = False
         sublime.set_timeout(lambda: thread.start_new_thread(hh_loop, ()), 0)
+
+    if HhThreadMgr.kill:
+        global running_hh_loop
+        del running_hh_loop
+        HhThreadMgr.kill = False
 
 
 def plugin_loaded():
@@ -328,3 +334,7 @@ def plugin_loaded():
         thread.start_new_thread(hh_loop, ())
     else:
         HhThreadMgr.restart = True
+
+
+def plugin_unloaded():
+    HhThreadMgr.kill = True
