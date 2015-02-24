@@ -8,7 +8,7 @@ import sublime
 import sublime_plugin
 from HexViewer.hex_common import *
 from time import time, sleep
-import _thread as thread
+import threading
 import re
 
 HIGHLIGHT_SCOPE = "string"
@@ -18,21 +18,8 @@ MS_HIGHLIGHT_DELAY = 500
 MAX_HIGHIGHT = 1000
 THROTTLING = False
 
-
-class Pref(object):
-    @classmethod
-    def load(cls):
-        cls.wait_time = 0.12
-        cls.time = time()
-        cls.modified = False
-        cls.ignore_all = False
-
-Pref.load()
-
-
-class HhThreadMgr(object):
-    restart = False
-    kill = False
+hh_thread = None
+hh_highlight = None
 
 
 class HexHighlighter(object):
@@ -275,9 +262,9 @@ class HexHighlighter(object):
 
 class HexHighlighterCommand(sublime_plugin.WindowCommand):
     def run(self):
-        if Pref.ignore_all:
+        if hh_thread.ignore_all:
             return
-        Pref.modified = True
+        hh_thread.modified = True
 
     def is_enabled(self):
         return is_enabled()
@@ -285,56 +272,66 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
 
 class HexHighlighterListenerCommand(sublime_plugin.EventListener):
     def on_selection_modified(self, view):
-        if not is_enabled(view) or Pref.ignore_all:
+        if not is_enabled(view) or hh_thread.ignore_all:
             return
         now = time()
-        if now - Pref.time > Pref.wait_time:
-            sublime.set_timeout(lambda: hh_run(), 0)
+        if now - hh_thread.time > hh_thread.wait_time:
+            sublime.set_timeout(lambda: hh_thread.payload(), 0)
         else:
-            Pref.modified = True
-            Pref.time = now
+            hh_thread.modified = True
+            hh_thread.time = now
 
 
-# Kick off hex highlighting
-def hh_run():
-    Pref.modified = False
-    # Ignore selection and edit events inside the routine
-    Pref.ignore_all = True
-    hh_highlight(sublime.active_window())
-    Pref.ignore_all = False
-    Pref.time = time()
+class HhThread(threading.Thread):
+    """ Load up defaults """
 
+    def __init__(self):
+        """ Setup the thread """
+        self.reset()
+        threading.Thread.__init__(self)
 
-# Start thread that will ensure highlighting happens after a barage of events
-# Initial highlight is instant, but subsequent events in close succession will
-# be ignored and then accounted for with one match by this thread
-def hh_loop():
-    while not HhThreadMgr.restart and not HhThreadMgr.kill:
-        if Pref.modified is True and time() - Pref.time > Pref.wait_time:
-            sublime.set_timeout(lambda: hh_run(), 0)
-        sleep(0.5)
+    def reset(self):
+        """ Reset the thread variables """
+        self.wait_time = 0.12
+        self.time = time()
+        self.modified = False
+        self.ignore_all = False
+        self.abort = False
 
-    if HhThreadMgr.restart:
-        HhThreadMgr.restart = False
-        sublime.set_timeout(lambda: thread.start_new_thread(hh_loop, ()), 0)
+    def payload(self):
+        """ Code to run """
+        self.modified = False
+        # Ignore selection and edit events inside the routine
+        self.ignore_all = True
+        hh_highlight(sublime.active_window())
+        self.ignore_all = False
+        self.time = time()
 
-    if HhThreadMgr.kill:
-        global running_hh_loop
-        del running_hh_loop
-        HhThreadMgr.kill = False
+    def kill(self):
+        """ Kill thread """
+        self.abort = True
+        while self.is_alive():
+            pass
+        self.reset()
+
+    def run(self):
+        """ Thread loop """
+        while not self.abort:
+            if self.modified is True and time() - self.time > self.wait_time:
+                sublime.set_timeout(lambda: self.payload(), 0)
+            sleep(0.5)
 
 
 def plugin_loaded():
     global hh_highlight
+    global hh_thread
     hh_highlight = HexHighlighter().run
 
-    if 'running_hh_loop' not in globals():
-        global running_hh_loop
-        running_hh_loop = True
-        thread.start_new_thread(hh_loop, ())
-    else:
-        HhThreadMgr.restart = True
+    if hh_thread is not None:
+        hh_thread.kill()
+    hh_thread = HhThread()
+    hh_thread.start()
 
 
 def plugin_unloaded():
-    HhThreadMgr.kill = True
+    hh_thread.kill()
