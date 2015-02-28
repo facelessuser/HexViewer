@@ -18,7 +18,6 @@ MS_HIGHLIGHT_DELAY = 500
 MAX_HIGHIGHT = 1000
 THROTTLING = False
 
-hh_thread = None
 hh_highlight = None
 
 
@@ -327,7 +326,7 @@ def plugin_loaded():
     global hh_thread
     hh_highlight = HexHighlighter().run
 
-    if hh_thread is not None:
+    if 'hh_thread' in globals() and hh_thread is not None:
         hh_thread.kill()
     hh_thread = HhThread()
     hh_thread.start()
