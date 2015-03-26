@@ -9,7 +9,9 @@
 	<key>keyEquivalent</key>
 	<string>~^I</string>
 	<key>name</key>
-	<string>hex-inspect</string>
+	<string>Hex Inspect</string>
+	<key>hidden</key>
+	<true/>
 	<key>patterns</key>
 	<array>
 		<dict>
