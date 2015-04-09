@@ -1,0 +1,39 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: Hex
+file_extensions:
+  - hex
+scope: source.hex
+contexts:
+  main:
+    - match: '^([a-f\d]{8}\:)([\s]{2})'
+      captures:
+        1: keyword.address.hex
+        2: dump.buffer-start.hex
+      push:
+        - meta_scope: dump.hex
+        - match: '[\s]{2}(\:)'
+          captures:
+            0: dump.buffer-end.hex
+            1: keyword.ascii-start.hex
+          pop: true
+        - match: '[\da-f]{1}'
+          captures:
+            0: raw.nibble.upper.hex
+          push:
+            - meta_scope: raw.byte.hex
+            - match: '[\da-f]{1}'
+              captures:
+                0: raw.nibble.lower.hex
+              pop: true
+            - match: '[\w\W]'
+              scope: invalid.illegal.expected-nibble.hex
+        - match: '[\s]{1}'
+          scope: raw.punctuation.hex
+        - match: '[\w\W]{1}\s*'
+          scope: invalid.illegal.character.hex
+    - match: '^[\w\W]*$'
+      scope: invalid.malformed-line.hex
+    - match: '[\w\W]*$'
+      scope: comment.ascii.hex

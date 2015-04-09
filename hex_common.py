@@ -5,11 +5,13 @@ Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
 """
 
 import sublime
-from os.path import basename
+from os.path import basename, splitext
 
 ADDRESS_OFFSET = 11
 ASCII_OFFSET = 3
 BITS_PER_BYTE = 8
+USE_ST_SYNTAX = int(sublime.version()) >= 3084
+ST_SYNTAX = "sublime-syntax" if USE_ST_SYNTAX else 'tmLanguage'
 
 
 def is_enabled(current_view=None):
@@ -24,7 +26,7 @@ def is_enabled(current_view=None):
     if current_view is not None and current_view.id() != view.id():
         return False
     syntax = view.settings().get('syntax')
-    language = basename(syntax).replace('.tmLanguage', '').lower() if syntax is not None else "plain text"
+    language = splitext(basename(syntax))[0].lower() if syntax is not None else "plain text"
     return bool(language == "hex")
 
 

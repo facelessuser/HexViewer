@@ -3,7 +3,6 @@ Hex Viewer
 Licensed under MIT
 Copyright (c) 2011 Isaac Muse <isaacmuse@gmail.com>
 """
-
 import sublime
 import sublime_plugin
 import math
@@ -19,7 +18,7 @@ class HexShowInspectorCommand(sublime_plugin.WindowCommand):
     def run(self):
         # Setup inspector window
         view = self.window.get_output_panel('hex_viewer_inspector')
-        view.set_syntax_file("Packages/HexViewer/HexInspect.tmLanguage")
+        view.set_syntax_file("Packages/HexViewer/HexInspect.%s" % ST_SYNTAX)
         view.settings().set("draw_white_space", "none")
         view.settings().set("draw_indent_guides", False)
         view.settings().set("gutter", False)

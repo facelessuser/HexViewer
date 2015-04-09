@@ -85,7 +85,7 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
                 view.settings().set("hex_viewer_file_name", self.fail_safe_view["name"])
                 view.settings().set("font_face", self.fail_safe_view["font_face"])
                 view.settings().set("font_size", self.fail_safe_view["font_size"])
-                view.set_syntax_file("Packages/HexViewer/Hex.tmLanguage")
+                view.set_syntax_file("Packages/HexViewer/Hex.%s" % ST_SYNTAX)
                 view.sel().clear()
                 HexEditGlobal.bfr = self.fail_safe_view["buffer"]
                 HexEditGlobal.region = sublime.Region(0, view.size())
