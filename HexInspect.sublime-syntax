@@ -2,8 +2,7 @@
 ---
 # http://www.sublimetext.com/docs/3/syntax.html
 name: Hex Inspect
-file_extensions:
-  - Hex Inspect Panel
+file_extensions: []
 hidden: true
 scope: source.inspect
 contexts:

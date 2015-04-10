@@ -4,7 +4,6 @@
 <dict>
 	<key>fileTypes</key>
 	<array>
-		<string>Hex Inspect Panel</string>
 	</array>
 	<key>keyEquivalent</key>
 	<string>~^I</string>

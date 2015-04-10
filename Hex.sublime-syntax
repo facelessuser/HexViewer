@@ -2,8 +2,8 @@
 ---
 # http://www.sublimetext.com/docs/3/syntax.html
 name: Hex
-file_extensions:
-  - hex
+file_extensions: []
+hidden: true
 scope: source.hex
 contexts:
   main:
