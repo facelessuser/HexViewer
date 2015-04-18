@@ -28,7 +28,8 @@ active_thread = None
 
 
 class ReadBin(threading.Thread):
-    def __init__(self, file_name, bytes_wide, group_size):
+    def __init__(self, file_name, bytes_wide, group_size, starting_address=0):
+        self.starting_address = starting_address
         self.bytes_wide = int(bytes_wide)
         self.group_size = int(group_size)
         self.file_name = file_name
@@ -72,7 +73,7 @@ class ReadBin(threading.Thread):
                 self.read_count = read_count if read_count < self.file_size else self.file_size
 
                 # Add line number
-                l_buffer.append("%08x:  " % (line * self.bytes_wide))
+                l_buffer.append("%08x:  " % ((line * self.bytes_wide) + self.starting_address))
 
                 try:
                     # Complete line
@@ -202,6 +203,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
             view.settings().erase("hex_viewer_bytes")
             view.settings().erase("hex_viewer_actual_bytes")
             view.settings().erase("hex_viewer_file_name")
+            view.settings().erase("hex_viewer_starting_address")
 
 
 class HexViewerCommand(sublime_plugin.WindowCommand):
@@ -261,7 +263,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         global active_thread
         self.abort = False
         self.current_view = self.view
-        self.thread = ReadBin(file_name, self.bytes_wide, self.group_size)
+        self.thread = ReadBin(file_name, self.bytes_wide, self.group_size, self.starting_address)
         file_size = float(self.thread.file_size) * 0.001
         max_file_size = float(hv_settings("max_file_size_kb", DEFAULT_MAX_FILE_SIZE))
         if file_size > max_file_size:
@@ -310,6 +312,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         view.settings().set("hex_no_auto_open", True)
         view.settings().set("hex_viewer_fake", False)
         view.settings().set("hex_viewer_temp_file", hex_name)
+        view.settings().set("hex_viewer_starting_address", self.starting_address)
         # Show hex content in view; make read only
         view.set_scratch(True)
         view.set_read_only(True)
@@ -380,8 +383,9 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             not(active_thread is not None and active_thread.is_alive())
         )
 
-    def run(self, bits=None, bytearray=None):
+    def run(self, bits=None, bytearray=None, starting_address=0):
         global active_thread
+        self.starting_address = starting_address
         if active_thread is not None and active_thread.is_alive():
             error("HexViewer is already converting a file!\nPlease run the abort command to stop the current conversion.")
             return

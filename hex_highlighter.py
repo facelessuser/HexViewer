@@ -75,9 +75,10 @@ class HexHighlighter(object):
         return init_status
 
     def get_address(self, start, bytes, line):
+        address_offset = self.view.settings().get('hex_viewer_starting_address', 0)
         lines = line
         align_to_address_offset = 2
-        add_start = lines * self.bytes_wide + start - align_to_address_offset
+        add_start = lines * self.bytes_wide + start - align_to_address_offset + address_offset
         add_end = add_start + bytes - 1
         length = len(self.address)
         if length == 0:

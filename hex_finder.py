@@ -17,6 +17,7 @@ class HexFinderCommand(sublime_plugin.WindowCommand):
 
         if self.handshake != -1 and self.handshake == view.id():
             # Adress offset for line
+            address_offset = view.settings().get('hex_viewer_starting_address', 0)
             group_size = view.settings().get("hex_viewer_bits", None)
             bytes_wide = view.settings().get("hex_viewer_actual_bytes", None)
             if group_size is None and bytes_wide is None:
@@ -26,7 +27,8 @@ class HexFinderCommand(sublime_plugin.WindowCommand):
             # Go to address
             try:
                 # Address wanted
-                wanted = int(address, 16)
+                wanted = int(address, 16) - address_offset
+                assert wanted >= 0, "Address does not exist!"
                 # Calculate row
                 row = int(wanted / (bytes_wide))
                 # Byte offset into final row
