@@ -41,14 +41,16 @@ class HexHighlighter(object):
         style = hv_settings("highlight_style", HIGHLIGHT_STYLE)
 
         if (group_size is None or self.bytes_wide is None) and self.enable_fake_hex:
-            m = re.match(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', self.view.substr(self.view.line(0)))
+            m = re.match(r'([\da-z]{8}):[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', self.view.substr(self.view.line(0)))
             if m is not None:
-                hex_chars = m.group(1).split(' ')
+                starting_address = int(m.group(1), 16)
+                hex_chars = m.group(2).split(' ')
                 group_size = (len(hex_chars[0]) / 2) * 8
                 self.bytes_wide = (len(hex_chars[0]) / 2) * (len(hex_chars) - 1)
                 self.view.settings().set("hex_viewer_bits", group_size)
                 self.view.settings().set("hex_viewer_actual_bytes", self.bytes_wide)
                 self.view.settings().set("hex_viewer_fake", True)
+                self.view.settings().set("hex_viewer_starting_address", starting_address)
                 self.view.set_read_only(True)
                 self.view.set_scratch(True)
                 if hv_settings("inspector", False) and hv_settings("inspector_auto_show", False):
