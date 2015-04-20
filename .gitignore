@@ -3,3 +3,5 @@
 .DS_Store
 
 HexInspect.hidden-tmLanguage.cache
+
+site/*

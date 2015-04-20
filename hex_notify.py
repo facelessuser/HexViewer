@@ -1,3 +1,8 @@
+"""
+Hex Viewer
+Licensed under MIT
+Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
+"""
 import sublime
 try:
     from SubNotify.sub_notify import SubNotifyIsReadyCommand as Notify
