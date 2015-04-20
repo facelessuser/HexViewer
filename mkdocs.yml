@@ -6,10 +6,16 @@ pages:
 - ['index.md', 'Home']
 - ['usage.md', 'User Guide']
 - ['license.md', 'License']
+theme: readthedocs
+extra_javascript:
+- js/inlinehilite.js
+extra_css:
+- css/inlinehilite.css
 markdown_extensions:
 - markdown.extensions.extra
 - markdown.extensions.admonition
 - markdown.extensions.smarty
+- pymdownx.inlinehilite(use_pygments=False)
 - pymdownx.magiclink
 - pymdownx.betterem
 - pymdownx.tilde
