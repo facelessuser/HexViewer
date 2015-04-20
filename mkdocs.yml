@@ -6,3 +6,15 @@ pages:
 - ['index.md', 'Home']
 - ['usage.md', 'User Guide']
 - ['license.md', 'License']
+markdown_extensions:
+- markdown.extensions.extra
+- markdown.extensions.admonition
+- markdown.extensions.smarty
+- pymdownx.magiclink
+- pymdownx.betterem
+- pymdownx.tilde
+- pymdownx.caret
+- pymdownx.smartsymbols
+- pymdownx.githubemoji
+- pymdownx.tasklist
+- pymdownx.superfences
