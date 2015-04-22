@@ -7,16 +7,14 @@ pages:
 - ['usage.md', 'User Guide']
 - ['license.md', 'License']
 theme: readthedocs
-extra_javascript:
-- js/theme_custom.js
-extra_css:
-- css/theme_custom.css
+theme_dir: doc_theme
 markdown_extensions:
 - markdown.extensions.extra
 - markdown.extensions.admonition
 - markdown.extensions.smarty
 - markdown.extensions.nl2br
-- pymdownx.inlinehilite(use_pygments=False)
+- markdown.extensions.codehilite
+- pymdownx.inlinehilite
 - pymdownx.magiclink
 - pymdownx.betterem
 - pymdownx.tilde
@@ -26,3 +24,4 @@ markdown_extensions:
 - pymdownx.tasklist
 - pymdownx.superfences
 - pymdownx.progressbar
+- pymdownx.headeranchor
