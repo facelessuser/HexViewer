@@ -1,4 +1,6 @@
-# License
+# License {: .doctitle}
+
+---
 
 Hex Viewer is released under the MIT license.
 

@@ -1,6 +1,10 @@
-# Usage
+# User Guide {: .doctitle}
+Configuring and using HexViewer.
+{: .doctitle-info}
 
-## Overview
+---
+
+# Commands
 There are 10 commands available via the command palette or by key-bindings.
 
 - Hex Viewer: Toggle Hex View
@@ -46,10 +50,10 @@ This command exports the current hex view to a binary file, and if the option is
 By default, it opens up a quick panel with all available hashes that can be used as a checksum.  When an algorithm is selected, it is used to retrieve the checksum for the current file in hex view mode.
 
 ## Hex Viewer: Generate Hash
-Shows a quick panel allowing you to select the desired hash, and then shows an input panel that allows you to specify the string to be hashed. A panel is then displayed with your generated hash accoriding to specifications.
+Shows a quick panel allowing you to select the desired hash, and then shows an input panel that allows you to specify the string to be hashed. A panel is then displayed with your generated hash according to specifications.
 
 ## Hex Viewer: Generate Hash from Selection
-Allows you to genrate hashes from your current selection(s).  Multiselect regions' content will be combined and evaluated together.  If a region contains newlines, they will be hashed as well.
+Allows you to generate hashes from your current selection(s).  Multi-select regions' content will be combined and evaluated together.  If a region contains newlines, they will be hashed as well.
 
 ## Hex Viewer: Abort (Hex Conversion|Export|Checksum)
 Abort the given action.
