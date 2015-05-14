@@ -1,13 +1,13 @@
 """
-Hex Viewer
+Hex Viewer.
+
 Licensed under MIT
 Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 """
-
 import sublime
 import sublime_plugin
 from os.path import dirname, exists
-from HexViewer.hex_common import *
+import HexViewer.hex_common as common
 from HexViewer.hex_checksum import checksum, parse_view_data
 import threading
 import traceback
@@ -22,7 +22,12 @@ active_thread = None
 
 
 class ThreadedWrite(threading.Thread):
+
+    """Threaded write."""
+
     def __init__(self, data, file_name, fmt_callback=None, count=None):
+        """Initialize."""
+
         self.data = data
         self.file_name = file_name
         self.chunk = 0
@@ -33,10 +38,14 @@ class ThreadedWrite(threading.Thread):
         threading.Thread.__init__(self)
 
     def format(self, data):
+        """Format."""
+
         for x in data:
             yield x
 
     def run(self):
+        """Run command."""
+
         try:
             with open(self.file_name, "wb") as f:
                 for chunk in self.fmt_callback(self.data):
@@ -51,30 +60,44 @@ class ThreadedWrite(threading.Thread):
 
 
 class HexWriterAbortCommand(sublime_plugin.WindowCommand):
+
+    """Command to abort a write operation."""
+
     def run(self):
+        """Run command."""
+
         global active_thread
         if active_thread is not None and active_thread.is_alive():
             active_thread.abort = True
 
     def is_enabled(self):
+        """Check if command is enabled."""
+
         global active_thread
         return active_thread is not None and active_thread.is_alive()
 
 
 class HexWriterCommand(sublime_plugin.WindowCommand):
+
+    """Export hex view data to a file."""
+
     export_path = ""
     handshake = -1
 
     def is_enabled(self):
+        """Check if command is enabled."""
+
         global active_thread
         view = self.window.active_view()
         return (
-            is_enabled() and
+            common.is_enabled() and
             view is not None and not view.settings().get("hex_viewer_fake", False) and
             not (active_thread is not None and active_thread.is_alive())
         )
 
     def export_panel(self):
+        """Show the export panel."""
+
         self.window.show_input_panel(
             "Export To:",
             self.export_path,
@@ -84,6 +107,8 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         )
 
     def overwrite(self, value):
+        """Handle the overwrite response."""
+
         if value.strip().lower() == "yes":
             self.export()
         else:
@@ -91,6 +116,8 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             self.export_panel()
 
     def prepare_export(self, file_path):
+        """Prepare to export."""
+
         self.export_path = file_path
         if exists(dirname(file_path)):
             if exists(file_path):
@@ -109,10 +136,14 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             self.export_panel()
 
     def reset_thread(self):
+        """Rest the thread."""
+
         self.thread = None
 
     def finish_export(self):
-        if hv_settings("checksum_on_save", USE_CHECKSUM_ON_SAVE):
+        """Post export event."""
+
+        if common.hv_settings("checksum_on_save", USE_CHECKSUM_ON_SAVE):
             hex_hash = checksum()
             self.hex_buffer.seek(0)
             # Checksum will be threaded and will show the result when done
@@ -120,17 +151,19 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             hex_hash.threaded_update(self.hex_buffer, parse_view_data, self.row)
 
         # Update the tab name
-        self.view.set_name(basename(self.export_path) + ".hex")
+        self.view.set_name(common.basename(self.export_path) + ".hex")
         # Update the internal path
         self.view.settings().set("hex_viewer_file_name", self.export_path)
         # Tie it to a real view if not already
         self.view.settings().set("hex_viewer_fake", False)
         # Clear the marked edits
-        clear_edits(self.view)
+        common.clear_edits(self.view)
         # Reset class
         self.reset()
 
     def export_thread(self):
+        """Thread the export."""
+
         ratio = float(self.thread.chunk) / float(self.thread.chunks)
         percent = int(ratio * 10)
         leftover = 10 - percent
@@ -151,6 +184,8 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             sublime.set_timeout(lambda: self.export_thread(), 500)
 
     def export(self):
+        """Export the data."""
+
         global active_thread
         self.view = self.window.active_view()
         if self.handshake != -1 and self.handshake == self.view.id():
@@ -173,11 +208,15 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             self.reset()
 
     def reset(self):
+        """Reset."""
+
         self.export_path = ""
         self.handshake = -1
         self.reset_thread()
 
     def run(self):
+        """Run command."""
+
         global active_thread
         if active_thread is not None and active_thread.is_alive():
             error("HexViewer is already exporting a file!\nPlease run the abort command to stop the current export.")

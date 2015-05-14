@@ -1,9 +1,9 @@
 """
-Hex Viewer
+Hex Viewer.
+
 Licensed under MIT
 Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 """
-
 import sublime
 from os.path import basename, splitext
 
@@ -15,6 +15,8 @@ ST_SYNTAX = "sublime-syntax" if USE_ST_SYNTAX else 'tmLanguage'
 
 
 def is_enabled(current_view=None):
+    """Check if hex commands should be enabled."""
+
     window = sublime.active_window()
     if window is None:
         return False
@@ -31,6 +33,7 @@ def is_enabled(current_view=None):
 
 
 def clear_edits(view):
+    """Clear edit highlights."""
     view.add_regions(
         "hex_edit",
         [],
@@ -39,30 +42,48 @@ def clear_edits(view):
 
 
 def is_hex_dirty(view):
+    """Check if hex view is dirty."""
+
     return True if len(view.get_regions("hex_edit")) != 0 else False
 
 
 def get_hex_char_range(group_size, bytes_wide):
+    """Get the hex char range."""
+
     return int((group_size * 2) * bytes_wide / (group_size) + bytes_wide / (group_size)) - 1
 
 
 def get_byte_count(start, end, group_size):
-    return int((end - start - 1) / (group_size * 2 + 1)) * int(group_size) + int(((end - start - 1) % (group_size * 2 + 1)) / 2 + 1)
+    """Get the byte count."""
+
+    return (
+        int((end - start - 1) / (group_size * 2 + 1)) * int(group_size) +
+        int(((end - start - 1) % (group_size * 2 + 1)) / 2 + 1)
+    )
 
 
 def ascii_to_hex_col(index, group_size):
-    #   Calculate byte number              Account for address
-    #
-    # current_char   wanted_byte
-    # ------------ = -----------  => wanted_byte + offset = start_column
-    #  total_chars   total_bytes
-    #
-    start_column = int(ADDRESS_OFFSET + (group_size * 2) * index / (group_size) + index / (group_size))
+    """
+    Convert ASCII selection to the column in the hex data.
+
+          Calculate byte number              Account for address
+
+        current_char   wanted_byte
+        ------------ = -----------  => wanted_byte + offset = start_column
+         total_chars   total_bytes
+    """
+
+    start_column = int(
+        ADDRESS_OFFSET + (group_size * 2) * index / (group_size)
+        + index / (group_size)
+    )
     # Convert byte column position to test point
     return start_column
 
 
 def adjust_hex_sel(view, start, end, group_size):
+    """Adjust the hex selection."""
+
     bytes = 0
     size = end - start
     if view.score_selector(start, 'raw.nibble.upper') == 0:
@@ -87,7 +108,8 @@ def adjust_hex_sel(view, start, end, group_size):
 
 
 def underline(selected_bytes):
-    # Convert to empty regions
+    """Convert to empty regions to simulate underline."""
+
     new_regions = []
     for region in selected_bytes:
         start = region.begin()
@@ -99,6 +121,8 @@ def underline(selected_bytes):
 
 
 def hv_settings(key=None, default=None):
+    """Get the settings."""
+
     if key is not None:
         return sublime.load_settings('hex_viewer.sublime-settings').get(key, default)
     else:

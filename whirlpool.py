@@ -1,29 +1,35 @@
-# whirlpool.py - pure Python implementation of the Whirlpool algorithm.
-# Bjorn Edstrom <be@bjrn.se> 16 december 2007.
-#
-# Copyrights
-# ==========
-#
-# This code is based on the reference implementation by
-# Paulo S.L.M. Barreto and Vincent Rijmen. The reference implementation
-# is placed in the public domain but has the following headers:
-#
-# * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
-# * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE
-# * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
-# * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-# * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
-# * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
-# * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# *
-# */
-# /* The code contained in this file (Whirlpool.c) is in the public domain. */
-#
-# This Python implementation is therefore also placed in the public domain.
+"""
+ Whirlpool.
+
+ whirlpool.py - pure Python implementation of the Whirlpool algorithm.
+ Bjorn Edstrom <be@bjrn.se> 16 december 2007.
+
+ Copyrights
+ ==========
+
+ This code is based on the reference implementation by
+ Paulo S.L.M. Barreto and Vincent Rijmen. The reference implementation
+ is placed in the public domain but has the following headers:
+
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHORS ''AS IS'' AND ANY EXPRESS
+ * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+ * BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+ * OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+ /* The code contained in this file (Whirlpool.c) is in the public domain. */
+
+ This Python implementation is therefore also placed in the public domain.
+
+ Modified to work with HexViewer by Isaac Muse.
+"""
 
 DIGESTBYTES = 64
 DIGESTBITS = 512

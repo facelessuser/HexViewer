@@ -1,15 +1,15 @@
 """
-Hex Viewer
+Hex Viewer.
+
 Licensed under MIT
 Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 """
-
 import sublime
 import sublime_plugin
 import re
 from os.path import basename
 from struct import unpack
-from HexViewer.hex_common import *
+import HexViewer.hex_common as common
 from binascii import unhexlify, hexlify
 from HexViewer.hex_notify import error
 
@@ -19,25 +19,40 @@ HIGHLIGHT_EDIT_STYLE = "underline"
 
 
 class HexEditGlobal(object):
+
+    """Hex edit global object."""
+
     bfr = None
     region = None
 
     @classmethod
     def clear(cls):
+        """Clear."""
+
         cls.bfr = None
         cls.region = None
 
 
 class HexEditApplyCommand(sublime_plugin.TextCommand):
+
+    """Apply edits to the view."""
+
     def run(self, edit):
+        """Run command."""
+
         self.view.replace(edit, HexEditGlobal.region, HexEditGlobal.bfr)
 
 
 class HexEditorListenerCommand(sublime_plugin.EventListener):
+
+    """Hex Editor listener command."""
+
     fail_safe_view = None
     handshake = -1
 
     def restore(self, value):
+        """Restore."""
+
         window = sublime.active_window()
         view = None
         if value.strip().lower() == "yes" and self.fail_safe_view is not None:
@@ -59,9 +74,9 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
             # Restore view
             if view is not None:
                 # Get highlight settings
-                highlight_scope = hv_settings("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
-                highlight_icon = hv_settings("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
-                style = hv_settings("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
+                highlight_scope = common.hv_settings("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
+                highlight_icon = common.hv_settings("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
+                style = common.hv_settings("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
 
                 # No icon?
                 if highlight_icon == "none":
@@ -85,7 +100,7 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
                 view.settings().set("hex_viewer_file_name", self.fail_safe_view["name"])
                 view.settings().set("font_face", self.fail_safe_view["font_face"])
                 view.settings().set("font_size", self.fail_safe_view["font_size"])
-                view.set_syntax_file("Packages/HexViewer/Hex.%s" % ST_SYNTAX)
+                view.set_syntax_file("Packages/HexViewer/Hex.%s" % common.ST_SYNTAX)
                 view.sel().clear()
                 HexEditGlobal.bfr = self.fail_safe_view["buffer"]
                 HexEditGlobal.region = sublime.Region(0, view.size())
@@ -93,7 +108,7 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
                 HexEditGlobal.clear()
                 view.set_scratch(True)
                 view.set_read_only(True)
-                view.sel().add(sublime.Region(ADDRESS_OFFSET, ADDRESS_OFFSET))
+                view.sel().add(sublime.Region(common.ADDRESS_OFFSET, common.ADDRESS_OFFSET))
                 view.add_regions(
                     "hex_edit",
                     self.fail_safe_view["edits"],
@@ -104,6 +119,7 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
         self.reset()
 
     def reset(self):
+        """Rest."""
         window = sublime.active_window()
         if window is not None and self.handshake != -1:
             for v in window.views():
@@ -114,7 +130,9 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
         self.handshake = -1
 
     def on_close(self, view):
-        if view.settings().has("hex_viewer_file_name") and is_hex_dirty(view):
+        """Handle the close event."""
+
+        if view.settings().has("hex_viewer_file_name") and common.is_hex_dirty(view):
             window = sublime.active_window()
             file_name = file_name = view.settings().get("hex_viewer_file_name")
 
@@ -154,27 +172,38 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
 
 
 class HexDiscardEditsCommand(sublime_plugin.WindowCommand):
+
+    """Discard current edits."""
+
     def is_enabled(self):
-        return bool(is_enabled() and len(self.window.active_view().get_regions("hex_edit")))
+        """Check if command is enabled."""
+
+        return bool(common.is_enabled() and len(self.window.active_view().get_regions("hex_edit")))
 
     def run(self):
+        """Run command."""
         view = self.window.active_view()
         group_size = int(view.settings().get("hex_viewer_bits", None))
         bytes_wide = int(view.settings().get("hex_viewer_actual_bytes", None))
-        clear_edits(view)
+        common.clear_edits(view)
         self.window.run_command('hex_viewer', {"bits": group_size, "bytes": bytes_wide})
 
 
 class HexEditorCommand(sublime_plugin.WindowCommand):
+
+    """Hex editor command."""
+
     handshake = -1
 
     def init(self):
+        """Initialize."""
+
         init_status = False
 
         # Get highlight settings
-        self.highlight_scope = hv_settings("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
-        self.highlight_icon = hv_settings("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
-        style = hv_settings("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
+        self.highlight_scope = common.hv_settings("highlight_edit_scope", HIGHLIGHT_EDIT_SCOPE)
+        self.highlight_icon = common.hv_settings("highlight_edit_icon", HIGHLIGHT_EDIT_ICON)
+        style = common.hv_settings("highlight_edit_style", HIGHLIGHT_EDIT_STYLE)
 
         # No icon?
         if self.highlight_icon == "none":
@@ -194,15 +223,19 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
         # Process hex grouping
         if group_size is not None and self.bytes_wide is not None:
-            self.group_size = group_size / BITS_PER_BYTE
+            self.group_size = group_size / common.BITS_PER_BYTE
             init_status = True
         return init_status
 
     def is_enabled(self):
+        """Check if command is enabled."""
+
         view = self.window.active_view()
-        return is_enabled() and view is not None and not view.settings().get("hex_viewer_fake", False)
+        return common.is_enabled() and view is not None and not view.settings().get("hex_viewer_fake", False)
 
     def apply_edit(self, value):
+        """Apply edits."""
+
         edits = ""
         self.view = self.window.active_view()
         # Is this the same view as earlier?
@@ -235,7 +268,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                 ascii = " :"
                 start = 0
                 ascii_start_pos = self.ascii_pos
-                hex_start_pos = self.line["range"].begin() + ADDRESS_OFFSET
+                hex_start_pos = self.line["range"].begin() + common.ADDRESS_OFFSET
                 end = len(edits)
                 count = 1
                 change_start = None
@@ -311,7 +344,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
                 # Underline if required
                 if self.highlight_style == sublime.DRAW_EMPTY_AS_OVERWRITE:
-                    regions = underline(regions)
+                    regions = common.underline(regions)
 
                 # Highlight changed bytes
                 self.view.add_regions(
@@ -330,6 +363,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         self.reset()
 
     def reset(self):
+        """Reset."""
+
         self.handshake = -1
         self.total_bytes = 0
         self.start_pos = -1
@@ -337,6 +372,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         self.line = {}
 
     def ascii_to_hex(self, start, end):
+        """Convert ascii to hex."""
+
         bytes = 0
         size = end - start
         ascii_range = self.view.extract_scope(start)
@@ -348,7 +385,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
         if bytes != 0:
             row, column = self.view.rowcol(start)
-            column = ascii_to_hex_col(start - ascii_range.begin(), self.group_size)
+            column = common.ascii_to_hex_col(start - ascii_range.begin(), self.group_size)
             hex_pos = self.view.text_point(row, column)
             start = hex_pos
 
@@ -367,6 +404,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         return start, end, bytes
 
     def edit_panel(self, value, error=None):
+        """Show edit panel."""
+
         msg = "Edit:" if error is None else "Edit (" + error + "):"
         self.window.show_input_panel(
             msg,
@@ -377,6 +416,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
         )
 
     def run(self):
+        """Run command."""
+
         self.view = self.window.active_view()
 
         # Identify view
@@ -397,8 +438,8 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
             # Get range of hex data
             line = self.view.line(start)
-            range_start = line.begin() + ADDRESS_OFFSET
-            range_end = range_start + get_hex_char_range(self.group_size, self.bytes_wide)
+            range_start = line.begin() + common.ADDRESS_OFFSET
+            range_end = range_start + common.get_hex_char_range(self.group_size, self.bytes_wide)
             hex_range = sublime.Region(range_start, range_end)
 
             if self.view.score_selector(start, "comment"):
@@ -408,18 +449,18 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
             if start >= hex_range.begin() and end <= hex_range.end():
                 # Adjust beginning of selection to begining of first selected byte
                 if bytes == 0:
-                    start, end, bytes = adjust_hex_sel(self.view, start, end, self.group_size)
+                    start, end, bytes = common.adjust_hex_sel(self.view, start, end, self.group_size)
 
                 # Get general line info for diffing and editing
                 if bytes != 0:
-                    self.ascii_pos = hex_range.end() + ASCII_OFFSET
+                    self.ascii_pos = hex_range.end() + common.ASCII_OFFSET
                     self.total_bytes = bytes
                     self.start_pos = start
                     self.end_pos = end + 1
                     selection = self.view.substr(sublime.Region(start, end + 1))
                     self.line = {
                         "range": line,
-                        "address": self.view.substr(sublime.Region(line.begin(), line.begin() + ADDRESS_OFFSET)),
+                        "address": self.view.substr(sublime.Region(line.begin(), line.begin() + common.ADDRESS_OFFSET)),
                         "selection": selection.replace(" ", ""),
                         "data1": self.view.substr(sublime.Region(hex_range.begin(), start)).replace(" ", ""),
                         "data2": self.view.substr(sublime.Region(end + 1, hex_range.end() + 1)).replace(" ", "")
