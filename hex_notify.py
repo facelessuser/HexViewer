@@ -9,12 +9,19 @@ try:
     from SubNotify.sub_notify import SubNotifyIsReadyCommand as Notify
 except:
     class Notify:
+
+        """Fallback notify class."""
+
         @classmethod
         def is_ready(cls):
+            """Return false to disable SubNotify."""
+
             return False
 
 
 def notify(msg):
+    """Notify message."""
+
     settings = sublime.load_settings("hex_viewer.sublime-settings")
     if settings.get("use_sub_notify", False) and Notify.is_ready():
         sublime.run_command("sub_notify", {"title": "HexViewer", "msg": msg})
@@ -23,6 +30,8 @@ def notify(msg):
 
 
 def error(msg):
+    """Error message."""
+
     settings = sublime.load_settings("hex_viewer.sublime-settings")
     if settings.get("use_sub_notify", False) and Notify.is_ready():
         sublime.run_command("sub_notify", {"title": "HexViewer", "msg": msg, "level": "error"})

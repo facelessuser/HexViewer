@@ -133,7 +133,8 @@ class zlib_algorithm(object):
     def copy(self):
         """Get copy."""
 
-        return self
+        import copy
+        return copy.deepcopy(self)
 
     def digest(self):
         """Get digest."""

@@ -1,12 +1,13 @@
 """
-Hex Viewer
+Hex Viewer.
+
 Licensed under MIT
 Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 """
 
 import sublime
 import sublime_plugin
-from HexViewer.hex_common import *
+import HexViewer.hex_common as common
 from time import time, sleep
 import threading
 import re
@@ -20,9 +21,17 @@ THROTTLING = False
 
 hh_highlight = None
 
+if 'hh_thread' not in globals():
+    hh_thread = None
+
 
 class HexHighlighter(object):
+
+    """Hex highlighter."""
+
     def init(self):
+        """Initialize."""
+
         init_status = False
         self.address_done = False
         self.total_bytes = 0
@@ -31,14 +40,14 @@ class HexHighlighter(object):
 
         # Get Seetings from settings file
         group_size = self.view.settings().get("hex_viewer_bits", None)
-        self.inspector_enabled = hv_settings("inspector", False)
-        self.throttle = hv_settings("highlight_throttle", THROTTLING)
-        self.max_highlight = hv_settings("highlight_max_bytes", MAX_HIGHIGHT)
+        self.inspector_enabled = common.hv_settings("inspector", False)
+        self.throttle = common.hv_settings("highlight_throttle", THROTTLING)
+        self.max_highlight = common.hv_settings("highlight_max_bytes", MAX_HIGHIGHT)
         self.bytes_wide = self.view.settings().get("hex_viewer_actual_bytes", None)
-        self.highlight_scope = hv_settings("highlight_scope", HIGHLIGHT_SCOPE)
-        self.highlight_icon = hv_settings("highlight_icon", HIGHLIGHT_ICON)
-        self.enable_fake_hex = hv_settings("enable_fake_hex_file", True)
-        style = hv_settings("highlight_style", HIGHLIGHT_STYLE)
+        self.highlight_scope = common.hv_settings("highlight_scope", HIGHLIGHT_SCOPE)
+        self.highlight_icon = common.hv_settings("highlight_icon", HIGHLIGHT_ICON)
+        self.enable_fake_hex = common.hv_settings("enable_fake_hex_file", True)
+        style = common.hv_settings("highlight_style", HIGHLIGHT_STYLE)
 
         if (group_size is None or self.bytes_wide is None) and self.enable_fake_hex:
             m = re.match(r'([\da-z]{8}):[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', self.view.substr(self.view.line(0)))
@@ -53,7 +62,7 @@ class HexHighlighter(object):
                 self.view.settings().set("hex_viewer_starting_address", starting_address)
                 self.view.set_read_only(True)
                 self.view.set_scratch(True)
-                if hv_settings("inspector", False) and hv_settings("inspector_auto_show", False):
+                if common.hv_settings("inspector", False) and common.hv_settings("inspector_auto_show", False):
                     self.view.window().run_command("hex_show_inspector")
 
         # No icon?
@@ -71,12 +80,14 @@ class HexHighlighter(object):
 
         # Process hex grouping
         if group_size is not None and self.bytes_wide is not None:
-            self.group_size = group_size / BITS_PER_BYTE
-            self.hex_char_range = get_hex_char_range(self.group_size, self.bytes_wide)
+            self.group_size = group_size / common.BITS_PER_BYTE
+            self.hex_char_range = common.get_hex_char_range(self.group_size, self.bytes_wide)
             init_status = True
         return init_status
 
     def get_address(self, start, bytes, line):
+        """Get the address."""
+
         address_offset = self.view.settings().get('hex_viewer_starting_address', 0)
         lines = line
         align_to_address_offset = 2
@@ -99,6 +110,8 @@ class HexHighlighter(object):
             self.address_done = True
 
     def display_address(self):
+        """Display the address."""
+
         count = ''
         if self.total_bytes == 0 or len(self.address) != 2:
             self.view.set_status('hex_address', "Address: None")
@@ -121,13 +134,16 @@ class HexHighlighter(object):
         self.view.set_status('hex_address', status)
 
     def display_total_bytes(self):
-        # Display total hex bytes
+        """Display total hex bytes."""
+
         total = self.total_bytes if self.total_bytes == "?" else str(self.total_bytes)
         self.view.set_status('hex_total_bytes', "Total Bytes: " + total)
 
     def hex_selection(self, start, bytes, first_pos):
+        """Get hex selection."""
+
         row, column = self.view.rowcol(first_pos)
-        column = ascii_to_hex_col(start, self.group_size)
+        column = common.ascii_to_hex_col(start, self.group_size)
         hex_pos = self.view.text_point(row, column)
 
         # Log first byte
@@ -157,6 +173,8 @@ class HexHighlighter(object):
             self.get_address(start + 2, bytes, row)
 
     def ascii_to_hex(self, sel):
+        """Convert ASCII to hex."""
+
         view = self.view
         start = sel.begin()
         end = sel.end()
@@ -185,34 +203,38 @@ class HexHighlighter(object):
             self.hex_selection(start - ascii_range.begin(), bytes, start)
 
     def hex_to_ascii(self, sel):
+        """Convert hex to ASCII."""
+
         view = self.view
         start = sel.begin()
         end = sel.end()
 
         # Get range of hex data
         line = view.line(start)
-        range_start = line.begin() + ADDRESS_OFFSET
+        range_start = line.begin() + common.ADDRESS_OFFSET
         range_end = range_start + self.hex_char_range
         hex_range = sublime.Region(range_start, range_end)
 
         # Determine if selection is within hex range
         if start >= hex_range.begin() and end <= hex_range.end():
             # Adjust beginning of selection to begining of first selected byte
-            start, end, bytes = adjust_hex_sel(view, start, end, self.group_size)
+            start, end, bytes = common.adjust_hex_sel(view, start, end, self.group_size)
 
             # Highlight hex values and their ascii chars
             if bytes != 0:
                 self.total_bytes += bytes
                 # Zero based byte number
-                start_byte = get_byte_count(hex_range.begin(), start + 2, self.group_size) - 1
+                start_byte = common.get_byte_count(hex_range.begin(), start + 2, self.group_size) - 1
                 self.hex_selection(start_byte, bytes, start)
 
                 # Highlight Ascii
-                ascii_start = hex_range.end() + ASCII_OFFSET + start_byte
+                ascii_start = hex_range.end() + common.ASCII_OFFSET + start_byte
                 ascii_end = ascii_start + bytes
                 self.selected_bytes.append(sublime.Region(ascii_start, ascii_end))
 
     def get_highlights(self):
+        """Get the highlights."""
+
         self.first_all = -1
         for sel in self.view.sel():
             # Kick out if total bytes exceeds limit
@@ -228,6 +250,8 @@ class HexHighlighter(object):
                 self.hex_to_ascii(sel)
 
     def run(self, window):
+        """Run command."""
+
         if window is None:
             return
         self.window = window
@@ -249,7 +273,7 @@ class HexHighlighter(object):
 
         # Highlight selected regions
         if self.highlight_style == sublime.DRAW_EMPTY_AS_OVERWRITE:
-            self.selected_bytes = underline(self.selected_bytes)
+            self.selected_bytes = common.underline(self.selected_bytes)
         view.add_regions(
             "hex_view",
             self.selected_bytes,
@@ -263,18 +287,30 @@ class HexHighlighter(object):
 
 
 class HexHighlighterCommand(sublime_plugin.WindowCommand):
+
+    """Hex highlighter command."""
+
     def run(self):
+        """Run the command."""
+
         if hh_thread.ignore_all:
             return
         hh_thread.modified = True
 
     def is_enabled(self):
-        return is_enabled()
+        """Check if command is enabled."""
+
+        return common.is_enabled()
 
 
 class HexHighlighterListenerCommand(sublime_plugin.EventListener):
+
+    """Hex highlighter event listener command."""
+
     def on_selection_modified(self, view):
-        if not is_enabled(view) or hh_thread.ignore_all:
+        """Determine if a highlight should be triggered."""
+
+        if not common.is_enabled(view) or hh_thread.ignore_all:
             return
         now = time()
         if now - hh_thread.time > hh_thread.wait_time:
@@ -285,15 +321,18 @@ class HexHighlighterListenerCommand(sublime_plugin.EventListener):
 
 
 class HhThread(threading.Thread):
-    """ Load up defaults """
+
+    """Load up defaults."""
 
     def __init__(self):
-        """ Setup the thread """
+        """Setup the thread."""
+
         self.reset()
         threading.Thread.__init__(self)
 
     def reset(self):
-        """ Reset the thread variables """
+        """Reset the thread variables."""
+
         self.wait_time = 0.12
         self.time = time()
         self.modified = False
@@ -301,7 +340,8 @@ class HhThread(threading.Thread):
         self.abort = False
 
     def payload(self):
-        """ Code to run """
+        """Code to run."""
+
         self.modified = False
         # Ignore selection and edit events inside the routine
         self.ignore_all = True
@@ -310,14 +350,16 @@ class HhThread(threading.Thread):
         self.time = time()
 
     def kill(self):
-        """ Kill thread """
+        """Kill thread."""
+
         self.abort = True
         while self.is_alive():
             pass
         self.reset()
 
     def run(self):
-        """ Thread loop """
+        """Thread loop."""
+
         while not self.abort:
             if self.modified is True and time() - self.time > self.wait_time:
                 sublime.set_timeout(lambda: self.payload(), 0)
@@ -325,6 +367,8 @@ class HhThread(threading.Thread):
 
 
 def plugin_loaded():
+    """Setup plugin."""
+
     global hh_highlight
     global hh_thread
     hh_highlight = HexHighlighter().run
@@ -336,4 +380,6 @@ def plugin_loaded():
 
 
 def plugin_unloaded():
+    """Tear down plugin."""
+
     hh_thread.kill()

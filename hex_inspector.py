@@ -1,5 +1,6 @@
 """
-Hex Viewer
+Hex Viewer.
+
 Licensed under MIT
 Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 """
@@ -7,18 +8,27 @@ import sublime
 import sublime_plugin
 import math
 from struct import unpack
-from HexViewer.hex_common import *
+import HexViewer.hex_common as common
 from binascii import unhexlify
+
+hv_endianness = None
 
 
 class HexShowInspectorCommand(sublime_plugin.WindowCommand):
+
+    """Show the hex inspector panel."""
+
     def is_enabled(self):
-        return bool(is_enabled() and hv_settings("inspector", False))
+        """Check if command is enabled."""
+
+        return bool(common.is_enabled() and common.hv_settings("inspector", False))
 
     def run(self):
+        """Run the command."""
+
         # Setup inspector window
         view = self.window.get_output_panel('hex_viewer_inspector')
-        view.set_syntax_file("Packages/HexViewer/HexInspect.%s" % ST_SYNTAX)
+        view.set_syntax_file("Packages/HexViewer/HexInspect.%s" % common.ST_SYNTAX)
         view.settings().set("draw_white_space", "none")
         view.settings().set("draw_indent_guides", False)
         view.settings().set("gutter", False)
@@ -29,40 +39,69 @@ class HexShowInspectorCommand(sublime_plugin.WindowCommand):
 
 
 class HexHideInspectorCommand(sublime_plugin.WindowCommand):
+
+    """Hide the hex inspector panel."""
+
     def is_enabled(self):
-        return bool(is_enabled() and hv_settings("inspector", False))
+        """Check if command is enabled."""
+
+        return bool(common.is_enabled() and common.hv_settings("inspector", False))
 
     def run(self):
+        """Run the command."""
+
         self.window.run_command("hide_panel", {"panel": "output.hex_viewer_inspector"})
 
 
 class HexToggleInspectorEndiannessCommand(sublime_plugin.WindowCommand):
+
+    """Toggle hex inspector's endianness."""
+
     def is_enabled(self):
-        return bool(is_enabled() and hv_settings("inspector", False))
+        """Check if command is enabled."""
+
+        return bool(common.is_enabled() and common.hv_settings("inspector", False))
 
     def run(self):
+        """Run the command."""
+
         global hv_endianness
         hv_endianness = "big" if hv_endianness == "little" else "little"
         self.window.run_command('hex_highlighter')
 
 
 class HexInspectGlobal(object):
+
+    """Global hex inspector data."""
+
     bfr = None
     region = None
 
     @classmethod
     def clear(cls):
+        """Clear."""
+
         cls.bfr = None
         cls.region = None
 
 
 class HexInspectorApplyCommand(sublime_plugin.TextCommand):
+
+    """Apply text to the hex inspector panel."""
+
     def run(self, edit):
+        """Run the command."""
+
         self.view.replace(edit, HexInspectGlobal.region, HexInspectGlobal.bfr)
 
 
 class HexInspectorCommand(sublime_plugin.WindowCommand):
+
+    """Hex inspector command."""
+
     def get_bytes(self, start, bytes_wide):
+        """Get the bytes at the cursor."""
+
         bytes = self.view.substr(sublime.Region(start, start + 2))
         byte64 = None
         byte32 = None
@@ -111,11 +150,13 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         return byte8, byte16, byte32, byte64
 
     def display(self, view, byte8, bytes16, bytes32, bytes64):
-        item_dec = hv_settings("inspector_integer_format", "%-12s:  %-14d")
-        item_str = hv_settings("inspector_missing/bad_format", "%-12s:  %-14s")
-        item_float = hv_settings("insepctor_float_format", "%-12s:  %-14e")
-        item_double = hv_settings("inspector_double_format", "%-12s:  %-14e")
-        item_bin = hv_settings("inspector_binary_format", "%-12s:  %-14s")
+        """Display hex inspector data."""
+
+        item_dec = common.hv_settings("inspector_integer_format", "%-12s:  %-14d")
+        item_str = common.hv_settings("inspector_missing/bad_format", "%-12s:  %-14s")
+        item_float = common.hv_settings("insepctor_float_format", "%-12s:  %-14e")
+        item_double = common.hv_settings("inspector_double_format", "%-12s:  %-14e")
+        item_bin = common.hv_settings("inspector_binary_format", "%-12s:  %-14s")
         nl = "\n"
         endian = ">" if self.endian == "big" else "<"
         i_buffer = "%28s:%-28s" % ("Hex Inspector ", (" Big Endian" if self.endian == "big" else " Little Endian")) + nl
@@ -194,9 +235,12 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         view.sel().clear()
 
     def is_enabled(self):
-        return is_enabled()
+        """Check if the command is enabled."""
+        return common.is_enabled()
 
     def run(self, first_byte=None, bytes_wide=None, reset=False):
+        """Run the command."""
+
         self.view = self.window.active_view()
         self.endian = hv_endianness
         byte8, bytes16, bytes32, bytes64 = None, None, None, None
@@ -206,5 +250,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
 
 
 def plugin_loaded():
+    """Setup plugin."""
+
     global hv_endianness
-    hv_endianness = hv_settings("inspector_endian", "little")
+    hv_endianness = common.hv_settings("inspector_endian", "little")
