@@ -1,6 +1,5 @@
 # HexViewer {: .doctitle}
 A hex viewer and editor for Sublime Text.
-{: .doctitle-info}
 
 ---
 
@@ -10,16 +9,13 @@ Hex Viewer is a plugin for Sublime Text that allows the toggling of a file into 
 <img src="http://dl.dropbox.com/u/342698/HexViewer/preview.png" border="0"/>
 
 # Features
-- Toggling a file into hex view mode.
-- Search bytes by address.
-- Customizable highlight of byte and corresponding ASCII representation.
-- Customizable byte grouping and bytes per line.
-- Hex inspector to view current selected bytes as different unit types (endianness is configurable).
-- Display total selected number of bytes and addresses of first group of consecutive bytes in status bar.
-- Hex editing.
-- Checksumming of files.
-- Generate a hash from a entered string or selection.
-- Auto open binary files in Hex Viewer (disabled by default).
-
-# Installation
-Use Package Control
+- View any file (that exist on disk) in a hex format showing both byte and ASCII representation.
+- Command to jump to a specific address.
+- In place editing of bytes or ASCII chars.
+- Highlight selected byte **and** ascii code.
+- Inspection panel showing different integer representation at the cursor position.
+- Configurable display of byte grouping, bytes per line, endianness.
+- Export hex view to a binary file.
+- Get the checksum of a given file (various checksums are available).
+- Generate checksum/hash from input via panel or text selection.
+- Optionally auto convert binary to hex view.

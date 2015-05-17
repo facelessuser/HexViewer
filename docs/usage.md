@@ -1,6 +1,5 @@
 # User Guide {: .doctitle}
 Configuring and using HexViewer.
-{: .doctitle-info}
 
 ---
 
