@@ -46,21 +46,21 @@ class ReadBin(threading.Thread):
     def iterfile(self, maxblocksize=4096):
         """Iterate through the file chunking the data in 4096 blocks."""
 
-        with open(self.file_name, "rb") as bin:
+        with open(self.file_name, "rb") as bin_file:
             # Ensure read block is a multiple of groupsize
             bytes_wide = self.bytes_wide
             blocksize = maxblocksize - (maxblocksize % bytes_wide)
 
             start = 0
-            bytearray = bin.read(blocksize)
-            while bytearray:
-                outbytes = bytearray[start:start + bytes_wide]
+            byte_array = bin_file.read(blocksize)
+            while byte_array:
+                outbytes = byte_array[start:start + bytes_wide]
                 while outbytes:
                     yield outbytes
                     start += bytes_wide
-                    outbytes = bytearray[start:start + bytes_wide]
+                    outbytes = byte_array[start:start + bytes_wide]
                 start = 0
-                bytearray = bin.read(blocksize)
+                byte_array = bin_file.read(blocksize)
 
     def run(self):
         """Run the command."""
@@ -76,7 +76,7 @@ class ReadBin(threading.Thread):
         read_count = 0
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix=".hex") as f:
             self.hex_name = f.name
-            for bytearray in self.iterfile():
+            for byte_array in self.iterfile():
                 if self.abort:
                     return
                 l_buffer = []
@@ -90,31 +90,31 @@ class ReadBin(threading.Thread):
                 try:
                     # Complete line
                     # Convert to decimal value
-                    values = def_struct.unpack(bytearray)
+                    values = def_struct.unpack(byte_array)
 
                     # Add hex value
                     l_buffer.append(def_template % values)
                 except struct.error:
                     # Incomplete line
                     # Convert to decimal value
-                    values = struct.unpack("=" + ("B" * len(bytearray)), bytearray)
+                    values = struct.unpack("=" + ("B" * len(byte_array)), byte_array)
 
                     # Add hex value
-                    remain_group = int(len(bytearray) / self.group_size)
-                    remain_extra = len(bytearray) % self.group_size
+                    remain_group = int(len(byte_array) / self.group_size)
+                    remain_extra = len(byte_array) % self.group_size
                     l_buffer.append(
                         ((("%02x" * self.group_size) + " ") * (remain_group) + ("%02x" * remain_extra)) % values
                     )
 
                     # Append printable chars to incomplete line
-                    delta = self.bytes_wide - len(bytearray)
+                    delta = self.bytes_wide - len(byte_array)
                     group_space = int(delta / self.group_size)
                     extra_space = (1 if delta % self.group_size else 0)
 
                     l_buffer.append(" " * (group_space + extra_space + delta * 2))
 
                 # Append printable chars
-                l_buffer.append(" :" + "".join([chr(translate_table[b]) for b in bytearray]))
+                l_buffer.append(" :" + "".join([chr(translate_table[b]) for b in byte_array]))
 
                 # Add line to buffer
                 f.write(("\n" if line > 0 else "") + "".join(l_buffer))
@@ -175,7 +175,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
                 # Handle previw or direct open
                 if is_preview:
                     self.open_me = file_name
-                    sublime.set_timeout(lambda: self.open_bin_file(), 100)
+                    sublime.set_timeout(self.open_bin_file, 100)
                 else:
                     self.open_me = file_name
                     self.open_bin_file(view, window)
@@ -266,7 +266,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         elif offset != 0:
             self.bytes_wide -= offset
 
-    def buffer_init(self, bits, bytearray):
+    def buffer_init(self, bits, byte_array):
         """Initialize info for the hex buffer."""
         self.view = self.window.active_view()
         file_name = None
@@ -291,7 +291,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             )
             # Use passed in bit and byte settings if available
             self.bits = bits if bits is not None else int(current_bits)
-            self.bytes = bytearray if bytearray is not None else int(current_bytes)
+            self.bytes = byte_array if byte_array is not None else int(current_bytes)
             self.set_format()
         return file_name
 
@@ -379,7 +379,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         if self.abort is True:
             self.thread.abort = True
             notify("Hex View aborted!")
-            sublime.set_timeout(lambda: self.reset_thread(), 500)
+            sublime.set_timeout(self.reset_thread, 500)
             return
         ratio = float(self.thread.read_count) / float(self.thread.file_size)
         percent = int(ratio * 10)
@@ -387,9 +387,9 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         message = "[" + "-" * percent + ">" + "-" * leftover + ("] %3d%%" % int(ratio * 100)) + " converted to hex"
         sublime.status_message(message)
         if not self.thread.is_alive():
-            sublime.set_timeout(lambda: self.load_hex_view(), 100)
+            sublime.set_timeout(self.load_hex_view, 100)
         else:
-            sublime.set_timeout(lambda: self.handle_thread(), 100)
+            sublime.set_timeout(self.handle_thread, 100)
 
     def abort_hex_load(self):
         """Abort the loading of the hex view."""
@@ -437,10 +437,9 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             not(active_thread is not None and active_thread.is_alive())
         )
 
-    def run(self, bits=None, bytearray=None, starting_address=0):
+    def run(self, bits=None, byte_array=None, starting_address=0):
         """Run the command."""
 
-        global active_thread
         self.starting_address = starting_address
         if active_thread is not None and active_thread.is_alive():
             error(
@@ -454,7 +453,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             return
 
         # Init Buffer
-        file_name = self.buffer_init(bits, bytearray)
+        file_name = self.buffer_init(bits, byte_array)
 
         # Identify view
         if self.handshake != -1 and self.handshake == self.view.id():
@@ -467,13 +466,13 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 self.view_type = "hex"
                 if common.is_hex_dirty(self.view):
                     self.file_name = file_name
-                    if bits is None and bytearray is None:
+                    if bits is None and byte_array is None:
                         self.switch_type = "file"
                     else:
                         self.switch_type = "hex"
                     self.discard_panel()
                 else:
-                    if bits is None and bytearray is None:
+                    if bits is None and byte_array is None:
                         # Switch back to traditional output
                         self.read_file(file_name)
                     else:
@@ -533,8 +532,8 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
                         option_list.append(str(bits) + " bits")
                     self.window.show_quick_panel(option_list, self.set_bits)
                 elif option == "bytes":
-                    for bytearray in self.valid_bytes:
-                        option_list.append(str(bytearray) + " bytes")
+                    for byte_array in self.valid_bytes:
+                        option_list.append(str(byte_array) + " bytes")
                     self.window.show_quick_panel(option_list, self.set_bytes)
 
 
@@ -572,12 +571,10 @@ class HexViewerAbortCommand(sublime_plugin.WindowCommand):
     def run(self):
         """Run the command."""
 
-        global active_thread
         if active_thread is not None and active_thread.is_alive():
             active_thread.abort = True
 
     def is_enabled(self):
         """Check if command is enabled."""
 
-        global active_thread
         return active_thread is not None and active_thread.is_alive()

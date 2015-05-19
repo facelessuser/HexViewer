@@ -74,8 +74,8 @@ def ascii_to_hex_col(index, group_size):
     """
 
     start_column = int(
-        ADDRESS_OFFSET + (group_size * 2) * index / (group_size)
-        + index / (group_size)
+        ADDRESS_OFFSET + (group_size * 2) * index / (group_size) +
+        index / (group_size)
     )
     # Convert byte column position to test point
     return start_column
@@ -84,7 +84,7 @@ def ascii_to_hex_col(index, group_size):
 def adjust_hex_sel(view, start, end, group_size):
     """Adjust the hex selection."""
 
-    bytes = 0
+    num_bytes = 0
     size = end - start
     if view.score_selector(start, 'raw.nibble.upper') == 0:
         if view.score_selector(start, 'raw.nibble.lower'):
@@ -96,15 +96,15 @@ def adjust_hex_sel(view, start, end, group_size):
     # Adjust ending of selection to end of last selected byte
     if size == 0 and start is not None:
         end = start + 1
-        bytes = 1
+        num_bytes = 1
     elif view.score_selector(end, 'raw.nibble.lower') == 0:
         if view.score_selector(end - 1, 'raw.nibble.lower'):
             end -= 1
         else:
             end -= 2
     if start is not None and end is not None:
-        bytes = get_byte_count(start, end, group_size)
-    return start, end, bytes
+        num_bytes = get_byte_count(start, end, group_size)
+    return start, end, num_bytes
 
 
 def underline(selected_bytes):

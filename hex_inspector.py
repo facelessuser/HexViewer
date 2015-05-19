@@ -102,7 +102,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
     def get_bytes(self, start, bytes_wide):
         """Get the bytes at the cursor."""
 
-        bytes = self.view.substr(sublime.Region(start, start + 2))
+        byte_str = self.view.substr(sublime.Region(start, start + 2))
         byte64 = None
         byte32 = None
         byte16 = None
@@ -119,34 +119,34 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         while start < size and count < target_bytes:
             # Check if sitting on first nibble
             if self.view.score_selector(start, 'raw.nibble.upper'):
-                bytes += self.view.substr(sublime.Region(start, start + 2))
+                byte_str += self.view.substr(sublime.Region(start, start + 2))
                 count += 1
                 start += 2
             else:
                 # Must be at byte group falling edge; try and step over divider
                 start += group_divide
                 if start < size and self.view.score_selector(start, 'raw.nibble.upper'):
-                    bytes += self.view.substr(sublime.Region(start, start + 2))
+                    byte_str += self.view.substr(sublime.Region(start, start + 2))
                     count += 1
                     start += 2
                 # Must be at line end; try and step to next line
                 else:
                     start += ascii_divide
                     if start < size and self.view.score_selector(start, 'raw.nibble.upper'):
-                        bytes += self.view.substr(sublime.Region(start, start + 2))
+                        byte_str += self.view.substr(sublime.Region(start, start + 2))
                         count += 1
                         start += 2
                     else:
                         # No more bytes to check
                         break
 
-        byte8 = bytes[0:2]
+        byte8 = byte_str[0:2]
         if count > 1:
-            byte16 = bytes[0:4]
+            byte16 = byte_str[0:4]
         if count > 3:
-            byte32 = bytes[0:8]
+            byte32 = byte_str[0:8]
         if count > 7:
-            byte64 = bytes[0:16]
+            byte64 = byte_str[0:16]
         return byte8, byte16, byte32, byte64
 
     def display(self, view, byte8, bytes16, bytes32, bytes64):

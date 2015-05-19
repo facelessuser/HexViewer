@@ -53,7 +53,7 @@ class HexFinderCommand(sublime_plugin.WindowCommand):
                 view.show_at_center(pt)
                 # Highlight
                 self.window.run_command('hex_highlighter')
-            except:
+            except Exception:
                 pass
         else:
             error("Hex view is no longer in focus! Find address canceled.")

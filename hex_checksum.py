@@ -34,25 +34,24 @@ def parse_view_data(data_buffer):
 def verify_hashes(hashes):
     """Verify the hashes are valid."""
 
-    global VALID_HASH
     for item in hashes:
         module = item.split(":")
         if len(module) == 2:
             try:
                 getattr(sys.modules[module[0]], module[1])
                 VALID_HASH.append(module[1])
-            except:
+            except Exception:
                 print("Hex Viewer: " + module[1] + " hash is not available!")
         else:
             try:
                 hashlib.new(item)
                 VALID_HASH.append(item)
-            except:
+            except Exception:
                 print("Hex Viewer: " + item + " hash is not available!")
 
 
 # Extra hash SSL and ZLIB classes
-class ssl_algorithm(object):
+class SSlAlgorithm(object):
 
     """SSL hash algorithm."""
 
@@ -100,7 +99,7 @@ class ssl_algorithm(object):
             self.__algorithm.update(arg)
 
 
-class zlib_algorithm(object):
+class ZlibAlgorithm(object):
 
     """Zlib hash algorithm."""
 
@@ -126,7 +125,7 @@ class zlib_algorithm(object):
 
         self.__algorithm = getattr(zlib, name)
         self.__name = name
-        self.__digest_size
+        self.__digest_size = digest_size
         self.__hash = start
         self.update(arg)
 
@@ -154,7 +153,7 @@ class zlib_algorithm(object):
 
 
 # Additional Hashes
-class md2(ssl_algorithm):
+class md2(SSlAlgorithm):  # noqa
 
     """md2 hash."""
 
@@ -164,7 +163,7 @@ class md2(ssl_algorithm):
         self.algorithm('md2', 16, arg)
 
 
-class mdc2(ssl_algorithm):
+class mdc2(SSlAlgorithm):  # noqa
 
     """mdc2 hash."""
 
@@ -174,7 +173,7 @@ class mdc2(ssl_algorithm):
         self.algorithm('mdc2', 16, arg)
 
 
-class md4(ssl_algorithm):
+class md4(SSlAlgorithm):  # noqa
 
     """md4 hash."""
 
@@ -184,7 +183,7 @@ class md4(ssl_algorithm):
         self.algorithm('md4', 16, arg)
 
 
-class sha(ssl_algorithm):
+class sha(SSlAlgorithm):  # noqa
 
     """sha hash."""
 
@@ -194,7 +193,7 @@ class sha(ssl_algorithm):
         self.algorithm('sha', 20, arg)
 
 
-class ripemd160(ssl_algorithm):
+class ripemd160(SSlAlgorithm):  # noqa
 
     """ripemd160 hash."""
 
@@ -204,7 +203,7 @@ class ripemd160(ssl_algorithm):
         self.algorithm('ripemd160', 20, arg)
 
 
-class crc32(zlib_algorithm):
+class crc32(ZlibAlgorithm):  # noqa
 
     """crc32 hash."""
 
@@ -214,7 +213,7 @@ class crc32(zlib_algorithm):
         self.algorithm('crc32', 4, 0, arg)
 
 
-class adler32(zlib_algorithm):
+class adler32(ZlibAlgorithm):  # noqa
 
     """adler32 hash."""
 
@@ -225,7 +224,7 @@ class adler32(zlib_algorithm):
 
 
 # Sublime Text Commands
-class checksum(object):
+class Checksum(object):
 
     """Checksum."""
 
@@ -247,10 +246,12 @@ class checksum(object):
         if isinstance(data, str):
             self.hash.update(data)
 
-    def threaded_update(self, data_buffer=[], fmt_callback=None, count=None):
+    def threaded_update(self, data_buffer=None, fmt_callback=None, count=None):
         """Hash the data via a thread."""
         global active_thread
-        self.thread = hash_thread(data_buffer, self.hash, fmt_callback, count)
+        if data_buffer is None:
+            data_buffer = []
+        self.thread = HashThread(data_buffer, self.hash, fmt_callback, count)
         self.thread.start()
         self.chunk_thread()
         active_thread = self.thread
@@ -266,11 +267,11 @@ class checksum(object):
         if not self.thread.is_alive():
             if self.thread.abort is True:
                 notify("Hash calculation aborted!")
-                sublime.set_timeout(lambda: self.reset_thread(), 500)
+                sublime.set_timeout(self.reset_thread, 500)
             else:
-                sublime.set_timeout(lambda: self.display(), 500)
+                sublime.set_timeout(self.display, 500)
         else:
-            sublime.set_timeout(lambda: self.chunk_thread(), 500)
+            sublime.set_timeout(self.chunk_thread, 500)
 
     def reset_thread(self):
         """Reset."""
@@ -285,7 +286,7 @@ class checksum(object):
         window.show_input_panel(self.name + ":", str(self.hash.hexdigest()), None, None, None)
 
 
-class hash_thread(threading.Thread):
+class HashThread(threading.Thread):
 
     """Thread hashing."""
 
@@ -317,7 +318,7 @@ class hash_thread(threading.Thread):
                     return
                 else:
                     self.obj.update(chunk)
-        except:
+        except Exception:
             print(str(traceback.format_exc()))
 
 
@@ -345,7 +346,7 @@ class HashSelectionCommand(sublime_plugin.WindowCommand):
                 # Initialize hasher and related values
                 data = []
                 view = self.window.active_view()
-                hasher = checksum(self.algorithm)
+                hasher = Checksum(self.algorithm)
                 # Walk through all selections breaking up data by lines
                 for sel in view.sel():
                     lines = view.substr(sel).splitlines(True)
@@ -370,7 +371,7 @@ class HashEvalCommand(sublime_plugin.WindowCommand):
         """Hash the value."""
 
         data = []
-        hasher = checksum(self.algorithm)
+        hasher = Checksum(self.algorithm)
         lines = value.splitlines(True)
         for line in lines:
             data.append(line.encode("utf-8"))
@@ -389,7 +390,7 @@ class HashEvalCommand(sublime_plugin.WindowCommand):
                 None
             )
 
-    def run(self, hash_algorithm=None):
+    def run(self):
         """Run command."""
 
         self.window.show_quick_panel(VALID_HASH, self.select_hash)
@@ -402,7 +403,6 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
         """Check if command is enabled."""
 
-        global active_thread
         return (
             common.is_enabled() and
             not (active_thread is not None and active_thread.is_alive())
@@ -411,7 +411,6 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
     def run(self, hash_algorithm=None, panel=False):
         """Run command."""
 
-        global active_thread
         if active_thread is not None and active_thread.is_alive():
             error(
                 "HexViewer is already checksumming a file!\n"
@@ -435,7 +434,7 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
         view = self.window.active_view()
         if view is not None:
             sublime.set_timeout(lambda: sublime.status_message("Checksumming..."), 0)
-            hex_hash = checksum(hash_algorithm)
+            hex_hash = Checksum(hash_algorithm)
             row = view.rowcol(view.size())[0] - 1
             hex_hash.threaded_update(
                 StringIO(view.substr(sublime.Region(0, view.size()))),
@@ -451,13 +450,12 @@ class HexChecksumAbortCommand(sublime_plugin.WindowCommand):
     def run(self):
         """Run command."""
 
-        global active_thread
         if active_thread is not None and active_thread.is_alive():
             active_thread.abort = True
 
     def is_enabled(self):
         """Check if command should be enabled."""
-        global active_thread
+
         return active_thread is not None and active_thread.is_alive()
 
 

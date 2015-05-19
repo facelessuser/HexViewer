@@ -265,7 +265,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                 original = self.line["data1"] + selection + self.line["data2"]
 
                 # Initialize
-                ascii = " :"
+                ascii_str = " :"
                 start = 0
                 ascii_start_pos = self.ascii_pos
                 hex_start_pos = self.line["range"].begin() + common.ADDRESS_OFFSET
@@ -314,7 +314,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
 
                     # Copy valid printible ascii chars over or substitute with "."
                     dec = unpack("=B", unhexlify(value))[0]
-                    ascii += chr(dec) if dec in range(32, 127) else "."
+                    ascii_str += chr(dec) if dec in range(32, 127) else "."
                     start += 2
                     count += 1
                     hex_start_pos += 2
@@ -330,7 +330,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                 # Append ascii chars to line accounting for missing bytes in line
                 delta = int(self.bytes_wide) - len(edits) / 2
                 group_space = int(delta / self.group_size) + (1 if delta % self.group_size else 0)
-                l_buffer += " " * int(group_space + delta * 2) + ascii
+                l_buffer += " " * int(group_space + delta * 2) + ascii_str
 
                 # Apply buffer edit
                 self.view.sel().clear()
@@ -374,23 +374,23 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
     def ascii_to_hex(self, start, end):
         """Convert ascii to hex."""
 
-        bytes = 0
+        num_bytes = 0
         size = end - start
         ascii_range = self.view.extract_scope(start)
 
         # Determine if selection is within ascii range
         if start >= ascii_range.begin() and end <= ascii_range.end() + 1:
             # Single char selection or multi
-            bytes = 1 if size == 0 else end - start
+            num_bytes = 1 if size == 0 else end - start
 
-        if bytes != 0:
+        if num_bytes != 0:
             row, column = self.view.rowcol(start)
             column = common.ascii_to_hex_col(start - ascii_range.begin(), self.group_size)
             hex_pos = self.view.text_point(row, column)
             start = hex_pos
 
             # Traverse row finding the specified bytes
-            byte_count = bytes
+            byte_count = num_bytes
             while byte_count:
                 # Byte rising edge
                 if self.view.score_selector(hex_pos, 'raw.nibble.upper'):
@@ -401,7 +401,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
                         end = hex_pos - 1
                 else:
                     hex_pos += 1
-        return start, end, bytes
+        return start, end, num_bytes
 
     def edit_panel(self, value, error=None):
         """Show edit panel."""
@@ -434,7 +434,7 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
             sel = self.view.sel()[0]
             start = sel.begin()
             end = sel.end()
-            bytes = 0
+            num_bytes = 0
 
             # Get range of hex data
             line = self.view.line(start)
@@ -443,18 +443,18 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
             hex_range = sublime.Region(range_start, range_end)
 
             if self.view.score_selector(start, "comment"):
-                start, end, bytes = self.ascii_to_hex(start, end)
+                start, end, num_bytes = self.ascii_to_hex(start, end)
 
             # Determine if selection is within hex range
             if start >= hex_range.begin() and end <= hex_range.end():
                 # Adjust beginning of selection to begining of first selected byte
-                if bytes == 0:
-                    start, end, bytes = common.adjust_hex_sel(self.view, start, end, self.group_size)
+                if num_bytes == 0:
+                    start, end, num_bytes = common.adjust_hex_sel(self.view, start, end, self.group_size)
 
                 # Get general line info for diffing and editing
-                if bytes != 0:
+                if num_bytes != 0:
                     self.ascii_pos = hex_range.end() + common.ASCII_OFFSET
-                    self.total_bytes = bytes
+                    self.total_bytes = num_bytes
                     self.start_pos = start
                     self.end_pos = end + 1
                     selection = self.view.substr(sublime.Region(start, end + 1))

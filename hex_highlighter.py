@@ -85,14 +85,14 @@ class HexHighlighter(object):
             init_status = True
         return init_status
 
-    def get_address(self, start, bytes, line):
+    def get_address(self, start, num_bytes, line):
         """Get the address."""
 
         address_offset = self.view.settings().get('hex_viewer_starting_address', 0)
         lines = line
         align_to_address_offset = 2
         add_start = lines * self.bytes_wide + start - align_to_address_offset + address_offset
-        add_end = add_start + bytes - 1
+        add_end = add_start + num_bytes - 1
         length = len(self.address)
         if length == 0:
             # Add first address group
@@ -139,7 +139,7 @@ class HexHighlighter(object):
         total = self.total_bytes if self.total_bytes == "?" else str(self.total_bytes)
         self.view.set_status('hex_total_bytes', "Total Bytes: " + total)
 
-    def hex_selection(self, start, bytes, first_pos):
+    def hex_selection(self, start, num_bytes, first_pos):
         """Get hex selection."""
 
         row, column = self.view.rowcol(first_pos)
@@ -152,7 +152,7 @@ class HexHighlighter(object):
 
         # Traverse row finding the specified bytes
         highlight_start = -1
-        byte_count = bytes
+        byte_count = num_bytes
         while byte_count:
             # Byte rising edge
             if self.view.score_selector(hex_pos, 'raw.nibble.upper'):
@@ -169,8 +169,8 @@ class HexHighlighter(object):
                 hex_pos += 1
                 highlight_start = -1
         # Log address
-        if bytes and not self.address_done:
-            self.get_address(start + 2, bytes, row)
+        if num_bytes and not self.address_done:
+            self.get_address(start + 2, num_bytes, row)
 
     def ascii_to_hex(self, sel):
         """Convert ASCII to hex."""
@@ -178,7 +178,7 @@ class HexHighlighter(object):
         view = self.view
         start = sel.begin()
         end = sel.end()
-        bytes = 0
+        num_bytes = 0
         ascii_range = view.extract_scope(sel.begin())
 
         # Determine if selection is within ascii range
@@ -192,15 +192,15 @@ class HexHighlighter(object):
         ):
             # Single char selection
             if sel.size() == 0:
-                bytes = 1
+                num_bytes = 1
                 self.selected_bytes.append(sublime.Region(start, end + 1))
             else:
                 # Multi char selection
-                bytes = end - start
+                num_bytes = end - start
                 self.selected_bytes.append(sublime.Region(start, end))
-            self.total_bytes += bytes
+            self.total_bytes += num_bytes
             # Highlight hex values
-            self.hex_selection(start - ascii_range.begin(), bytes, start)
+            self.hex_selection(start - ascii_range.begin(), num_bytes, start)
 
     def hex_to_ascii(self, sel):
         """Convert hex to ASCII."""
@@ -218,18 +218,18 @@ class HexHighlighter(object):
         # Determine if selection is within hex range
         if start >= hex_range.begin() and end <= hex_range.end():
             # Adjust beginning of selection to begining of first selected byte
-            start, end, bytes = common.adjust_hex_sel(view, start, end, self.group_size)
+            start, end, num_bytes = common.adjust_hex_sel(view, start, end, self.group_size)
 
             # Highlight hex values and their ascii chars
-            if bytes != 0:
-                self.total_bytes += bytes
+            if num_bytes != 0:
+                self.total_bytes += num_bytes
                 # Zero based byte number
                 start_byte = common.get_byte_count(hex_range.begin(), start + 2, self.group_size) - 1
-                self.hex_selection(start_byte, bytes, start)
+                self.hex_selection(start_byte, num_bytes, start)
 
                 # Highlight Ascii
                 ascii_start = hex_range.end() + common.ASCII_OFFSET + start_byte
-                ascii_end = ascii_start + bytes
+                ascii_end = ascii_start + num_bytes
                 self.selected_bytes.append(sublime.Region(ascii_start, ascii_end))
 
     def get_highlights(self):
@@ -314,7 +314,7 @@ class HexHighlighterListenerCommand(sublime_plugin.EventListener):
             return
         now = time()
         if now - hh_thread.time > hh_thread.wait_time:
-            sublime.set_timeout(lambda: hh_thread.payload(), 0)
+            sublime.set_timeout(hh_thread.payload, 0)
         else:
             hh_thread.modified = True
             hh_thread.time = now
@@ -362,7 +362,7 @@ class HhThread(threading.Thread):
 
         while not self.abort:
             if self.modified is True and time() - self.time > self.wait_time:
-                sublime.set_timeout(lambda: self.payload(), 0)
+                sublime.set_timeout(self.payload, 0)
             sleep(0.5)
 
 

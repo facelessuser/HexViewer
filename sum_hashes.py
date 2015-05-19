@@ -11,7 +11,7 @@ BIT24_MOD = 16777216
 BIT32_MOD = 4294967296
 
 
-class sum8(object):
+class sum8(object):  # noqa
 
     """Sum8 hash."""
 
@@ -58,7 +58,7 @@ class sum8(object):
         return copy.deepcopy(self)
 
 
-class sum16(sum8):
+class sum16(sum8):  # noqa
 
     """Sum16 hash."""
 
@@ -76,7 +76,7 @@ class sum16(sum8):
         return "%04x" % self.digest()
 
 
-class sum24(sum8):
+class sum24(sum8):  # noqa
 
     """Sum24 hash."""
 
@@ -92,7 +92,7 @@ class sum24(sum8):
         return "%06x" % self.digest()
 
 
-class sum32(sum8):
+class sum32(sum8):  # noqa
 
     """Sum32 hash."""
 
@@ -110,7 +110,7 @@ class sum32(sum8):
         return "%08x" % self.digest()
 
 
-class xor8(sum8):
+class xor8(sum8):  # noqa
 
     """Xor8 hash."""
 

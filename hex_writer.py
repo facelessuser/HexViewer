@@ -8,7 +8,7 @@ import sublime
 import sublime_plugin
 from os.path import dirname, exists
 import HexViewer.hex_common as common
-from HexViewer.hex_checksum import checksum, parse_view_data
+from HexViewer.hex_checksum import Checksum, parse_view_data
 import threading
 import traceback
 from io import StringIO
@@ -54,7 +54,7 @@ class ThreadedWrite(threading.Thread):
                         return
                     else:
                         f.write(chunk)
-        except:
+        except Exception:
             self.status = WRITE_FAIL
             print(str(traceback.format_exc()))
 
@@ -66,14 +66,12 @@ class HexWriterAbortCommand(sublime_plugin.WindowCommand):
     def run(self):
         """Run command."""
 
-        global active_thread
         if active_thread is not None and active_thread.is_alive():
             active_thread.abort = True
 
     def is_enabled(self):
         """Check if command is enabled."""
 
-        global active_thread
         return active_thread is not None and active_thread.is_alive()
 
 
@@ -87,7 +85,6 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
     def is_enabled(self):
         """Check if command is enabled."""
 
-        global active_thread
         view = self.window.active_view()
         return (
             common.is_enabled() and
@@ -144,7 +141,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         """Post export event."""
 
         if common.hv_settings("checksum_on_save", USE_CHECKSUM_ON_SAVE):
-            hex_hash = checksum()
+            hex_hash = Checksum()
             self.hex_buffer.seek(0)
             # Checksum will be threaded and will show the result when done
             sublime.set_timeout(lambda: sublime.status_message("Checksumming..."), 0)
@@ -172,16 +169,16 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         if not self.thread.is_alive():
             if self.thread.abort is True:
                 notify("Write aborted!")
-                sublime.set_timeout(lambda: self.reset_thread(), 500)
+                sublime.set_timeout(self.reset_thread, 500)
             else:
                 status = self.thread.status
                 self.reset_thread()
                 if status == WRITE_GOOD:
-                    sublime.set_timeout(lambda: self.finish_export(), 500)
+                    sublime.set_timeout(self.finish_export, 500)
                 else:
                     error("Failed to export to " + self.export_path)
         else:
-            sublime.set_timeout(lambda: self.export_thread(), 500)
+            sublime.set_timeout(self.export_thread, 500)
 
     def export(self):
         """Export the data."""
@@ -197,7 +194,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
                 self.thread.start()
                 self.export_thread()
                 active_thread = self.thread
-            except:
+            except Exception:
                 print(str(traceback.format_exc()))
                 error("Failed to export to " + self.export_path)
                 self.reset()
@@ -217,7 +214,6 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
     def run(self):
         """Run command."""
 
-        global active_thread
         if active_thread is not None and active_thread.is_alive():
             error("HexViewer is already exporting a file!\nPlease run the abort command to stop the current export.")
         else:
