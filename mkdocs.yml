@@ -6,7 +6,7 @@ pages:
   - About HexViewer: index.md
   - Installation: installation.md
   - User Guide: usage.md
-  - Contributing & Support: contributing.md
+  - Contributing &amp; Support: contributing.md
   - License: license.md
 theme: readthedocs
 theme_dir: doc_theme
