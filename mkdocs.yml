@@ -3,28 +3,28 @@ repo_url: https://github.com/facelessuser/HexViewer
 site_description: A Sublime Text hex viewer and editor.
 copyright: Copyright &copy; 2011 - 2015 <a href="https://github.com/facelessuser">Isaac Muse</a>
 pages:
-- About HexViewer: index.md
-- Installation: installation.md
-- User Guide: usage.md
-- Contributing & Support: contributing.md
-- License: license.md
+  - About HexViewer: index.md
+  - Installation: installation.md
+  - User Guide: usage.md
+  - Contributing & Support: contributing.md
+  - License: license.md
 theme: readthedocs
 theme_dir: doc_theme
 markdown_extensions:
-- markdown.extensions.extra
-- markdown.extensions.admonition
-- markdown.extensions.smarty
-- markdown.extensions.nl2br
-- markdown.extensions.codehilite:
-    guess_lang: false
-- pymdownx.inlinehilite
-- pymdownx.magiclink
-- pymdownx.betterem
-- pymdownx.tilde
-- pymdownx.caret
-- pymdownx.smartsymbols
-- pymdownx.githubemoji
-- pymdownx.tasklist
-- pymdownx.superfences
-- pymdownx.progressbar
-- pymdownx.headeranchor
+  - markdown.extensions.extra
+  - markdown.extensions.admonition
+  - markdown.extensions.smarty
+  - markdown.extensions.nl2br
+  - markdown.extensions.codehilite:
+      guess_lang: false
+  - pymdownx.inlinehilite
+  - pymdownx.magiclink
+  - pymdownx.betterem
+  - pymdownx.tilde
+  - pymdownx.caret
+  - pymdownx.smartsymbols
+  - pymdownx.githubemoji
+  - pymdownx.tasklist
+  - pymdownx.superfences
+  - pymdownx.progressbar
+  - pymdownx.headeranchor

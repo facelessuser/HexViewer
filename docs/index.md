@@ -3,12 +3,12 @@ A hex viewer and editor for Sublime Text.
 
 ---
 
-# Overview
+## Overview
 Hex Viewer is a plugin for Sublime Text that allows the toggling of a file into a hex viewing mode.  Hex Viewer also supports hex editing.
 
 <img src="http://dl.dropbox.com/u/342698/HexViewer/preview.png" border="0"/>
 
-# Features
+## Features
 - View any file (that exist on disk) in a hex format showing both byte and ASCII representation.
 - Command to jump to a specific address.
 - In place editing of bytes or ASCII chars.
