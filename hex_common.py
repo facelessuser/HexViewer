@@ -10,7 +10,7 @@ from os.path import basename, splitext
 ADDRESS_OFFSET = 11
 ASCII_OFFSET = 3
 BITS_PER_BYTE = 8
-USE_ST_SYNTAX = int(sublime.version()) >= 3084 and False
+USE_ST_SYNTAX = int(sublime.version()) >= 3092
 ST_SYNTAX = "sublime-syntax" if USE_ST_SYNTAX else 'tmLanguage'
 
 
