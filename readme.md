@@ -1,6 +1,6 @@
 [![Unix Build Status][travis-image]][travis-link]
 ![License][license-image]
-# About
+# HexViewer
 Hex Viewer is a plugin for Sublime Text that allows the toggling of a file into a hex viewing mode.  Hex Viewer also supports hex editing.
 
 <img src="http://dl.dropbox.com/u/342698/HexViewer/preview.png" border="0"/>
