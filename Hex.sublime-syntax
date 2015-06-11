@@ -2,7 +2,7 @@
 ---
 # http://www.sublimetext.com/docs/3/syntax.html
 name: Hex
-file_extensions: []
+file_extensions: ['hex']
 scope: source.hex
 contexts:
   main:
