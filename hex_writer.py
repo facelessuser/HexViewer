@@ -188,7 +188,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
         if self.handshake != -1 and self.handshake == self.view.id():
             try:
                 sublime.set_timeout(lambda: sublime.status_message("Writing..."), 0)
-                self.row = self.view.rowcol(self.view.size())[0] - 1
+                self.row = self.view.rowcol(self.view.size())[0] + 1
                 self.hex_buffer = StringIO(self.view.substr(sublime.Region(0, self.view.size())))
                 self.thread = ThreadedWrite(self.hex_buffer, self.export_path, parse_view_data, self.row)
                 self.thread.start()
