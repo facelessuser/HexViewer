@@ -510,7 +510,7 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
         """Set total bytes per line."""
 
         if value != -1:
-            self.window.run_command('hex_viewer', {"bytearray": self.valid_bytes[value]})
+            self.window.run_command('hex_viewer', {"byte_array": self.valid_bytes[value]})
 
     def is_enabled(self):
         """Check if command is enabled."""
