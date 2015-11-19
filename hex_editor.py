@@ -19,7 +19,6 @@ HIGHLIGHT_EDIT_STYLE = "underline"
 
 
 class HexEditGlobal(object):
-
     """Hex edit global object."""
 
     bfr = None
@@ -34,7 +33,6 @@ class HexEditGlobal(object):
 
 
 class HexEditApplyCommand(sublime_plugin.TextCommand):
-
     """Apply edits to the view."""
 
     def run(self, edit):
@@ -44,7 +42,6 @@ class HexEditApplyCommand(sublime_plugin.TextCommand):
 
 
 class HexEditorListenerCommand(sublime_plugin.EventListener):
-
     """Hex Editor listener command."""
 
     fail_safe_view = None
@@ -172,7 +169,6 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
 
 
 class HexDiscardEditsCommand(sublime_plugin.WindowCommand):
-
     """Discard current edits."""
 
     def is_enabled(self):
@@ -190,7 +186,6 @@ class HexDiscardEditsCommand(sublime_plugin.WindowCommand):
 
 
 class HexEditorCommand(sublime_plugin.WindowCommand):
-
     """Hex editor command."""
 
     handshake = -1

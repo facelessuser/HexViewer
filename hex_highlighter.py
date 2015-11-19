@@ -26,7 +26,6 @@ if 'hh_thread' not in globals():
 
 
 class HexHighlighter(object):
-
     """Hex highlighter."""
 
     def init(self):
@@ -287,7 +286,6 @@ class HexHighlighter(object):
 
 
 class HexHighlighterCommand(sublime_plugin.WindowCommand):
-
     """Hex highlighter command."""
 
     def run(self):
@@ -304,7 +302,6 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
 
 
 class HexHighlighterListenerCommand(sublime_plugin.EventListener):
-
     """Hex highlighter event listener command."""
 
     def on_selection_modified(self, view):
@@ -321,7 +318,6 @@ class HexHighlighterListenerCommand(sublime_plugin.EventListener):
 
 
 class HhThread(threading.Thread):
-
     """Load up defaults."""
 
     def __init__(self):

@@ -28,7 +28,6 @@ active_thread = None
 
 
 class ReadBin(threading.Thread):
-
     """Read a file in binary mode."""
 
     def __init__(self, file_name, bytes_wide, group_size, starting_address=0):
@@ -123,7 +122,6 @@ class ReadBin(threading.Thread):
 
 
 class HexViewerListenerCommand(sublime_plugin.EventListener):
-
     """Hex viewer listener command."""
 
     open_me = None
@@ -237,7 +235,6 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
 
 
 class HexViewerCommand(sublime_plugin.WindowCommand):
-
     """Hex viewer command."""
 
     handshake = -1
@@ -497,7 +494,6 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
 
 class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
-
     """Set hex view options."""
 
     def set_bits(self, value):
@@ -538,7 +534,6 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
 
 
 class HexExternalViewerCommand(sublime_plugin.TextCommand):
-
     """Open hex data in external hex program."""
 
     def run(self, edit):
@@ -565,7 +560,6 @@ class HexExternalViewerCommand(sublime_plugin.TextCommand):
 
 
 class HexViewerAbortCommand(sublime_plugin.WindowCommand):
-
     """Abort loading the hex view."""
 
     def run(self):

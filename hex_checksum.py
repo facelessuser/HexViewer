@@ -52,7 +52,6 @@ def verify_hashes(hashes):
 
 # Extra hash SSL and ZLIB classes
 class SSlAlgorithm(object):
-
     """SSL hash algorithm."""
 
     __algorithm = None
@@ -100,7 +99,6 @@ class SSlAlgorithm(object):
 
 
 class ZlibAlgorithm(object):
-
     """Zlib hash algorithm."""
 
     __algorithm = None
@@ -225,7 +223,6 @@ class adler32(ZlibAlgorithm):  # noqa
 
 # Sublime Text Commands
 class Checksum(object):
-
     """Checksum."""
 
     thread = None
@@ -287,7 +284,6 @@ class Checksum(object):
 
 
 class HashThread(threading.Thread):
-
     """Thread hashing."""
 
     def __init__(self, data, obj, fmt_callback=None, count=None):
@@ -323,7 +319,6 @@ class HashThread(threading.Thread):
 
 
 class HashSelectionCommand(sublime_plugin.WindowCommand):
-
     """Hash view selections."""
 
     algorithm = "md5"
@@ -362,7 +357,6 @@ class HashSelectionCommand(sublime_plugin.WindowCommand):
 
 
 class HashEvalCommand(sublime_plugin.WindowCommand):
-
     """Evaluate hash."""
 
     algorithm = "md5"
@@ -397,7 +391,6 @@ class HashEvalCommand(sublime_plugin.WindowCommand):
 
 
 class HexChecksumCommand(sublime_plugin.WindowCommand):
-
     """Checksum command."""
 
     def is_enabled(self):
@@ -444,7 +437,6 @@ class HexChecksumCommand(sublime_plugin.WindowCommand):
 
 
 class HexChecksumAbortCommand(sublime_plugin.WindowCommand):
-
     """Abort checksum command."""
 
     def run(self):

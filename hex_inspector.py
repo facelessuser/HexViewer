@@ -15,7 +15,6 @@ hv_endianness = None
 
 
 class HexShowInspectorCommand(sublime_plugin.WindowCommand):
-
     """Show the hex inspector panel."""
 
     def is_enabled(self):
@@ -39,7 +38,6 @@ class HexShowInspectorCommand(sublime_plugin.WindowCommand):
 
 
 class HexHideInspectorCommand(sublime_plugin.WindowCommand):
-
     """Hide the hex inspector panel."""
 
     def is_enabled(self):
@@ -54,7 +52,6 @@ class HexHideInspectorCommand(sublime_plugin.WindowCommand):
 
 
 class HexToggleInspectorEndiannessCommand(sublime_plugin.WindowCommand):
-
     """Toggle hex inspector's endianness."""
 
     def is_enabled(self):
@@ -71,7 +68,6 @@ class HexToggleInspectorEndiannessCommand(sublime_plugin.WindowCommand):
 
 
 class HexInspectGlobal(object):
-
     """Global hex inspector data."""
 
     bfr = None
@@ -86,7 +82,6 @@ class HexInspectGlobal(object):
 
 
 class HexInspectorApplyCommand(sublime_plugin.TextCommand):
-
     """Apply text to the hex inspector panel."""
 
     def run(self, edit):
@@ -96,7 +91,6 @@ class HexInspectorApplyCommand(sublime_plugin.TextCommand):
 
 
 class HexInspectorCommand(sublime_plugin.WindowCommand):
-
     """Hex inspector command."""
 
     def get_bytes(self, start, bytes_wide):

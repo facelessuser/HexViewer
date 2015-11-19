@@ -22,7 +22,6 @@ active_thread = None
 
 
 class ThreadedWrite(threading.Thread):
-
     """Threaded write."""
 
     def __init__(self, data, file_name, fmt_callback=None, count=None):
@@ -60,7 +59,6 @@ class ThreadedWrite(threading.Thread):
 
 
 class HexWriterAbortCommand(sublime_plugin.WindowCommand):
-
     """Command to abort a write operation."""
 
     def run(self):
@@ -76,7 +74,6 @@ class HexWriterAbortCommand(sublime_plugin.WindowCommand):
 
 
 class HexWriterCommand(sublime_plugin.WindowCommand):
-
     """Export hex view data to a file."""
 
     export_path = ""

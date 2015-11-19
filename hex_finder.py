@@ -10,7 +10,6 @@ from HexViewer.hex_notify import error
 
 
 class HexFinderCommand(sublime_plugin.WindowCommand):
-
     """Find the desired address in the hex view."""
 
     handshake = -1
