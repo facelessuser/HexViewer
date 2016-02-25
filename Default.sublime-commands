@@ -30,7 +30,7 @@
         "args"   : {"option": "bytes"}
     },
     {
-        "caption": "Hex Viewer: Find By Address",
+        "caption": "Hex Viewer: Go to Offset",
         "command": "hex_finder"
     },
     {

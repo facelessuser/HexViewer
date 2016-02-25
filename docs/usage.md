@@ -11,7 +11,7 @@ There are 10 commands available via the command palette or by key-bindings.
 - Hex Viewer: Toggle Endianness (Big|Little)
 - Hex Viewer: Set Bits Per Group
 - Hex Viewer: Set Bytes Per Line
-- Hex Viewer: Find By Address
+- Hex Viewer: Go to Offset
 - Hex Viewer: Show Hex Edit Panel
 - Hex Viewer: Discard All Edits
 - Hex Viewer: Export Bin
@@ -47,8 +47,8 @@ Allows selection from the quick panel the grouping of bytes by 8, 16, 32, 64, an
 ### Hex Viewer: Set Bytes Per Line
 Allows selection from the quick panel the number of bytes to be shown on a line (allowed options are defined in [valid_bytes_per_line](#valid_bytes_per_line)).
 
-### Hex Viewer: Find By Address
-Finds the byte at the specified address.  Input is received through the input panel.
+### Hex Viewer: Go to Offset
+Moves the cursor to the given offset (address).  Input is received through the input panel.
 
 ### Hex Viewer: Show Hex Edit Panel
 Invoking this command will take the currently selected bytes on a line and display them in an input panel.  They can then be modified and submitted to replace the original bytes.  Strings can also be used by using the `s:` prefix followed by the equivalent ASCII characters that are to replace the selected bytes.

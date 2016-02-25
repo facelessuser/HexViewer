@@ -52,7 +52,7 @@
                                 "args"   : {"option": "bytes"}
                             },
                             {
-                                "caption": "Find By Address",
+                                "caption": "Go to Offset",
                                 "command": "hex_finder"
                             },
                             {
