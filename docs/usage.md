@@ -209,6 +209,18 @@ Sets the max number of allowed bytes that HexViewer will highlight when selected
     "highlight_max_bytes" : 1000,
 ```
 
+### prompt_on_file_too_big
+Prompts the user with a dialog that gives the user the option to bypass the default action.  By default HexViewer cancels rendering a hex view if the file is too big; or, if an external viewer is configured, HexViewer will open the binary file in the configured external viewer.  This option gives the user the ability to conditionally override the default action and render the hex viewer tab despite file size being too large.
+
+
+```js
+    // If the file is too large (as defined in the settings file via 'max_file_size_kb'),
+    // prompt the user with a dialog asking whether they would like to open the file internally anyways
+    // or use the default action (open in external viewer defined in 'external viewer' or terminate action
+    // if 'external_viewer' is not set or invalid).
+    "prompt_on_file_too_big": false,
+```
+
 ### highlight_throttle
 Sets whether `highlight_max_bytes` will be used.  This allows a user to not limit the number of highlighted bytes.  It is not recommended to use this for performances sake.
 
@@ -272,7 +284,7 @@ Sets a limit for how big of a binary file HexViewer will try and convert to a He
 ```
 
 ### external_viewer
-Sometimes it may be desired to open a hex view in an external editor.  HexViewer, due to the nature of the Sublime Text API is limited in certain ways, so it can be advantageous to open a file in an external hex editor for certain files or certain tasks.  `external_viewer` allows the configuring of the external hex editor.  `external_viewer` is a dictionary containing to parameters.  `viewer`, which is an absolute bath the the external hex editor.  `args` are the arguments that will be passed to the external editor; it is an array of string arguments.  You can use `${FILE}` has a place holder for the file path that will be sent to the editor.  HexViewer will insert the actual file path in the place of `${FILE}`.
+Sometimes it may be desired to open a hex view in an external editor.  Due to the nature of the Sublime Text API, HexViewer's options and speed can be limited, so it can be advantageous to open a file in an external hex editor when performing certain actions or dealing with very large files.  `external_viewer` allows the configuring of the external hex editor.  `external_viewer` is a dictionary containing to parameters.  `viewer`, which is an absolute path to the the external hex editor.  `args` are the arguments that will be passed to the external editor; it is an array of string arguments.  You can use `${FILE}` has a place holder for the file path that will be sent to the editor.  HexViewer will insert the actual file path in the place of `${FILE}`.
 
 ```js
     // External Hex Viewer if max size is exceeded.

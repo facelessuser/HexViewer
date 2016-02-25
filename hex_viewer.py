@@ -292,6 +292,22 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             self.set_format()
         return file_name
 
+    def is_file_too_big(self):
+        """Check if file is too big and display prompt if desired."""
+
+        file_size = float(self.thread.file_size) * 0.001
+        max_file_size = float(common.hv_settings("max_file_size_kb", DEFAULT_MAX_FILE_SIZE))
+        too_big = file_size > max_file_size
+        if too_big and common.hv_settings("prompt_on_file_too_big", False):
+            if sublime.ok_cancel_dialog(
+                'File is too large to open (as defined in settings file). Open anyways?\n\n'
+                'If opening is declined, the default action will be taken '
+                '(open in external viewer if available or terminate operation).',
+                'Open'
+            ):
+                too_big = False
+        return too_big
+
     def read_bin(self, file_name):
         """Read the binary file."""
 
@@ -299,14 +315,16 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.abort = False
         self.current_view = self.view
         self.thread = ReadBin(file_name, self.bytes_wide, self.group_size, self.starting_address)
-        file_size = float(self.thread.file_size) * 0.001
-        max_file_size = float(common.hv_settings("max_file_size_kb", DEFAULT_MAX_FILE_SIZE))
-        if file_size > max_file_size:
+        if self.is_file_too_big():
             viewer = common.hv_settings("external_viewer", {}).get("viewer", "")
             if exists(viewer):
                 self.view.run_command("hex_external_viewer")
             else:
-                error("File size exceeded HexViewers configured max limit of %s KB" % str(max_file_size))
+                error(
+                    "File size exceeded HexViewers configured max limit of %s KB" % str(
+                        common.hv_settings("max_file_size_kb", DEFAULT_MAX_FILE_SIZE)
+                    )
+                )
             self.reset_thread()
         else:
             self.thread.start()

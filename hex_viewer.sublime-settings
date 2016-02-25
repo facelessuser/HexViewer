@@ -55,6 +55,12 @@
         "args": ["${FILE}"]
     },
 
+    // If the file is too large (as defined in the settings file via 'max_file_size_kb'),
+    // prompt the user with a dialog asking whether they would like to open the file internally anyways
+    // or use the default action (open in external viewer defined in 'external viewer' or terminate action
+    // if 'external_viewer' is not set or invalid).
+    "prompt_on_file_too_big": false,
+
     //Enable highlight throttling
     "highlight_throttle" : false,
 
