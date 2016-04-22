@@ -442,17 +442,24 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         self.file_name = ""
         self.type = None
 
-    def is_enabled(self):
+    def is_enabled(self, **args):
         """Check if the command is enabled."""
 
         view = self.window.active_view()
         return (
             view is not None and
+            (
+                not args.get('reload', False) or
+                (
+                    common.is_enabled() and
+                    not view.settings().get("hex_viewer_fake", False)
+                )
+            ) and
             not view.settings().get("hex_viewer_fake", False) and
             not(active_thread is not None and active_thread.is_alive())
         )
 
-    def run(self, bits=None, byte_array=None, starting_address=0):
+    def run(self, bits=None, byte_array=None, starting_address=0, reload=False):
         """Run the command."""
 
         self.starting_address = starting_address
@@ -479,7 +486,11 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
             # Decide whether to read in as a binary file or a traditional file
             if self.view.settings().has("hex_viewer_file_name"):
                 self.view_type = "hex"
-                if common.is_hex_dirty(self.view):
+                if reload:
+                    self.file_name = file_name
+                    common.clear_edits(self.view)
+                    self.read_bin(file_name)
+                elif common.is_hex_dirty(self.view):
                     self.file_name = file_name
                     if bits is None and byte_array is None:
                         self.switch_type = "file"
@@ -493,6 +504,8 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                     else:
                         # Reload hex with new settings
                         self.read_bin(file_name)
+            elif reload:
+                error("View current file is not a hex view, so no reload can be performed!")
             else:
                 # We are going to swap out the current file for hex output
                 # So as not to clutter the screen.  Changes need to be saved

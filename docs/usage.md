@@ -21,6 +21,9 @@ There are 10 commands available via the command palette or by key-bindings.
 ### Hex Viewer: Toggle Hex View
 Toggles file in or out of hex view.
 
+### Hex Viewer: Reload Hex View
+Reloads the current hex view.  All edits will be lost.
+
 ### Hex Viewer: Show Hex Inspector
 Show the Hex Inspector panel.  The Hex Inspector is a panel which shows the current selected byte as different unit types.
 

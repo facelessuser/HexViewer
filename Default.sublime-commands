@@ -4,6 +4,11 @@
         "command": "hex_viewer"
     },
     {
+        "caption": "Hex Viewer: Reload Hex View",
+        "command": "hex_viewer",
+        "args": {"reload": true}
+    },
+    {
         "caption": "Hex Viewer: Open in External Viewer",
         "command": "hex_external_viewer"
     },
