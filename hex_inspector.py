@@ -90,6 +90,20 @@ class HexInspectorApplyCommand(sublime_plugin.TextCommand):
         self.view.replace(edit, HexInspectGlobal.region, HexInspectGlobal.bfr)
 
 
+class HexInspectorListenerCommand(sublime_plugin.EventListener):
+    """Hex Inspector listener command."""
+
+    def on_pre_close(self, view):
+        """On close."""
+
+        if common.is_enabled() and view is not None and not view.settings().get("hex_viewer_fake", False):
+            win = view.window()
+            panel_view = win.get_output_panel('hex_viewer_inspector')
+            parent_win = panel_view.window()
+            if parent_win:
+                parent_win.run_command('hide_panel', {'cancel': True})
+
+
 class HexInspectorCommand(sublime_plugin.WindowCommand):
     """Hex inspector command."""
 
