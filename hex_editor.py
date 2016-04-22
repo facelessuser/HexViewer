@@ -182,7 +182,7 @@ class HexDiscardEditsCommand(sublime_plugin.WindowCommand):
         group_size = int(view.settings().get("hex_viewer_bits", None))
         bytes_wide = int(view.settings().get("hex_viewer_actual_bytes", None))
         common.clear_edits(view)
-        self.window.run_command('hex_viewer', {"bits": group_size, "bytes": bytes_wide})
+        self.window.run_command('hex_viewer', {"bits": group_size, "byte_array": bytes_wide})
 
 
 class HexEditorCommand(sublime_plugin.WindowCommand):
