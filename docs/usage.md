@@ -107,6 +107,14 @@ Number of bytes that will be shown on a line.  Can be any value found in [valid_
     "bytes_per_line" : 24,
 ```
 
+### use_lowercase_hex
+Controls whether hex values are displayed with lowercase or uppercase characters.
+
+```js
+    // Use lowercase hex values.
+    "use_lowercase_hex": true,
+```
+
 ### custom_font
 Sets the font used in a HexViewer view.  It is strongly recommended to set this to a monospaced font if your default font is not monospaced.
 

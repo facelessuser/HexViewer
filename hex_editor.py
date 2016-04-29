@@ -241,14 +241,16 @@ class HexEditorCommand(sublime_plugin.WindowCommand):
             # Transform string if provided
             if re.match("^s\:", value) is not None:
                 edits = hexlify(value[2:len(value)].encode("ascii")).decode("ascii")
-            else:
+            elif common.use_hex_lowercase():
                 edits = value.replace(" ", "").lower()
+            else:
+                edits = value.replace(" ", "").upper()
 
             # See if change occured and if changes are valid
             if len(edits) != total_chars:
                 self.edit_panel(value, "Unexpected # of bytes!")
                 return
-            elif re.match("[\da-f]{" + str(total_chars) + "}", edits) is None:
+            elif re.match("[\da-fA-F]{" + str(total_chars) + "}", edits) is None:
                 self.edit_panel(value, "Invalid data!")
                 return
             elif selection != edits:

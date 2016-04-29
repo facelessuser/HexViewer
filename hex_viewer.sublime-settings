@@ -13,6 +13,9 @@
     // See "valid_bytes_per_line" for valid options
     "bytes_per_line" : 24,
 
+    // Use lowercase hex values.
+    "use_lowercase_hex": true,
+
     // Use a custom font and/or font size in hex view.
     // Use None to use the current Sublime Text font.
     "custom_font" : "none",

@@ -28,7 +28,9 @@ def parse_view_data(data_buffer):
     """Parse the hex data."""
 
     for line in data_buffer:
-        yield unhexlify(re.sub(r'[\da-z]{8}:[\s]{2}((?:[\da-z]+[\s]{1})*)\s*\:[\w\W]*', r'\1', line).replace(" ", ""))
+        yield unhexlify(
+            re.sub(r'[\da-fA-F]{8}:[\s]{2}((?:[\da-fA-F]+[\s]{1})*)\s*\:[\w\W]*', r'\1', line).replace(" ", "")
+        )
 
 
 def verify_hashes(hashes):
@@ -280,7 +282,11 @@ class Checksum(object):
 
         if window is None:
             window = sublime.active_window()
-        window.show_input_panel(self.name + ":", str(self.hash.hexdigest()), None, None, None)
+        if common.use_hex_lowercase():
+            digest = str(self.hash.hexdigest())
+        else:
+            digest = str(self.hash.hexdigest()).upper()
+        window.show_input_panel(self.name + ":", digest, None, None, None)
 
 
 class HashThread(threading.Thread):

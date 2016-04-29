@@ -6,7 +6,7 @@ file_extensions: ['hex']
 scope: source.hex
 contexts:
   main:
-    - match: '^([a-f\d]{8}\:)([\s]{2})'
+    - match: '^([a-fA-F\d]{8}\:)([\s]{2})'
       captures:
         1: keyword.address.hex
         2: dump.buffer-start.hex
@@ -17,12 +17,12 @@ contexts:
             0: dump.buffer-end.hex
             1: keyword.ascii-start.hex
           pop: true
-        - match: '[\da-f]{1}'
+        - match: '[\da-fA-F]{1}'
           captures:
             0: raw.nibble.upper.hex
           push:
             - meta_scope: raw.byte.hex
-            - match: '[\da-f]{1}'
+            - match: '[\da-fA-F]{1}'
               captures:
                 0: raw.nibble.lower.hex
               pop: true

@@ -41,6 +41,11 @@ def clear_edits(view):
     )
 
 
+def use_hex_lowercase():
+    """Check if lowercase hex format should be used."""
+    return hv_settings('use_lowercase_hex', True)
+
+
 def is_hex_dirty(view):
     """Check if hex view is dirty."""
 

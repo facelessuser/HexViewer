@@ -36,6 +36,7 @@ class HexHighlighter(object):
         self.total_bytes = 0
         self.address = []
         self.selected_bytes = []
+        self.hex_lower = common.use_hex_lowercase()
 
         # Get Seetings from settings file
         group_size = self.view.settings().get("hex_viewer_bits", None)
@@ -111,6 +112,7 @@ class HexHighlighter(object):
     def display_address(self):
         """Display the address."""
 
+        address_string = "0x%08x" if self.hex_lower else "0x%08X"
         count = ''
         if self.total_bytes == 0 or len(self.address) != 2:
             self.view.set_status('hex_address', "Address: None")
@@ -127,9 +129,9 @@ class HexHighlighter(object):
         # Display adresses
         status = "Address: "
         if self.address[1] == -1:
-            status += ("0x%08x" % self.address[0]) + count
+            status += (address_string % self.address[0]) + count
         else:
-            status += ("0x%08x" % self.address[0]) + "-" + ("0x%08x" % self.address[1]) + count
+            status += (address_string % self.address[0]) + "-" + (address_string % self.address[1]) + count
         self.view.set_status('hex_address', status)
 
     def display_total_bytes(self):

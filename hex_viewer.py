@@ -40,6 +40,7 @@ class ReadBin(threading.Thread):
         self.file_size = get_file_size(file_name)
         self.read_count = 0
         self.abort = False
+        self.hex_lower = common.use_hex_lowercase()
         threading.Thread.__init__(self)
 
     def iterfile(self, maxblocksize=4096):
@@ -64,12 +65,14 @@ class ReadBin(threading.Thread):
     def run(self):
         """Run the command."""
 
+        byte_string = "%02x" if self.hex_lower else "%02X"
+        address_string = "%08x" if self.hex_lower else "%08X"
         translate_table = str.maketrans(
             "".join([chr(c) for c in range(0, 256)]),
             "".join(["."] * 32 + [chr(c) for c in range(32, 127)] + ["."] * 129)
         )
         def_struct = struct.Struct("=" + ("B" * self.bytes_wide))
-        def_template = (("%02x" * self.group_size) + " ") * int(self.bytes_wide / self.group_size)
+        def_template = ((byte_string * self.group_size) + " ") * int(self.bytes_wide / self.group_size)
 
         line = 0
         read_count = 0
@@ -84,7 +87,7 @@ class ReadBin(threading.Thread):
                 self.read_count = read_count if read_count < self.file_size else self.file_size
 
                 # Add line number
-                l_buffer.append("%08x:  " % ((line * self.bytes_wide) + self.starting_address))
+                l_buffer.append((address_string + ":  ") % ((line * self.bytes_wide) + self.starting_address))
 
                 try:
                     # Complete line
@@ -102,7 +105,10 @@ class ReadBin(threading.Thread):
                     remain_group = int(len(byte_array) / self.group_size)
                     remain_extra = len(byte_array) % self.group_size
                     l_buffer.append(
-                        ((("%02x" * self.group_size) + " ") * (remain_group) + ("%02x" * remain_extra)) % values
+                        (
+                            ((byte_string * self.group_size) + " ") *
+                            (remain_group) + (byte_string * remain_extra)
+                        ) % values
                     )
 
                     # Append printable chars to incomplete line
