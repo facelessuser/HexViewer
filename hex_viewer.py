@@ -306,8 +306,8 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         too_big = file_size > max_file_size
         if too_big and common.hv_settings("prompt_on_file_too_big", False):
             if sublime.ok_cancel_dialog(
-                'File is too large to open (as defined in settings file). Open anyways?\n\n'
-                'If opening is declined, the default action will be taken '
+                'File you\'re trying to open is larger than allowed (in settings). Open anyway?\n\n'
+                'Skipping opening will fall back to the default action '
                 '(open in external viewer if available or terminate operation).',
                 'Open'
             ):
@@ -511,7 +511,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                         # Reload hex with new settings
                         self.read_bin(file_name)
             elif reload:
-                error("View current file is not a hex view, so no reload can be performed!")
+                error("Can't reload, current file is not in hex view!")
             else:
                 # We are going to swap out the current file for hex output
                 # So as not to clutter the screen.  Changes need to be saved
@@ -525,7 +525,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                     self.read_bin(file_name)
         else:
             if file_name is None:
-                error("View does not exist on disk!")
+                error("Hex Viewer can only edit files. Save the contents to disk first!")
             else:
                 error("%s does not exist on disk!" % basename(file_name))
 
