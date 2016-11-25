@@ -1,2 +1,2 @@
-nosetests .
+py.test .
 flake8 .
