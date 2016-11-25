@@ -309,7 +309,7 @@ class HexHighlighterListenerCommand(sublime_plugin.EventListener):
     def on_selection_modified(self, view):
         """Determine if a highlight should be triggered."""
 
-        if not common.is_enabled(view) or hh_thread.ignore_all:
+        if hh_thread is None or not common.is_enabled(view) or hh_thread.ignore_all:
             return
         now = time()
         if now - hh_thread.time > hh_thread.wait_time:
