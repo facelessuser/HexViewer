@@ -2,7 +2,6 @@
     {
 
         "id": "tools",
-        "caption": "Tools",
         "children":
         [
             {
@@ -11,7 +10,6 @@
                 "children":
                 [
                     {
-                        "id": "hex-viewer",
                         "caption": "Hex Viewer",
                         "children":
                         [
@@ -79,14 +77,11 @@
         ]
     },
     {
-        "caption": "Preferences",
-        "mnemonic": "n",
         "id": "preferences",
         "children":
         [
             {
                 "caption": "Package Settings",
-                "mnemonic": "P",
                 "id": "package-settings",
                 "children":
                 [
