@@ -9,7 +9,7 @@ Hex Viewer is a plugin for Sublime Text that allows the toggling of a file into 
 - View any file (that exist on disk) in a hex format showing both byte and ASCII representation.
 - Command to jump to a specific address.
 - In place editing of bytes or ASCII chars.
-- Highlight selected byte **and** ascii code.
+- Highlight selected byte **and** ASCII code.
 - Inspection panel showing different integer representation at the cursor position.
 - Configurable display of byte grouping, bytes per line, endianness.
 - Export hex view to a binary file.
@@ -41,7 +41,7 @@ Name          | Signed   | Bits
 `Int`         | Signed   | 16
 `Dword`       | Unsigned | 32
 `LongInt`     | Signed   | 32
-`Qword`       | Unsinged | 64
+`Qword`       | Unsigned | 64
 `LongLongInt` | Signed   | 64
 `Float`       | Signed   | 32
 `Double`      | Signed   | 64
