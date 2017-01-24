@@ -10,7 +10,7 @@
                 "children":
                 [
                     {
-                        "caption": "Hex Viewer",
+                        "caption": "HexViewer",
                         "children":
                         [
                             {
@@ -86,7 +86,7 @@
                 "children":
                 [
                     {
-                        "caption": "Hex Viewer",
+                        "caption": "HexViewer",
                         "children":
                         [
                             {
@@ -148,7 +148,37 @@
                                 },
                                 "caption": "Key Bindings – User"
                             },
-                            { "caption": "-" }
+                            { "caption": "-" },
+                            {
+                                "caption": "Changelog",
+                                "command": "hex_viewer_changes"
+                            },
+                            {
+                                "caption": "Documentation",
+                                "command": "hex_viewer_open_site",
+                                "args": {
+                                    "url": "http://facelessuser.github.io/HexViewer/"
+                                }
+                            },
+                            // {
+                            //     "caption": "Quick Start Guide",
+                            //     "command": "hex_viewer_doc",
+                            //     "args": {
+                            //         "page": "${packages}/HexViewer/quickstart.md"
+                            //     }
+                            // },
+                            { "caption": "-" },
+                            {
+                                "caption": "Support Info",
+                                "command": "hex_viewer_support_info"
+                            },
+                            {
+                                "caption": "Issues",
+                                "command": "hex_viewer_open_site",
+                                "args": {
+                                    "url": "https://github.com/facelessuser/HexViewer/issues"
+                                }
+                            }
                         ]
                     }
                 ]

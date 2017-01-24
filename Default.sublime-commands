@@ -1,88 +1,88 @@
 [
     {
-        "caption": "Hex Viewer: Toggle Hex View",
+        "caption": "HexViewer: Toggle Hex View",
         "command": "hex_viewer"
     },
     {
-        "caption": "Hex Viewer: Reload Hex View",
+        "caption": "HexViewer: Reload Hex View",
         "command": "hex_viewer",
         "args": {"reload": true}
     },
     {
-        "caption": "Hex Viewer: Open in External Viewer",
+        "caption": "HexViewer: Open in External Viewer",
         "command": "hex_external_viewer"
     },
     {
-        "caption": "Hex Viewer: Abort Hex View Conversion",
+        "caption": "HexViewer: Abort Hex View Conversion",
         "command": "hex_viewer_abort"
     },
     {
-        "caption": "Hex Viewer: Show Hex Inspector",
+        "caption": "HexViewer: Show Hex Inspector",
         "command": "hex_show_inspector"
     },
     {
-        "caption": "Hex Viewer: Toggle Endianness (Big|Little)",
+        "caption": "HexViewer: Toggle Endianness (Big|Little)",
         "command": "hex_toggle_inspector_endianness"
     },
     {
-        "caption": "Hex Viewer: Set Bits Per Group",
+        "caption": "HexViewer: Set Bits Per Group",
         "command": "hex_viewer_options",
         "args"   : {"option": "bits"}
     },
     {
-        "caption": "Hex Viewer: Set Bytes Per Line",
+        "caption": "HexViewer: Set Bytes Per Line",
         "command": "hex_viewer_options",
         "args"   : {"option": "bytes"}
     },
     {
-        "caption": "Hex Viewer: Go to Offset",
+        "caption": "HexViewer: Go to Offset",
         "command": "hex_finder"
     },
     {
-        "caption": "Hex Viewer: Show Hex Edit Panel",
+        "caption": "HexViewer: Show Hex Edit Panel",
         "command": "hex_editor"
     },
     {
-        "caption": "Hex Viewer: Discard All Edits",
+        "caption": "HexViewer: Discard All Edits",
         "command": "hex_discard_edits"
     },
     {
-        "caption": "Hex Viewer: Export Bin",
+        "caption": "HexViewer: Export Bin",
         "command": "hex_writer"
     },
     {
-        "caption": "Hex Viewer: Abort Export",
+        "caption": "HexViewer: Abort Export",
         "command": "hex_writer_abort"
     },
     {
-        "caption": "Hex Viewer: Run Checksum",
+        "caption": "HexViewer: Run Checksum",
         "command": "hex_checksum",
         "args": {"panel": true}
     },
     {
-        "caption": "Hex Viewer: Abort Checksum",
+        "caption": "HexViewer: Abort Checksum",
         "command": "hex_checksum_abort"
     },
     {
-        "caption": "Hex Viewer: Generate Hash",
+        "caption": "HexViewer: Generate Hash",
         "command": "hash_eval"
     },
     {
-        "caption": "Hex Viewer: Generate Hash from Selection",
+        "caption": "HexViewer: Generate Hash from Selection",
         "command": "hash_selection"
     },
     {
-        "caption": "Preferences: Hex Viewer Settings – Default",
+        "caption": "Preferences: HexViewer Settings – Default",
         "command": "open_file",
         "args": { "file": "${packages}/HexViewer/hex_viewer.sublime-settings" }
     },
     {
-        "caption": "Preferences: Hex Viewer Settings – User",
+        "caption": "Preferences: HexViewer Settings – User",
         "command": "open_file",
         "args": { "file": "${packages}/User/hex_viewer.sublime-settings" }
     },
     {
-        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "caption": "Preferences: HexViewer Key Bindings – Default",
         "command": "open_file",
         "args":
         {
@@ -91,7 +91,7 @@
         }
     },
     {
-        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "caption": "Preferences: HexViewer Key Bindings – User",
         "command": "open_file",
         "args":
         {
@@ -100,7 +100,7 @@
         }
     },
     {
-        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "caption": "Preferences: HexViewer Key Bindings – Default",
         "command": "open_file",
         "args":
         {
@@ -109,7 +109,7 @@
         }
     },
     {
-        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "caption": "Preferences: HexViewer Key Bindings – User",
         "command": "open_file",
         "args":
         {
@@ -118,7 +118,7 @@
         }
     },
     {
-        "caption": "Preferences: Hex Viewer Key Bindings – Default",
+        "caption": "Preferences: HexViewer Key Bindings – Default",
         "command": "open_file",
         "args":
         {
@@ -127,7 +127,7 @@
         }
     },
     {
-        "caption": "Preferences: Hex Viewer Key Bindings – User",
+        "caption": "Preferences: HexViewer Key Bindings – User",
         "command": "open_file",
         "args":
         {
