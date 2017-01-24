@@ -18,3 +18,4 @@ addons:
 script:
   - py.test .
   - flake8 .
+  - python spellcheck.py
