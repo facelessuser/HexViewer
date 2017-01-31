@@ -1,4 +1,4 @@
 # HexViewer
 
-Welcome to HexViewer!  For a quick start guide, please go to  
+Welcome to HexViewer!  Please read the documentation at  
 `Preferences->Package Settings->HexViewer->Documentation`.
