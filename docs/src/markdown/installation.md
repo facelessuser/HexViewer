@@ -1,4 +1,7 @@
+# Installation
+
 ## Package Control
+
 The recommended way to install HexViewer is via [Package Control][package-control].  Package Control will install the correct branch on your system and keep it up to date.
 
 ---

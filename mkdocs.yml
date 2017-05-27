@@ -10,7 +10,8 @@ pages:
   - License: license.md
 
 theme: material
-theme_dir: doc_theme
+docs_dir: docs/src/markdown
+theme_dir: docs/theme
 
 markdown_extensions:
   - markdown.extensions.toc:
@@ -26,15 +27,14 @@ markdown_extensions:
   - markdown.extensions.abbr:
   - pymdownx.extrarawhtml:
   - pymdownx.superfences:
-      css_class: codehilite
   - pymdownx.highlight:
+      css_class: codehilite
       extend_pygments_lang:
         - name: php-inline
           lang: php
           options:
             startinline: true
   - pymdownx.inlinehilite:
-      css_class: codehilite
   - pymdownx.magiclink:
       repo_url_shortener: true
       base_repo_url: https://github.com/facelessuser/HexViewer
@@ -42,7 +42,7 @@ markdown_extensions:
   - pymdownx.caret:
   - pymdownx.smartsymbols:
   - pymdownx.emoji:
-      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+      emoji_generator: !!python/name:pymdownx.emoji.to_png
   - pymdownx.escapeall:
       hardbreak: true
       nbsp: true
@@ -52,7 +52,10 @@ markdown_extensions:
   - pymdownx.plainhtml:
       strip_attributes: ''
   - pymdownx.snippets:
-      base_path: docs/snippets
+      base_path: docs/src/markdown/_snippets
+  - pymdownx.keys:
+      separator: ＋
+  - pymdownx.spoilers:
 
 extra:
   palette:
@@ -65,4 +68,6 @@ extra:
     - type: github
       link: https://github.com/facelessuser
 extra_css:
-  - extra.css
+  - extra-effadd97dd.css
+extra_javascript:
+  - extra-0d49409391.js

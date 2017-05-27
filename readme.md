@@ -2,9 +2,10 @@
 [![Package Control Downloads][pc-image]][pc-link]
 ![License][license-image]
 # HexViewer
+
 HexViewer is a plugin for Sublime Text that allows the toggling of a file into a hex viewing mode.  HexViewer also supports limited hex editing.
 
-![Preview](docs/images/preview.png)
+![Preview](docs/src/markdown/images/preview.png)
 
 # Features
 
@@ -20,9 +21,11 @@ HexViewer is a plugin for Sublime Text that allows the toggling of a file into a
 - Optionally auto convert binary to hex view.
 
 # Documentation
+
 http://facelessuser.github.io/HexViewer/
 
 # License
+
 Hex Viewer is released under the MIT license.
 
 Copyright (c) 2011 - 2017 Isaac Muse <isaacmuse@gmail.com>
