@@ -89,7 +89,7 @@
 
     // Auto open binary files in hex viewer
     // Detects if view has encoding set to 'Hexidecimal'.
-    // Addtionally it can use 'auto_open_patterns' below.
+    // Additionally it can use 'auto_open_patterns' below.
     "auto_open" : false,
 
     // Disable auto open based on 'Hexidecimal' encoding
@@ -102,7 +102,7 @@
     "inspector_integer_format": "%-12s:  %-22d",
 
     // Inspector format strings: floating point decimals
-    "insepctor_float_format": "%-12s:  %-22e",
+    "inspector_float_format": "%-12s:  %-22e",
 
     // Inspector format strings: double floating point decimal strings
     "inspector_double_format": "%-12s:  %-22e",

@@ -162,7 +162,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
 
         item_dec = common.hv_settings("inspector_integer_format", "%-12s:  %-14d")
         item_str = common.hv_settings("inspector_missing/bad_format", "%-12s:  %-14s")
-        item_float = common.hv_settings("insepctor_float_format", "%-12s:  %-14e")
+        item_float = common.hv_settings("inspector_float_format", "%-12s:  %-14e")
         item_double = common.hv_settings("inspector_double_format", "%-12s:  %-14e")
         item_bin = common.hv_settings("inspector_binary_format", "%-12s:  %-14s")
         nl = "\n"
