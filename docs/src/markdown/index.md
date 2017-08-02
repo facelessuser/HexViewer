@@ -200,7 +200,7 @@ Controls the text format for float output in the inspector panel.  Uses standard
 
 ```js
     // Inspector format strings: floating point decimals
-    "insepctor_float_format": "%-12s:  %-22e",
+    "inspector_float_format": "%-12s:  %-22e",
 ```
 
 ### `inspector_double_format`
