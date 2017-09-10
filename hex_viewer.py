@@ -271,9 +271,26 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
     def buffer_init(self, bits, byte_array):
         """Initialize info for the hex buffer."""
+        self.sheet = None
         self.view = self.window.active_view()
+        if self.view is None:
+            self.sheet = self.window.active_sheet()
+            self.id = self.sheet.id()
+        else:
+            self.id = self.window.active_sheet().id()
         file_name = None
-        if self.view is not None:
+        if self.sheet is not None:
+            self.font = common.hv_settings('custom_font', 'none')
+            self.font_size = common.hv_settings('custom_font_size', 0)
+
+            file_name = self.window.extract_variables().get('file')
+            current_bits = common.hv_settings('group_bytes_by_bits', DEFAULT_BIT_GROUP)
+            current_bytes = common.hv_settings('bytes_per_line', DEFAULT_BYTES_WIDE)
+            self.bits = bits if bits is not None else int(current_bits)
+            self.bytes = byte_array if byte_array is not None else int(current_bytes)
+            self.set_format()
+
+        elif self.view is not None:
             # Get font settings
             self.font = common.hv_settings('custom_font', 'none')
             self.font_size = common.hv_settings('custom_font_size', 0)
@@ -319,12 +336,11 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
         global active_thread
         self.abort = False
-        self.current_view = self.view
         self.thread = ReadBin(file_name, self.bytes_wide, self.group_size, self.starting_address)
         if self.is_file_too_big():
             viewer = common.hv_settings("external_viewer", {}).get("viewer", "")
             if exists(viewer):
-                self.view.run_command("hex_external_viewer")
+                self.window.run_command("hex_external_viewer")
             else:
                 error(
                     "File size exceeded HexViewers configured max limit of %s KB" % str(
@@ -354,9 +370,14 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         # Show binary data
         view = self.window.open_file(hex_name)
 
-        self.window.focus_view(self.view)
-        if self.window.active_view().id() == self.view.id():
-            self.window.run_command("close_file")
+        if self.view:
+            self.window.focus_view(self.view)
+            if self.window.active_view().id() == self.view.id():
+                self.window.run_command("close_file")
+        else:
+            self.window.focus_sheet(self.sheet)
+            if self.window.active_sheet().id() == self.sheet.id():
+                self.window.run_command("close_file")
         self.window.focus_view(view)
 
         # Set font
@@ -421,9 +442,9 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
         if value.strip().lower() == "yes":
             if self.switch_type == "hex":
-                view = sublime.active_window().active_view()
-                if self.handshake == view.id():
-                    view.set_scratch(True)
+                sheet = sublime.active_window().active_sheet()
+                if self.handshake == sheet.id():
+                    sheet.view().set_scratch(True)
                     self.read_bin(self.file_name)
                 else:
                     error("Target view is no longer in focus!  Hex view aborted.")
@@ -453,15 +474,20 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
 
         view = self.window.active_view()
         return (
-            view is not None and
             (
-                not args.get('reload', False) or
                 (
-                    common.is_enabled() and
+                    view is not None and
+                    (
+                        not args.get('reload', False) or
+                        (
+                            common.is_enabled() and
+                            not view.settings().get("hex_viewer_fake", False)
+                        )
+                    ) and
                     not view.settings().get("hex_viewer_fake", False)
-                )
+                ) or
+                self.window.active_sheet()
             ) and
-            not view.settings().get("hex_viewer_fake", False) and
             not(active_thread is not None and active_thread.is_alive())
         )
 
@@ -484,13 +510,16 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
         file_name = self.buffer_init(bits, byte_array)
 
         # Identify view
-        if self.handshake != -1 and self.handshake == self.view.id():
+        if self.handshake != -1 and self.handshake == self.id:
             self.reset()
-        self.handshake = self.view.id()
+        self.handshake = self.id
 
         if file_name is not None and exists(file_name):
             # Decide whether to read in as a binary file or a traditional file
-            if self.view.settings().has("hex_viewer_file_name"):
+            if self.sheet:
+                self.file_name = file_name
+                self.read_bin(file_name)
+            elif self.view.settings().has("hex_viewer_file_name"):
                 self.view_type = "hex"
                 if reload:
                     self.file_name = file_name
@@ -570,7 +599,7 @@ class HexViewerOptionsCommand(sublime_plugin.WindowCommand):
                     self.window.show_quick_panel(option_list, self.set_bytes)
 
 
-class HexExternalViewerCommand(sublime_plugin.TextCommand):
+class HexExternalViewerCommand(sublime_plugin.WindowCommand):
     """Open hex data in external hex program."""
 
     def run(self, edit):
@@ -581,7 +610,8 @@ class HexExternalViewerCommand(sublime_plugin.TextCommand):
             error("Can't find the external hex viewer!")
             return
 
-        file_name = self.view.file_name()
+        file_name = self.window.extract_variables().get('file')
+
         if file_name is not None and exists(file_name):
             cmd = [viewer] + common.hv_settings("external_viewer", {}).get("args", [])
 
@@ -592,8 +622,10 @@ class HexExternalViewerCommand(sublime_plugin.TextCommand):
 
     def is_enabled(self):
         """Check if command is enabled."""
+        file_name = self.window.extract_variables().get('file')
+
         viewer = common.hv_settings("external_viewer", {}).get("viewer", "")
-        return exists(viewer) and self.view.file_name() is not None
+        return exists(viewer) and file_name is not None
 
 
 class HexViewerAbortCommand(sublime_plugin.WindowCommand):
