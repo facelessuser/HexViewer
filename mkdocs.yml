@@ -1,5 +1,7 @@
 site_name: HexViewer Documentation
+site_url: https://facelessuser.github.io/HexViewer
 repo_url: https://github.com/facelessuser/HexViewer
+edit_uri: tree/master/docs/src/markdown
 site_description: A Sublime Text hex viewer and editor.
 copyright: Copyright &copy; 2011 - 2017 <a href="https://github.com/facelessuser">Isaac Muse</a>
 
@@ -16,7 +18,7 @@ theme_dir: docs/theme
 markdown_extensions:
   - markdown.extensions.toc:
       slugify: !!python/name:pymdownx.slugs.uslugify
-      permalink: 
+      permalink: "\ue157"
   - markdown.extensions.admonition:
   - markdown.extensions.smarty:
       smart_quotes: false
@@ -54,10 +56,12 @@ markdown_extensions:
   - pymdownx.snippets:
       base_path: docs/src/markdown/_snippets
   - pymdownx.keys:
-      separator: ＋
-  - pymdownx.spoilers:
+      separator: "\uff0b"
+  - pymdownx.details:
 
 extra:
+  logo:
+    icon: description
   palette:
     primary: blue
     accent: blue
@@ -68,6 +72,6 @@ extra:
     - type: github
       link: https://github.com/facelessuser
 extra_css:
-  - extra-effadd97dd.css
+  - extra-21c736e569.css
 extra_javascript:
-  - extra-0d49409391.js
+  - extra-4596f9831a.js
