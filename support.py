@@ -5,7 +5,7 @@ import textwrap
 import webbrowser
 import re
 
-__version__ = "2.6.1"
+__version__ = "2.6.2"
 __pc_name__ = 'HexViewer'
 
 CSS = '''
@@ -32,7 +32,7 @@ frontmatter = {
                 "repo_url_shortener": True,
                 "repo_url_shorthand": True,
                 "user": "facelessuser",
-                "repo": "HexViewer"
+                "repo": "ScopeHunter"
             }
         },
         "pymdownx.extrarawhtml",
@@ -158,7 +158,7 @@ class HexViewerDocCommand(sublime_plugin.WindowCommand):
             import mdpopups
             import pymdownx
             has_phantom_support = (mdpopups.version() >= (1, 10, 0)) and (int(sublime.version()) >= 3124)
-            fmatter = mdpopups.format_frontmatter(frontmatter) if pymdownx.version[:3] >= (4, 3, 0) else ''
+            fmatter = mdpopups.format_frontmatter(frontmatter) if pymdownx.version_info[:3] >= (4, 3, 0) else ''
         except Exception:
             fmatter = ''
             has_phantom_support = False
@@ -198,8 +198,9 @@ class HexViewerChangesCommand(sublime_plugin.WindowCommand):
             import mdpopups
             import pymdownx
             has_phantom_support = (mdpopups.version() >= (1, 10, 0)) and (int(sublime.version()) >= 3124)
-            fmatter = mdpopups.format_frontmatter(frontmatter) if pymdownx.version[:3] >= (4, 3, 0) else ''
-        except Exception:
+            fmatter = mdpopups.format_frontmatter(frontmatter) if pymdownx.version_info[:3] >= (4, 3, 0) else ''
+        except Exception as e:
+            print(e)
             fmatter = ''
             has_phantom_support = False
 

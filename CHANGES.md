@@ -1,3 +1,7 @@
+# HexViewer 2.6.2
+
+- **FIX**: Log rendering.
+
 # HexViewer 2.6.1
 
 - **FIX**: Update dependencies.
