@@ -1,3 +1,7 @@
+# HexViewer 2.6.1
+
+- **FIX**: Update dependencies.
+
 # HexViewer 2.6.0
 
 Sep 10, 2017
