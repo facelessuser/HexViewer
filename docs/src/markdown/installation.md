@@ -8,7 +8,7 @@ The recommended way to install HexViewer is via [Package Control][package-contro
 
 1. Ensure Package Control is installed.  Instructions are found [here][package-control-install].
 
-2. In Sublime Text, press <kbd>ctrl</kbd> + <kbd>shift</kbd> + <kbd>p</kbd> (Win, Linux) or <kbd>cmd</kbd> + <kbd>shift</kbd> + <kbd>p</kbd> (OSX) to bring up the quick panel and start typing `Package Control: Install Package`.  Select the command and it will show a list of installable plugins.
+2. In Sublime Text, press ++ctrl+shift+p++ (Win, Linux) or ++cmd+shift+p++ (OSX) to bring up the quick panel and start typing `Package Control: Install Package`.  Select the command and it will show a list of installable plugins.
 
 3. Start typing `HexViewer`; when you see it, select it.
 
@@ -29,15 +29,15 @@ For those who want to install HexViewer without package control, here are the st
 
 1. Download the latest releases of the following dependencies and unpack or git clone in the `Packages` folder as shown below:
 
-    - https://bitbucket.org/teddy_beer_maniac/sublime-text-dependency-markupsafe -> `markupsafe`
-    - https://bitbucket.org/teddy_beer_maniac/sublime-text-dependency-jinja2 -> `python-jinja2`
-    - https://github.com/packagecontrol/pygments -> `pygments`
-    - https://github.com/facelessuser/sublime-markdown-popups -> `mdpopups`
-    - https://github.com/facelessuser/sublime-markdown -> `python-markdown`
+    - @bitbucket:teddy_beer_maniac/sublime-text-dependency-markupsafe -> `markupsafe`
+    - @bitbucket:teddy_beer_maniac/sublime-text-dependency-jinja2 -> `python-jinja2`
+    - @packagecontrol/pygments -> `pygments`
+    - @facelessuser/sublime-markdown-popups -> `mdpopups`
+    - @facelessuser/sublime-markdown -> `python-markdown`
 
 2. Download and unpack, or git clone, the latest HexViewer release and unpack as `HexViewer`:
 
-    - https://github.com/facelessuser/HexViewer -> HexViewer
+    - @facelessuser/HexViewer -> HexViewer
 
 3. Create a folder under `Packages` called `00-dependencies` and under that folder create a file called `00-dependencies.py`:
 
