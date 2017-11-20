@@ -1,3 +1,7 @@
+# HexViewer 2.6.3
+
+- **FIX**: Fix change log auto-linking issue.
+
 # HexViewer 2.6.2
 
 - **FIX**: Log rendering.
