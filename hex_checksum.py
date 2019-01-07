@@ -20,6 +20,7 @@ from HexViewer.hex_notify import notify, error
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
+SUPPORT_EXTRA = []
 
 active_thread = None
 
@@ -43,13 +44,13 @@ def verify_hashes(hashes):
                 getattr(sys.modules[module[0]], module[1])
                 VALID_HASH.append(module[1])
             except Exception:
-                print("Hex Viewer: " + module[1] + " hash is not available!")
+                SUPPORT_EXTRA.append("Hex Viewer: " + module[1] + " hash is not available!")
         else:
             try:
                 hashlib.new(item)
                 VALID_HASH.append(item)
             except Exception:
-                print("Hex Viewer: " + item + " hash is not available!")
+                SUPPORT_EXTRA.append("Hex Viewer: " + item + " hash is not available!")
 
 
 # Extra hash SSL and ZLIB classes

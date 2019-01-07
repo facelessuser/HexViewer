@@ -5,6 +5,8 @@ import textwrap
 import webbrowser
 import re
 
+from . import hex_checksum
+
 __version__ = "2.6.3"
 __pc_name__ = 'HexViewer'
 
@@ -111,6 +113,9 @@ class HexViewerSupportInfoCommand(sublime_plugin.ApplicationCommand):
         except Exception:
             info["pygments_version"] = 'Version could not be acquired!'
 
+        if hex_checksum.SUPPORT_EXTRA:
+            info["support_extra"] = ", ".join(hex_checksum.SUPPORT_EXTRA)
+
         msg = textwrap.dedent(
             """\
             - ST ver.: %(version)s
@@ -122,6 +127,7 @@ class HexViewerSupportInfoCommand(sublime_plugin.ApplicationCommand):
             - markdown ver.: %(markdown_version)s
             - pygments ver.: %(pygments_version)s
             - jinja2 ver.: %(jinja_version)s
+            %(support_extra)s
             """ % info
         )
 
