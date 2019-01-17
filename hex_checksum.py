@@ -43,13 +43,17 @@ def verify_hashes(hashes):
                 getattr(sys.modules[module[0]], module[1])
                 VALID_HASH.append(module[1])
             except Exception:
-                print("Hex Viewer: " + module[1] + " hash is not available!")
+                # Keep around in case useful for debugging in the future.
+                # print("Hex Viewer: " + module[1] + " hash is not available!")
+                pass
         else:
             try:
                 hashlib.new(item)
                 VALID_HASH.append(item)
             except Exception:
-                print("Hex Viewer: " + item + " hash is not available!")
+                # Keep around in case useful for debugging in the future.
+                # print("Hex Viewer: " + item + " hash is not available!")
+                pass
 
 
 # Extra hash SSL and ZLIB classes
