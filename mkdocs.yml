@@ -4,8 +4,8 @@ repo_url: https://github.com/facelessuser/HexViewer
 edit_uri: tree/master/docs/src/markdown
 site_description: A Sublime Text hex viewer and editor.
 copyright: |
-  Copyright &copy; 2011 - 2017 <a href="https://github.com/facelessuser">Isaac Muse</a>
-  <br><span class="md-footer-custom-text">emoji provided free by </span><a href="http://www.emojione.com">EmojiOne</a>
+  Copyright &copy; 2011 - 2019 <a href="https://github.com/facelessuser">Isaac Muse</a>
+  <br><span class="md-footer-custom-text">emoji provided free by <a href="http://www.emojione.com">EmojiOne</a></span>
 
 docs_dir: docs/src/markdown
 theme:
@@ -20,7 +20,7 @@ theme:
     text: Roboto
     code: Roboto Mono
 
-pages:
+nav:
   - User Guide: index.md
   - Installation: installation.md
   - Contributing &amp; Support: contributing.md
@@ -38,6 +38,7 @@ markdown_extensions:
   - markdown.extensions.def_list:
   - markdown.extensions.tables:
   - markdown.extensions.abbr:
+  - markdown.extensions.footnotes:
   - pymdownx.extrarawhtml:
   - pymdownx.superfences:
   - pymdownx.highlight:
@@ -64,8 +65,7 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.progressbar:
-  - pymdownx.plainhtml:
-      strip_attributes: ''
+  - pymdownx.striphtml:
   - pymdownx.snippets:
       base_path: docs/src/markdown/_snippets
   - pymdownx.keys:
