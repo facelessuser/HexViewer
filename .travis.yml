@@ -23,6 +23,7 @@ install:
   - pip install mkdocs-material
   - pip install pymdown-extensions
   - pip install pygments
+  - pip install pyspelling
 
 addons:
   apt:
@@ -33,8 +34,8 @@ addons:
 script:
   - if [ $TESTENV = unittest ]; then py.test .; fi
   - if [ $TESTENV = unittest ]; then flake8 .; fi
-  - if [ $TESTENV = documents ]; then python tests/spellcheck.py; fi
   - if [ $TESTENV = documents ]; then mkdocs build --clean --verbose --strict; fi
+  - if [ $TESTENV = documents ]; then pyspelling; fi
 
 deploy:
   - provider: pages

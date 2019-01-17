@@ -36,7 +36,7 @@ class ThreadedWrite(threading.Thread):
         self.status = WRITE_GOOD
         threading.Thread.__init__(self)
 
-    def format(self, data):
+    def format(self, data):  # noqa: A003
         """Format."""
 
         for x in data:
