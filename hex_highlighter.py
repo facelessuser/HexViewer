@@ -181,13 +181,19 @@ class HexHighlighter(object):
         end = sel.end()
         num_bytes = 0
         ascii_range = view.extract_scope(sel.begin())
+        if view.match_selector(ascii_range.begin(), 'keyword.ascii-start.hex'):
+            ascii_range = sublime.Region(ascii_range.begin() + 1, ascii_range.end())
+        if view.substr(ascii_range.end()) == '\x00':
+            offset = 0
+        else:
+            offset = 1
 
         # Determine if selection is within ascii range
         if (
             start >= ascii_range.begin() and
             (
                 # Single selection should ignore the end of line selection
-                (end == start and end < ascii_range.end() - 1) or
+                (end == start and end < ascii_range.end() - offset) or
                 (end != start and end < ascii_range.end())
             )
         ):

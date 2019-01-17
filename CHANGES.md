@@ -1,3 +1,7 @@
+# HexViewer 2.6.4
+
+- **FIX**: Fix issue with with selecting the correct hex byte when a character in the ASCII column is selected on the last row.
+
 # HexViewer 2.6.3
 
 - **FIX**: Fix change log auto-linking issue.
