@@ -308,7 +308,7 @@ class HashThread(threading.Thread):
         self.fmt_callback = fmt_callback if fmt_callback is not None else self.format
         threading.Thread.__init__(self)
 
-    def format(self, data):
+    def format(self, data):  # noqa: A003
         """Format."""
 
         for x in data:
