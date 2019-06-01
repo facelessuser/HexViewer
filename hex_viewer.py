@@ -11,11 +11,11 @@ import threading
 from os.path import basename, exists
 from os.path import getsize as get_file_size
 from os import remove
-import HexViewer.hex_common as common
+from . import hex_common as common
 from fnmatch import fnmatch
 import tempfile
 import subprocess
-from HexViewer.hex_notify import notify, error
+from .hex_notify import notify, error
 
 DEFAULT_BIT_GROUP = 16
 DEFAULT_BYTES_WIDE = 24

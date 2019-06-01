@@ -5,8 +5,8 @@ Licensed under MIT
 Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 """
 import sublime_plugin
-import HexViewer.hex_common as common
-from HexViewer.hex_notify import error
+from . import hex_common as common
+from .hex_notify import error
 
 
 class HexFinderCommand(sublime_plugin.WindowCommand):

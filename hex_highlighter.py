@@ -7,7 +7,7 @@ Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 
 import sublime
 import sublime_plugin
-import HexViewer.hex_common as common
+from . import hex_common as common
 from time import time, sleep
 import threading
 from queue import Queue

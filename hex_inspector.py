@@ -8,7 +8,7 @@ import sublime
 import sublime_plugin
 import math
 from struct import unpack
-import HexViewer.hex_common as common
+from . import hex_common as common
 from binascii import unhexlify
 
 hv_endianness = None

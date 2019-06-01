@@ -7,12 +7,12 @@ Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 import sublime
 import sublime_plugin
 from os.path import dirname, exists
-import HexViewer.hex_common as common
-from HexViewer.hex_checksum import Checksum, parse_view_data
+from . import hex_common as common
+from .hex_checksum import Checksum, parse_view_data
 import threading
 import traceback
 from io import StringIO
-from HexViewer.hex_notify import notify, error
+from .hex_notify import notify, error
 
 USE_CHECKSUM_ON_SAVE = True
 WRITE_GOOD = 0
