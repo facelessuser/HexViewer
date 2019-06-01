@@ -7,9 +7,10 @@ Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 
 import sublime
 import sublime_plugin
-import HexViewer.hex_common as common
+from . import hex_common as common
 from time import time, sleep
 import threading
+from queue import Queue
 import re
 
 HIGHLIGHT_SCOPE = "string"
@@ -301,6 +302,7 @@ class HexHighlighterCommand(sublime_plugin.WindowCommand):
 
         if hh_thread.ignore_all:
             return
+        start_task()
         hh_thread.modified = True
 
     def is_enabled(self):
@@ -321,6 +323,7 @@ class HexHighlighterListenerCommand(sublime_plugin.EventListener):
         if now - hh_thread.time > hh_thread.wait_time:
             sublime.set_timeout(hh_thread.payload, 0)
         else:
+            start_task()
             hh_thread.modified = True
             hh_thread.time = now
 
@@ -332,12 +335,14 @@ class HhThread(threading.Thread):
         """Setup the thread."""
 
         self.reset()
+        self.queue = Queue()
         threading.Thread.__init__(self)
 
     def reset(self):
         """Reset the thread variables."""
 
         self.wait_time = 0.12
+        self.queue = Queue()
         self.time = time()
         self.modified = False
         self.ignore_all = False
@@ -357,6 +362,7 @@ class HhThread(threading.Thread):
         """Kill thread."""
 
         self.abort = True
+        self.queue.put(True)
         while self.is_alive():
             pass
         self.reset()
@@ -364,10 +370,21 @@ class HhThread(threading.Thread):
     def run(self):
         """Thread loop."""
 
+        task = False
         while not self.abort:
-            if self.modified is True and time() - self.time > self.wait_time:
-                sublime.set_timeout(self.payload, 0)
-            sleep(0.5)
+            task = self.queue.get()
+            while task and not self.abort:
+                if self.modified is True and time() - self.time > self.wait_time:
+                    sublime.set_timeout(self.payload, 0)
+                    task = False
+                sleep(0.5)
+
+
+def start_task():
+    """Start task."""
+
+    if hh_thread.is_alive():
+        hh_thread.queue.put(True)
 
 
 def plugin_loaded():

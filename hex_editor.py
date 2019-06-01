@@ -9,9 +9,9 @@ import sublime_plugin
 import re
 from os.path import basename
 from struct import unpack
-import HexViewer.hex_common as common
+from . import hex_common as common
 from binascii import unhexlify, hexlify
-from HexViewer.hex_notify import error
+from .hex_notify import error
 
 HIGHLIGHT_EDIT_SCOPE = "keyword"
 HIGHLIGHT_EDIT_ICON = "none"

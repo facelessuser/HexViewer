@@ -7,16 +7,16 @@ Copyright (c) 2011-2015 Isaac Muse <isaacmuse@gmail.com>
 import sublime
 import sublime_plugin
 import re
-import HexViewer.hex_common as common
+from . import hex_common as common
 import threading
 import hashlib
 import zlib
 import sys
-from HexViewer import whirlpool, tiger, sum_hashes
+from . import whirlpool, tiger, sum_hashes
 from binascii import unhexlify
 from io import StringIO
 import traceback
-from HexViewer.hex_notify import notify, error
+from .hex_notify import notify, error
 
 DEFAULT_CHECKSUM = "md5"
 VALID_HASH = []
