@@ -1,4 +1,4 @@
-[![Unix Build Status][travis-image]][travis-link]
+[![Build][github-ci-image]][github-ci-link]
 [![Package Control Downloads][pc-image]][pc-link]
 ![License][license-image]
 # HexViewer
@@ -36,8 +36,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[travis-image]: https://img.shields.io/travis/facelessuser/HexViewer/master.svg
-[travis-link]: https://travis-ci.org/facelessuser/HexViewer
-[pc-image]: https://img.shields.io/packagecontrol/dt/HexViewer.svg
+[github-ci-image]: https://github.com/facelessuser/HexViewer/workflows/build/badge.svg
+[github-ci-link]: https://github.com/facelessuser/HexViewer/actions?workflow=build
+[pc-image]: https://img.shields.io/packagecontrol/dt/HexViewer.svg?logo=sublime%20text&logoColor=cccccc
 [pc-link]: https://packagecontrol.io/packages/HexViewer
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
