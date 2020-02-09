@@ -22,7 +22,7 @@ HexViewer is a plugin for Sublime Text that allows the toggling of a file into a
 
 # Documentation
 
-http://facelessuser.github.io/HexViewer/
+https://facelessuser.github.io/HexViewer/
 
 # License
 
