@@ -9,14 +9,12 @@ class TestSettings(unittest.TestCase):
     """Test JSON settings."""
 
     def _get_json_files(self, pattern, folder='.'):
-        """Get json files."""
+        """Get JSON files."""
 
         for root, dirnames, filenames in os.walk(folder):
             for filename in fnmatch.filter(filenames, pattern):
                 yield os.path.join(root, filename)
-            for dirname in [d for d in dirnames if d not in ('.svn', '.git', '.tox')]:
-                for f in self._get_json_files(pattern, os.path.join(root, dirname)):
-                    yield f
+            dirnames = [d for d in dirnames if d not in ('.svn', '.git', '.tox')]
 
     def test_json_settings(self):
         """Test each JSON file."""
@@ -32,7 +30,6 @@ class TestSettings(unittest.TestCase):
 
         for pattern in patterns:
             for f in self._get_json_files(pattern):
-                print(f)
                 self.assertFalse(
                     validate_json_format.CheckJsonFormat(False, True).check_format(f),
                     "%s does not comform to expected format!" % f
