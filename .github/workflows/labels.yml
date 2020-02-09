@@ -1,0 +1,86 @@
+template: 'facelessuser:master-labels:labels.yml:master'
+
+# Wildcard labels
+
+brace_expansion: true
+extended_glob: true
+
+rules:
+  - labels: ['C: infrastructure']
+    patterns: [
+      '*|-@(*.md|*.py|*.sublime-@(keymap|menu|settings|commands|syntax|color-scheme))',
+      '@(requirements|.github)/**'
+    ]
+
+  - labels: ['C: source']
+    patterns: ['**/@(*.py|*.sublime-@(keymap|menu|settings|commands|syntax|color-scheme))|-tests']
+
+  - labels: ['C: docs']
+    patterns: ['**/*.md|docs/**']
+
+  - labels: ['C: tests']
+    patterns: ['tests/**']
+
+  - labels: ['C: checksum']
+    patterns: ['@(sum_hashes|tiger|whirlpool|hex_checksum).py']
+
+  - labels: ['C: writer']
+    patterns: ['hex_writer.py']
+
+  - labels: ['C: editor']
+    patterns: ['hex_editor.py']
+
+  - labels: ['C: highighter']
+    patterns: ['hex_highlighter.py']
+
+  - labels: ['C: inspector']
+    patterns: ['hex_inspector.py']
+
+  - labels: ['C: viewer']
+    patterns: ['hex_viewer.py']
+
+  - labels: ['C: notify']
+    patterns: ['hex_notify.py']
+
+  - labels: ['C: settings']
+    patterns: ['*.sublime-@(keymap|menu|settings|commands)']
+
+  - labels: ['C: syntax']
+    patterns: ['*.sublime-syntax']
+
+# Label management
+
+labels:
+- name: 'C: checksum'
+  color: subcategory
+  description: Related to checksums.
+
+- name: 'C: writer'
+  color: subcategory
+  description: Related writing out hex output.
+
+- name: 'C: editor'
+  color: subcategory
+  description: Related editing hex.
+
+- name: 'C: highlighter'
+  color: subcategory
+  description: Related to highlighting.
+
+- name: 'C: inspector'
+  color: subcategory
+  description: Related to hex inspector.
+
+- name: 'C: viewer'
+  color: subcategory
+  description: Related to hex viewer.
+
+- name: 'C: syntax'
+  renamed: regions
+  color: subcategory
+  description: Related to syntax definitions.
+
+- name: 'C: settings'
+  renamed: settings
+  color: subcategory
+  description: Related to Sublime settings files.
