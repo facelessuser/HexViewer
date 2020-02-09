@@ -10,8 +10,7 @@ from os.path import basename, splitext
 ADDRESS_OFFSET = 11
 ASCII_OFFSET = 3
 BITS_PER_BYTE = 8
-USE_ST_SYNTAX = int(sublime.version()) >= 3092
-ST_SYNTAX = "sublime-syntax" if USE_ST_SYNTAX else 'tmLanguage'
+ST_SYNTAX = "sublime-syntax"
 
 
 def is_enabled(current_view=None):
@@ -29,7 +28,7 @@ def is_enabled(current_view=None):
         return False
     syntax = view.settings().get('syntax')
     language = splitext(basename(syntax))[0].lower() if syntax is not None else "plain text"
-    return bool(language == "hex")
+    return bool(language == "hexviewer")
 
 
 def clear_edits(view):

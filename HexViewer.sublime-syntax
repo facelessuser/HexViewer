@@ -1,8 +1,8 @@
 %YAML 1.2
 ---
 # http://www.sublimetext.com/docs/3/syntax.html
-name: Hex
-file_extensions: ['hex']
+name: Hex Viewer
+file_extensions: ['hxv']
 scope: source.hex
 contexts:
   main:

@@ -76,7 +76,7 @@ class ReadBin(threading.Thread):
 
         line = 0
         read_count = 0
-        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix=".hex") as f:
+        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix=".hxv") as f:
             self.hex_name = f.name
             for byte_array in self.iterfile():
                 if self.abort:
@@ -208,7 +208,7 @@ class HexViewerListenerCommand(sublime_plugin.EventListener):
             if exists(temp_file):
                 remove(temp_file)
 
-            view.set_name(basename(view.settings().get("hex_viewer_file_name")) + ".hex")
+            view.set_name(basename(view.settings().get("hex_viewer_file_name")) + ".hxv")
 
             view.sel().clear()
             # Offset past address to first byte

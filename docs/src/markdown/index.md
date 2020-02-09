@@ -234,9 +234,9 @@ Controls the text format for binary output in the inspector panel.  Uses standar
 
 When loading a file that is a HexViewer visual representation of a binary file, and the syntax is set to HexViewer's custom syntax, HexViewer will enable basic byte highlight features, Hex Inspector panel etc.
 
-```js 
-    // Treat files in hex syntax with proper format
-    // (usually .hex files; saved versions of hex output)
+```js
+    // Treat files in HexViewer syntax with proper format
+    // (usually .hxv files; saved versions of hex output)
     // as real hex views.  The following functionality will be omitted:
     // hex toggle, editing, writing to file,
     // and dynamic changing of bits and bytes functionality.
