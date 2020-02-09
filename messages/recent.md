@@ -1,4 +1,4 @@
-# HexViewer 2.6.0
+# HexViewer 2.7.0
 
 New release!
 
