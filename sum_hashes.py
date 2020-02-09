@@ -2,7 +2,7 @@
 Hex Viewer.
 
 Licensed under MIT
-Copyright (c) 2013-2015 Isaac Muse <isaacmuse@gmail.com>
+Copyright (c) 2013-2020 Isaac Muse <isaacmuse@gmail.com>
 """
 
 BIT8_MOD = 256
