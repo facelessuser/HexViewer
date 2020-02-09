@@ -145,7 +145,7 @@ class HexWriterCommand(sublime_plugin.WindowCommand):
             hex_hash.threaded_update(self.hex_buffer, parse_view_data, self.row)
 
         # Update the tab name
-        self.view.set_name(common.basename(self.export_path) + ".hex")
+        self.view.set_name(common.basename(self.export_path) + ".hxv")
         # Update the internal path
         self.view.settings().set("hex_viewer_file_name", self.export_path)
         # Tie it to a real view if not already

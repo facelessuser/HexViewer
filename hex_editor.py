@@ -90,14 +90,14 @@ class HexEditorListenerCommand(sublime_plugin.EventListener):
                     style = 0
 
                 # Setup view with saved settings
-                view.set_name(basename(self.fail_safe_view["name"]) + ".hex")
+                view.set_name(basename(self.fail_safe_view["name"]) + ".hxv")
                 view.settings().set("hex_viewer_bits", self.fail_safe_view["bits"])
                 view.settings().set("hex_viewer_bytes", self.fail_safe_view["bytes"])
                 view.settings().set("hex_viewer_actual_bytes", self.fail_safe_view["actual"])
                 view.settings().set("hex_viewer_file_name", self.fail_safe_view["name"])
                 view.settings().set("font_face", self.fail_safe_view["font_face"])
                 view.settings().set("font_size", self.fail_safe_view["font_size"])
-                view.set_syntax_file("Packages/HexViewer/Hex.%s" % common.ST_SYNTAX)
+                view.set_syntax_file("Packages/HexViewer/HexViewer.%s" % common.ST_SYNTAX)
                 view.sel().clear()
                 HexEditGlobal.bfr = self.fail_safe_view["buffer"]
                 HexEditGlobal.region = sublime.Region(0, view.size())
