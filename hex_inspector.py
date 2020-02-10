@@ -7,6 +7,7 @@ Copyright (c) 2011-2020 Isaac Muse <isaacmuse@gmail.com>
 import sublime
 import sublime_plugin
 import math
+import datetime
 from struct import unpack
 from . import hex_common as common
 from binascii import unhexlify
@@ -165,6 +166,7 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
         item_float = common.hv_settings("inspector_float_format", "%-12s:  %-14e")
         item_double = common.hv_settings("inspector_double_format", "%-12s:  %-14e")
         item_bin = common.hv_settings("inspector_binary_format", "%-12s:  %-14s")
+        item_timestamp, item_time = common.hv_settings("inspector_timestamp_format", ("%-12s:  %-14s", "%c"))
         nl = "\n"
         endian = ">" if self.endian == "big" else "<"
         i_buffer = "%28s:%-28s" % ("Hex Inspector ", (" Big Endian" if self.endian == "big" else " Little Endian")) + nl
@@ -232,6 +234,16 @@ class HexInspectorCommand(sublime_plugin.WindowCommand):
             i_buffer += item_bin % ("binary", '{0:08b}'.format(unpack(endian + "B", unhexlify(byte8))[0])) + nl
         else:
             i_buffer += item_str % ("binary", "--") + nl
+        if bytes64 is not None:
+            try:
+                t = datetime.datetime.fromtimestamp(unpack(endian + "Q", unhexlify(bytes64))[0]).strftime(item_time)
+                i_buffer += item_timestamp % (
+                    "timestamp", t
+                ) + nl
+            except Exception:
+                i_buffer += item_str % ("timestamp", "--") + nl
+        else:
+            i_buffer += item_str % ("timestamp", "--") + nl
 
         # Update content
         view.set_read_only(False)
