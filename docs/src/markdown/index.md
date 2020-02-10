@@ -230,6 +230,17 @@ Controls the text format for binary output in the inspector panel.  Uses standar
     "inspector_binary_format": "%-12s:  %-22s"
 ```
 
+### `inspector_timestamp_format`
+
+Controls the text format for the timestamp output in the inspector panel. Timestamp format is configured with two parts:
+the general string formatting, and the time output which is fed into the string format as the second parameter. Time
+format uses Python's [`strftime`](https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior).
+
+```js
+    // Timestamp format
+    "inspector_timestamp_format": ["%-12s:  %-22s", "%c"]
+```
+
 ### `enable_fake_hex_file`
 
 When loading a file that is a HexViewer visual representation of a binary file, and the syntax is set to HexViewer's custom syntax, HexViewer will enable basic byte highlight features, Hex Inspector panel etc.

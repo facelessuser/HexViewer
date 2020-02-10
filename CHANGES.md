@@ -3,6 +3,7 @@
 ## 2.7.0
 
 - **NEW**: HexViewer no longer triggers on files with extension `hex`. Instead it uses a custom extension `hxv`.
+- **NEW**: Add new timestamp output in the hex inspector.
 - **NEW**: Only use `sublime-syntax` files to highlight HexViewer related syntaxes.
 
 ## 2.6.5

@@ -111,5 +111,8 @@
     "inspector_missing/bad_format": "%-12s:  %-22s",
 
     // Binary number formatting
-    "inspector_binary_format": "%-12s:  %-22s"
+    "inspector_binary_format": "%-12s:  %-22s",
+
+    // Timestamp format
+    "inspector_timestamp_format": ["%-12s:  %-22s", "%c"]
 }
