@@ -488,7 +488,7 @@ class HexViewerCommand(sublime_plugin.WindowCommand):
                 ) or
                 self.window.active_sheet()
             ) and
-            not(active_thread is not None and active_thread.is_alive())
+            not (active_thread is not None and active_thread.is_alive())
         )
 
     def run(self, bits=None, byte_array=None, starting_address=0, reload=False):

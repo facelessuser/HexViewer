@@ -1,13 +1,8 @@
 {
     "*": {
         ">=3124": [
-            "pygments",
-            "python-markdown",
             "mdpopups",
-            "python-jinja2",
-            "markupsafe",
-            "pyyaml",
-            "pymdownx"
+            "typing"
         ]
     }
 }

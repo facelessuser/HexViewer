@@ -4,80 +4,142 @@ repo_url: https://github.com/facelessuser/HexViewer
 edit_uri: tree/master/docs/src/markdown
 site_description: A Sublime Text hex viewer and editor.
 copyright: |
-  Copyright &copy; 2011 - 2020 <a href="https://github.com/facelessuser">Isaac Muse</a>
-  <br><span class="md-footer-custom-text">emoji provided free by </span>
-  <a href="https://github.com/twitter/twemoji">Twemoji</a>
+  Copyright &copy; 2011 - 2025 <a href="https://github.com/facelessuser"  target="_blank" rel="noopener">Isaac Muse</a>
 
 docs_dir: docs/src/markdown
 theme:
   name: material
   custom_dir: docs/theme
+  icon:
+    logo: material/book-open-page-variant
   palette:
-    primary: blue
-    accent: blue
-  logo:
-    icon: description
+    scheme: dracula
+    primary: deep purple
+    accent: deep purple
   font:
     text: Roboto
     code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.top
+    - search.share
+    - search.highlight
+    - search.suggest
+  pymdownx:
+    sponsor: "https://github.com/sponsors/facelessuser"
 
 nav:
   - User Guide: index.md
   - Installation: installation.md
-  - Contributing &amp; Support: contributing.md
-  - License: license.md
+  - About:
+    - Contributing &amp; Support: about/contributing.md
+    - Changelog: https://github.com/facelessuser/HexViewer/blob/master/CHANGES.md
+    - License: about/license.md
 
 markdown_extensions:
   - markdown.extensions.toc:
       slugify: !!python/name:pymdownx.slugs.uslugify
-      permalink: "\ue157"
-  - markdown.extensions.admonition:
+      permalink: ""
   - markdown.extensions.smarty:
       smart_quotes: false
   - pymdownx.betterem:
   - markdown.extensions.attr_list:
-  - markdown.extensions.def_list:
   - markdown.extensions.tables:
   - markdown.extensions.abbr:
   - markdown.extensions.footnotes:
-  - pymdownx.extrarawhtml:
+  - markdown.extensions.md_in_html:
   - pymdownx.superfences:
   - pymdownx.highlight:
       extend_pygments_lang:
-        - name: php-inline
-          lang: php
+        - name: pycon3
+          lang: pycon
           options:
-            startinline: true
+            python3: true
   - pymdownx.inlinehilite:
   - pymdownx.magiclink:
       repo_url_shortener: true
       repo_url_shorthand: true
+      social_url_shorthand: true
       user: facelessuser
-      repo: HexViewer
+      repo: ColorHelper
   - pymdownx.tilde:
   - pymdownx.caret:
   - pymdownx.smartsymbols:
   - pymdownx.emoji:
-      emoji_index: !!python/name:pymdownx.emoji.twemoji
-      emoji_generator: !!python/name:pymdownx.emoji.to_png
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.escapeall:
       hardbreak: true
       nbsp: true
   - pymdownx.tasklist:
       custom_checkbox: true
-  - pymdownx.progressbar:
+  - pymdownx.arithmatex:
+  - pymdownx.mark:
   - pymdownx.striphtml:
   - pymdownx.snippets:
       base_path: docs/src/markdown/_snippets
   - pymdownx.keys:
       separator: "\uff0b"
-  - pymdownx.details:
+  - pymdownx.saneheaders:
+  - pymdownx.blocks.admonition:
+      types:
+      - new
+      - settings
+      - note
+      - abstract
+      - info
+      - tip
+      - success
+      - question
+      - warning
+      - failure
+      - danger
+      - bug
+      - example
+      - quote
+  - pymdownx.blocks.details:
+      types:
+      - name: details-new
+        class: new
+      - name: details-settings
+        class: settings
+      - name: details-note
+        class: note
+      - name: details-abstract
+        class: abstract
+      - name: details-info
+        class: info
+      - name: details-tip
+        class: tip
+      - name: details-success
+        class: success
+      - name: details-question
+        class: question
+      - name: details-warning
+        class: warning
+      - name: details-failure
+        class: failure
+      - name: details-danger
+        class: danger
+      - name: details-bug
+        class: bug
+      - name: details-example
+        class: example
+      - name: details-quote
+        class: quote
+  - pymdownx.blocks.html:
+  - pymdownx.blocks.definition:
+  - pymdownx.blocks.tab:
+      alternate_style: True
 
 extra:
   social:
-    - type: github
+    - icon: fontawesome/brands/github
       link: https://github.com/facelessuser
-extra_css:
-  - extra-b1410d454c.css
-extra_javascript:
-  - extra-0d9305e748.js
+
+plugins:
+  - search
+  - git-revision-date-localized
+  - mkdocs_pymdownx_material_extras
+  - minify:
+      minify_html: true

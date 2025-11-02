@@ -158,7 +158,6 @@ class ZlibAlgorithm(object):
 
 # Additional Hashes
 class md2(SSlAlgorithm):  # noqa
-
     """md2 hash."""
 
     def __init__(self, arg=b''):
@@ -168,7 +167,6 @@ class md2(SSlAlgorithm):  # noqa
 
 
 class mdc2(SSlAlgorithm):  # noqa
-
     """mdc2 hash."""
 
     def __init__(self, arg=b''):
@@ -178,7 +176,6 @@ class mdc2(SSlAlgorithm):  # noqa
 
 
 class md4(SSlAlgorithm):  # noqa
-
     """md4 hash."""
 
     def __init__(self, arg=b''):
@@ -188,7 +185,6 @@ class md4(SSlAlgorithm):  # noqa
 
 
 class sha(SSlAlgorithm):  # noqa
-
     """sha hash."""
 
     def __init__(self, arg=b''):
@@ -198,7 +194,6 @@ class sha(SSlAlgorithm):  # noqa
 
 
 class ripemd160(SSlAlgorithm):  # noqa
-
     """ripemd160 hash."""
 
     def __init__(self, arg=b''):
@@ -208,7 +203,6 @@ class ripemd160(SSlAlgorithm):  # noqa
 
 
 class crc32(ZlibAlgorithm):  # noqa
-
     """crc32 hash."""
 
     def __init__(self, arg=b''):
@@ -218,7 +212,6 @@ class crc32(ZlibAlgorithm):  # noqa
 
 
 class adler32(ZlibAlgorithm):  # noqa
-
     """adler32 hash."""
 
     def __init__(self, arg=b''):

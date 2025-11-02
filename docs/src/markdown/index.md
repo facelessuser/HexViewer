@@ -2,26 +2,28 @@
 
 ## Overview
 
-Hex Viewer is a plugin for Sublime Text that allows the toggling of a file into a hex viewing mode.  Hex Viewer also supports hex editing.
+Hex Viewer is a plugin for Sublime Text that allows the toggling of a file into a hex viewing mode.  Hex Viewer also
+supports hex editing.
 
 ![Preview](./images/preview.png)
 
 ## Features
 
-- View any file (that exist on disk) in a hex format showing both byte and ASCII representation.
-- Command to jump to a specific address.
-- In place editing of bytes or ASCII chars.
-- Highlight selected byte **and** ASCII code.
-- Inspection panel showing different integer representation at the cursor position.
-- Configurable display of byte grouping, bytes per line, endianness.
-- Export hex view to a binary file.
-- Get the checksum of a given file (various checksums are available).
-- Generate checksum/hash from input via panel or text selection.
-- Optionally auto convert binary to hex view.
+-   View any file (that exist on disk) in a hex format showing both byte and ASCII representation.
+-   Command to jump to a specific address.
+-   In place editing of bytes or ASCII chars.
+-   Highlight selected byte **and** ASCII code.
+-   Inspection panel showing different integer representation at the cursor position.
+-   Configurable display of byte grouping, bytes per line, endianness.
+-   Export hex view to a binary file.
+-   Get the checksum of a given file (various checksums are available).
+-   Generate checksum/hash from input via panel or text selection.
+-   Optionally auto convert binary to hex view.
 
 ## Commands
 
-There are various commands available via the command palette or by key-bindings. Below outlines what the commands are and what they do.
+There are various commands available via the command palette or by key-bindings. Below outlines what the commands are
+and what they do.
 
 ### HexViewer: Toggle Hex View
 
@@ -33,7 +35,8 @@ Reloads the current hex view.  All edits will be lost.
 
 ### HexViewer: Show Hex Inspector
 
-Show the Hex Inspector panel.  The Hex Inspector is a panel which shows the current selected byte as different unit types.
+Show the Hex Inspector panel.  The Hex Inspector is a panel which shows the current selected byte as different unit
+types.
 
 Name          | Signed   | Bits
 ------------- | -------- | ----
@@ -55,11 +58,13 @@ Toggles the parsing of bytes to big or little endian when showing unit types in 
 
 ### HexViewer: Set Bits Per Group
 
-Allows selection from the quick panel the grouping of bytes by 8, 16, 32, 64, and 128 bits.  This will reload the file with this formatting.  All edits will be lost, so export your changes before you do this.
+Allows selection from the quick panel the grouping of bytes by 8, 16, 32, 64, and 128 bits.  This will reload the file
+with this formatting.  All edits will be lost, so export your changes before you do this.
 
 ### HexViewer: Set Bytes Per Line
 
-Allows selection from the quick panel the number of bytes to be shown on a line (allowed options are defined in [valid_bytes_per_line](#valid_bytes_per_line)).
+Allows selection from the quick panel the number of bytes to be shown on a line (allowed options are defined in
+[`valid_bytes_per_line`](#valid_bytes_per_line)).
 
 ### HexViewer: Go to Offset
 
@@ -67,11 +72,14 @@ Moves the cursor to the given offset (address).  Input is received through the i
 
 ### HexViewer: Show Hex Edit Panel
 
-Invoking this command will take the currently selected bytes on a line and display them in an input panel.  They can then be modified and submitted to replace the original bytes.  Strings can also be used by using the `s:` prefix followed by the equivalent ASCII characters that are to replace the selected bytes.
+Invoking this command will take the currently selected bytes on a line and display them in an input panel.  They can
+then be modified and submitted to replace the original bytes.  Strings can also be used by using the `s:` prefix
+followed by the equivalent ASCII characters that are to replace the selected bytes.
 
 ### HexViewer: Discard All Edits
 
-If at any time you would like to discard all of the changes you have currently made to the hex view, you can invoke this command and a clean hex view will be reloaded.
+If at any time you would like to discard all of the changes you have currently made to the hex view, you can invoke this
+command and a clean hex view will be reloaded.
 
 ### HexViewer: Export Bin
 
@@ -79,15 +87,18 @@ Exports the current hex view to a binary file.
 
 ### HexViewer: Run Checksum
 
-By default, it opens up a quick panel with all available hashes that can be used as a checksum.  When an algorithm is selected, it is used to retrieve the checksum for the current file in hex view mode.
+By default, it opens up a quick panel with all available hashes that can be used as a checksum.  When an algorithm is
+selected, it is used to retrieve the checksum for the current file in hex view mode.
 
 ### HexViewer: Generate Hash
 
-Shows a quick panel allowing you to select the desired hash, and then shows an input panel that allows you to specify the string to be hashed. A panel is then displayed with your generated hash according to the selected specifications.
+Shows a quick panel allowing you to select the desired hash, and then shows an input panel that allows you to specify
+the string to be hashed. A panel is then displayed with your generated hash according to the selected specifications.
 
 ### HexViewer: Generate Hash from Selection
 
-Allows you to generate hashes from your current selection(s).  Multi-select regions' content will be combined and evaluated together.  If a region contains newlines, they will be hashed as well.
+Allows you to generate hashes from your current selection(s).  Multi-select regions' content will be combined and
+evaluated together.  If a region contains newlines, they will be hashed as well.
 
 ### HexViewer: Abort (Hex Conversion|Export|Checksum)
 
@@ -103,7 +114,8 @@ Settings are configurable in the `hex_viewer.sublime-settings` file.
 
 ### `group_bytes_by_bits`
 
-Groups together the bytes by the number of bits.  Valid numbers are must be divisible by bytes and currently go up to 128 bits.
+Groups together the bytes by the number of bits.  Valid numbers are must be divisible by bytes and currently go up to
+128 bits.
 
 ```js
 
@@ -114,7 +126,9 @@ Groups together the bytes by the number of bits.  Valid numbers are must be divi
 
 ### `valid_bytes_per_line`
 
-Sets the number of valid bytes that will be allowed for the `valid_bytes_per_line`.  Keep in mind though that just be because a value is deemed valid here, there are still some restriction that are covered in [bytes_per_line](#bytes_per_line).
+Sets the number of valid bytes that will be allowed for the `valid_bytes_per_line`.  Keep in mind though that just be
+because a value is deemed valid here, there are still some restriction that are covered in
+[`bytes_per_line`](#bytes_per_line).
 
 ```js
     // These are the valid bytes per line options
@@ -123,7 +137,10 @@ Sets the number of valid bytes that will be allowed for the `valid_bytes_per_lin
 
 ### `bytes_per_line`
 
-Number of bytes that will be shown on a line.  Can be any value found in [valid_bytes_per_line](#valid_bytes_per_line).  Even if the value is valid, there are some things to be aware of. HexViewer will default to a more reasonable value if the following does not hold true **bytes_per_line / (group_bytes_by_bits / 8) == 0**; if this does not hold true, there will be an adjustment made to the final number of bytes per line.
+Number of bytes that will be shown on a line.  Can be any value found in [`valid_bytes_per_line`](#valid_bytes_per_line).
+Even if the value is valid, there are some things to be aware of. HexViewer will default to a more reasonable value if
+the following does not hold true **bytes_per_line / (group_bytes_by_bits / 8) == 0**; if this does not hold true, there
+will be an adjustment made to the final number of bytes per line.
 
 ```js
     // Number of 8 bit bytes per line.
@@ -142,7 +159,8 @@ Controls whether hex values are displayed with lowercase or uppercase characters
 
 ### `custom_font`
 
-Sets the font used in a HexViewer view.  It is strongly recommended to set this to a monospaced font if your default font is not monospaced.
+Sets the font used in a HexViewer view.  It is strongly recommended to set this to a monospaced font if your default
+font is not monospaced.
 
 ```js
     // Use None to use the current Sublime Text font.
@@ -160,7 +178,8 @@ Sets the font size to be used in a HexViewer view.
 
 ### `inspector`
 
-Sets whether the Hex Inspector panel is enabled.  To have the Hex Inspector panel auto-open when a HexViewer view loads, see [inspector_auto_show](#inspector_auto_show).
+Sets whether the Hex Inspector panel is enabled.  To have the Hex Inspector panel auto-open when a HexViewer view loads,
+see [`inspector_auto_show`](#inspector_auto_show).
 
 ```js
     // Show inspector panel
@@ -178,7 +197,8 @@ Sets the endianness of the displayed values in the inspector.  The string value 
 
 ### `inspector_auto_show`
 
-Sets whether the Hex Inspector panel will auto-show on HexViewer view load.  If this is disabled, the Hex Inspector panel can still be shown manually when desired.
+Sets whether the Hex Inspector panel will auto-show on HexViewer view load.  If this is disabled, the Hex Inspector
+panel can still be shown manually when desired.
 
 ```js
     // Show inspector panel on hex view load and hide on hex view hide
@@ -243,7 +263,8 @@ format uses Python's [`strftime`](https://docs.python.org/3/library/datetime.htm
 
 ### `enable_fake_hex_file`
 
-When loading a file that is a HexViewer visual representation of a binary file, and the syntax is set to HexViewer's custom syntax, HexViewer will enable basic byte highlight features, Hex Inspector panel etc.
+When loading a file that is a HexViewer visual representation of a binary file, and the syntax is set to HexViewer's
+custom syntax, HexViewer will enable basic byte highlight features, Hex Inspector panel etc.
 
 ```js
     // Treat files in HexViewer syntax with proper format
@@ -257,7 +278,8 @@ When loading a file that is a HexViewer visual representation of a binary file, 
 
 ### `highlight_max_bytes`
 
-Sets the max number of allowed bytes that HexViewer will highlight when selected.  This is a setting that limits the highlight for the sake of performance.  Keep this set to a reasonable value.
+Sets the max number of allowed bytes that HexViewer will highlight when selected.  This is a setting that limits the
+highlight for the sake of performance.  Keep this set to a reasonable value.
 
 ```js
     // Approximate max byte selection.
@@ -270,7 +292,10 @@ Sets the max number of allowed bytes that HexViewer will highlight when selected
 
 ### `prompt_on_file_too_big`
 
-Prompts the user with a dialog that gives the user the option to bypass the default action.  By default HexViewer cancels rendering a hex view if the file is too big; or, if an external viewer is configured, HexViewer will open the binary file in the configured external viewer.  This option gives the user the ability to conditionally override the default action and render the hex viewer tab despite file size being too large.
+Prompts the user with a dialog that gives the user the option to bypass the default action.  By default HexViewer
+cancels rendering a hex view if the file is too big; or, if an external viewer is configured, HexViewer will open the
+binary file in the configured external viewer.  This option gives the user the ability to conditionally override the
+default action and render the hex viewer tab despite file size being too large.
 
 
 ```js
@@ -283,7 +308,8 @@ Prompts the user with a dialog that gives the user the option to bypass the defa
 
 ### `highlight_throttle`
 
-Sets whether `highlight_max_bytes` will be used.  This allows a user to not limit the number of highlighted bytes.  It is not recommended to use this for performances sake.
+Sets whether `highlight_max_bytes` will be used.  This allows a user to not limit the number of highlighted bytes. It is
+not recommended to use this for performances sake.
 
 ```js
     //Enable highlight throttling
@@ -292,7 +318,8 @@ Sets whether `highlight_max_bytes` will be used.  This allows a user to not limi
 
 ### `highlight_scope`
 
-Define the highlight color when a byte or ASCII char is selected.  Colors must be a scope found in your theme file, if not, the color will be the default font color.
+Define the highlight color when a byte or ASCII char is selected.  Colors must be a scope found in your theme file, if
+not, the color will be the default font color.
 
 ```js
     // Scope? (Defined in theme files.)
@@ -302,7 +329,8 @@ Define the highlight color when a byte or ASCII char is selected.  Colors must b
 
 ### `highlight_scope`
 
-Define the highlight color for bytes that have been edited.  Colors must be a scope found in your theme file, if not, the color will be the default font color.
+Define the highlight color for bytes that have been edited.  Colors must be a scope found in your theme file, if not,
+the color will be the default font color.
 
 ```js
     "highlight_edit_scope": "keyword",
@@ -310,7 +338,8 @@ Define the highlight color for bytes that have been edited.  Colors must be a sc
 
 ### `highlight_icon`
 
-Sets a gutter icon for highlighted bytes.  Default is set to the string `none` to hide the icon.  This can be changed to either `dot`, `circle`, `bookmark`, `cross`, or `none`.
+Sets a gutter icon for highlighted bytes.  Default is set to the string `none` to hide the icon.  This can be changed
+to either `dot`, `circle`, `bookmark`, `cross`, or `none`.
 
 ```js
     // Icon? (dot|circle|bookmark|cross|none)
@@ -319,7 +348,8 @@ Sets a gutter icon for highlighted bytes.  Default is set to the string `none` t
 
 ### `highlight_edit_icon`
 
-Sets a gutter icon for edited bytes.  Default is set to the string `none` to hide the icon.  This can be changed to either `dot`, `circle`, `bookmark`, `cross`, `none`.
+Sets a gutter icon for edited bytes.  Default is set to the string `none` to hide the icon.  This can be changed to
+either `dot`, `circle`, `bookmark`, `cross`, `none`.
 
 ```js
     "highlight_edit_icon" : "none",
@@ -353,7 +383,13 @@ Sets a limit for how big of a binary file HexViewer will try and convert to a He
 
 ### `external_viewer`
 
-Sometimes it may be desired to open a hex view in an external editor.  Due to the nature of the Sublime Text API, HexViewer's options and speed can be limited, so it can be advantageous to open a file in an external hex editor when performing certain actions or dealing with very large files.  `external_viewer` allows the configuring of the external hex editor.  `external_viewer` is a dictionary containing to parameters.  `viewer`, which is an absolute path to the the external hex editor.  `args` are the arguments that will be passed to the external editor; it is an array of string arguments.  You can use `${FILE}` has a place holder for the file path that will be sent to the editor.  HexViewer will insert the actual file path in the place of `${FILE}`.
+Sometimes it may be desired to open a hex view in an external editor.  Due to the nature of the Sublime Text API,
+HexViewer's options and speed can be limited, so it can be advantageous to open a file in an external hex editor when
+performing certain actions or dealing with very large files.  `external_viewer` allows the configuring of the external
+hex editor.  `external_viewer` is a dictionary containing to parameters.  `viewer`, which is an absolute path to the the
+external hex editor.  `args` are the arguments that will be passed to the external editor; it is an array of string
+arguments.  You can use `${FILE}` has a place holder for the file path that will be sent to the editor.  HexViewer will
+insert the actual file path in the place of `${FILE}`.
 
 ```js
     // External Hex Viewer if max size is exceeded.
@@ -367,7 +403,8 @@ Sometimes it may be desired to open a hex view in an external editor.  Due to th
 
 ### `hash_algorithm`
 
-The default checksum algorithm to use when creating a hash or checksum (not all values listed below will be found on every platform and system).
+The default checksum algorithm to use when creating a hash or checksum (not all values listed below will be found on
+every platform and system).
 
 ```js
     // Checksum algorithm default? (the default is what is applied to a file when saving)
@@ -386,7 +423,9 @@ Controls whether HexViewer will checksum the binary file on save/export.
 
 ### `auto_open`
 
-Sets whether HexViewer should auto detect binary files and convert them to HexViewer views.  When enabled, HexViewer will detect when a view is set to the `Hexidecimal` syntax, or if the file name matches the [auto_open_patterns](#auto_open_patterns) found below.
+Sets whether HexViewer should auto detect binary files and convert them to HexViewer views.  When enabled, HexViewer
+will detect when a view is set to the `Hexidecimal` syntax, or if the file name matches the
+[`auto_open_patterns`](#auto_open_patterns) found below.
 
 ```js
     // Auto open binary files in hex viewer
@@ -397,7 +436,8 @@ Sets whether HexViewer should auto detect binary files and convert them to HexVi
 
 ### `auto_open_patterns`
 
-When [auto_open](#auto_open) is enabled, HexViewer will use the following list of file patterns to detect binary files for auto conversion.
+When [`auto_open`](#auto_open) is enabled, HexViewer will use the following list of file patterns to detect binary files
+for auto conversion.
 
 ```js
     // Auto open patterns to open in hex viewer
@@ -406,7 +446,7 @@ When [auto_open](#auto_open) is enabled, HexViewer will use the following list o
 
 ### `disable_auto_open_hex_encoding`
 
-Sets whether [auto_open](#auto_open) will convert views with the `Hexidecimal` syntax.
+Sets whether [`auto_open`](#auto_open) will convert views with the `Hexidecimal` syntax.
 
 ```js
     // Disable auto open based on 'Hexidecimal' encoding

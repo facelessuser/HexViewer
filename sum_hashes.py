@@ -12,7 +12,6 @@ BIT32_MOD = 4294967296
 
 
 class sum8(object):  # noqa
-
     """Sum8 hash."""
 
     __name = "sum8"
@@ -59,7 +58,6 @@ class sum8(object):  # noqa
 
 
 class sum16(sum8):  # noqa
-
     """Sum16 hash."""
 
     __name = "sum16"
@@ -77,7 +75,6 @@ class sum16(sum8):  # noqa
 
 
 class sum24(sum8):  # noqa
-
     """Sum24 hash."""
 
     __name = "sum24"
@@ -93,7 +90,6 @@ class sum24(sum8):  # noqa
 
 
 class sum32(sum8):  # noqa
-
     """Sum32 hash."""
 
     __name = "sum32"
@@ -111,7 +107,6 @@ class sum32(sum8):  # noqa
 
 
 class xor8(sum8):  # noqa
-
     """Xor8 hash."""
 
     __name = "xor8"
