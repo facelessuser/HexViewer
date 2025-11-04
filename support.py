@@ -5,7 +5,7 @@ import textwrap
 import webbrowser
 import re
 
-__version__ = "2.7.1"
+__version__ = "2.7.2"
 __pc_name__ = 'HexViewer'
 
 CSS = '''
