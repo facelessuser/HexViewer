@@ -1,5 +1,9 @@
 # HexViewer
 
+## 2.8.0
+
+-   **NEW**: Support for Python 3.13 in ST 4201+.
+
 ## 2.7.2
 
 -   **FIX**: Fix support command failures.
